@@ -1,3 +1,4 @@
+
 //  Interface type for the SearchableString ADT of assignments 2 and 3.
 //
 //  A SearchableString encapsulates a String and supports a limited form

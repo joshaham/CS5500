@@ -1,5 +1,4 @@
 /**
- * 
  * @author Zhuoli Liang
  * @Email liang.zhu@husky.neu.edu
  * @category black-box test for SearchableStrings.java
