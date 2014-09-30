@@ -5,8 +5,8 @@ Requirements: JDK 1.6+
   <p> Assignment <a href="http://www.ccs.neu.edu/course/cs5500f14/assignment4.txt">link</a></p>
   <p>Description</p>
   <ul>
-  <li>1: Test and criticize the implementations that each member of the team submitted for assignment 3. No modifying allowed.</li>
-  <li>2: Write a single report containing its detailed criticisms of each implementation, including descriptions of all bugs found during testing.</li> 
+  <li> Test and criticize the implementations that each member of the team submitted for assignment 3. No modifying allowed.</li>
+  <li> Write a single report containing its detailed criticisms of each implementation, including descriptions of all bugs found during testing.</li> 
   <li> The report should be divided into sections, with one section for each of the implementations tested.</li>
     
   <p>Report form of a professional memo:<p>
