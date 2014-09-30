@@ -10,7 +10,7 @@ Requirements: JDK 1.6+
   <li> The report should be divided into sections, with one section for each of the implementations tested.</li>
     
   <p>Report form of a professional memo:<p>
-      <li>* identifies the report as CS 5500 assignment 4</li>
-      <li>* gives the names of every student on the team, and</li>
-      <li>* gives the preferred email address for each member of the team</li>
-      <li>* pdf format</li>
+      <li> identifies the report as CS 5500 assignment 4</li>
+      <li> gives the names of every student on the team, and</li>
+      <li> gives the preferred email address for each member of the team</li>
+      <li> pdf format</li>
