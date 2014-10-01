@@ -453,10 +453,11 @@ class ZhuoliTestProgram{
 	}
 	private void test_equals(){
 		SearchableString obj1=SearchableStrings.make("hello world");
-		SearchableString obj2=SearchableStrings.make("hello world");
+                String helloworld=new String("hello world");
+		SearchableString obj2=SearchableStrings.make(helloworld);
 		SearchableString obj3=SearchableStrings.make("good night");
 		if(!obj1.equals(obj2)){
-			this.errRecord("equal method 'hello world' doesn't equal 'hello world'");
+			this.errRecord("equal method 'hello world' doesn't equal 'hello world' while their address are different");
 		}
 		if(obj1.equals(obj3)){
 			this.errRecord("equal method 'hello world' equal 'good night");

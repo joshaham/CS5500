@@ -1,5 +1,6 @@
 Zhuoli Test
-Passed all test
+ERROR: equal method 'hello world' doesn't equal 'hello world' while their address are different
+1 Failed
 
 Moses
 Passed all tests.
