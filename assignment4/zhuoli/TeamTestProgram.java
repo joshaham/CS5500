@@ -2,20 +2,32 @@
 * @author:
 * @Email:
 */
+import java.io.PrintWriter;
 public class TeamTestProgram {
 	public static void main(String[] args){
-		int errCount=0;
-//		errCount=ZhuoliTestProgram.RunTest();
-		if(errCount==0){
-			System.err.println("Passed all tests");
-		}else{
-			System.err.println("Failed "+ errCount+" tests.");
+		String report=null;
+		PrintWriter F=null;
+		String user = args[0];
+		String fileName=System.getProperty("user.dir") +"/"+user+ "/log.txt";
+		System.out.println(fileName);
+		try{ 
+			F= new PrintWriter(fileName,"UTF-8");
+		}catch(Exception ex){
+
+		}
+		report=ZhuoliTestProgram.RunTest();
+		F.println(report);
+		try{
+			F.close();
+		}catch(Exception ex){
+
 		}
 
 	}
 }
 
 class ZhuoliTestProgram{
+	StringBuilder records=null;
 	int falied_count=0;
 	boolean errFlag=false;
 	SearchableString x1=null;
@@ -24,6 +36,7 @@ class ZhuoliTestProgram{
 	SearchableString x4=null;
 
 	public ZhuoliTestProgram(){
+		records=new StringBuilder("Zhuoli Test\n");
 	    x1 = SearchableStrings.make("telegraph");
 	    x2 = SearchableStrings.make("telegram");
 	    x3 = SearchableStrings.make("elegant");
@@ -173,17 +186,19 @@ class ZhuoliTestProgram{
 	private void errRecord(String message){
 		this.errFlag=true;
 		this.falied_count+=1;
-		System.err.println("ERROR: "+message);
+		records.append("ERROR: "+message+'\n');
 	}
-	private int testSummary(){
+	private String testSummary(){
 		if(this.errFlag==false){
-			return 0;
+			records.append("Passed all test");
+			return records.toString();
 		}else{
-			return this.falied_count;
+			records.append(this.falied_count+" Failed");
+			return records.toString();
 		}
 	}
 	/* black-box testing of the SearchableString ADT */
-	public static int RunTest(){
+	public static String RunTest(){
 		ZhuoliTestProgram testObj=null;
 		try{
 			testObj=new ZhuoliTestProgram();

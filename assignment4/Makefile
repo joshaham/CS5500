@@ -4,7 +4,9 @@ default:
 	javac joshua/*.java
 	javac moses/*.java
 run:
-	java -cp ./zhuoli TeamTestProgram
+	java -cp ./zhuoli TeamTestProgram zhuoli
+	java -cp ./joshua TeamTestProgram joshua
+	java -cp ./moses TeamTestProgram moses
 clean:
 	$(RM) joshua/*.class
 	$(RM) moses/*.class
