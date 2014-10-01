@@ -1,7 +1,6 @@
-#CS5500 TEAM PROJECT & ASSIGNMENT
+<h1>CS5500 TEAM PROJECT & ASSIGNMENT</h1>
 Requirements: JDK 1.6+
-======
-##Assignment 4:
+<h2>Assignment 4:</h2>
   <p> Assignment <a href="http://www.ccs.neu.edu/course/cs5500f14/assignment4.txt">link</a></p>
   <p>Description</p>
   <ul>
@@ -14,3 +13,5 @@ Requirements: JDK 1.6+
       <li> gives the names of every student on the team, and</li>
       <li> gives the preferred email address for each member of the team</li>
       <li> pdf format</li>
+<h2>Assignment 5:</h2>
+   <p>Assignment <a href="http://www.ccs.neu.edu/course/cs5500f14/assignment5.txt">link</a></p>
