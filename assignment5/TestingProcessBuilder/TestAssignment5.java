@@ -19,6 +19,9 @@ public class TestAssignment5 {
 
 		//check file is in WAVE format, if not return
 		//ERROR: File not in WAVE format
+		
+		//check file lengths, NO MATCH if files are
+		//of different lengths
 
 		for (int i = 0; i < args.length; i++) {
 			byte[] currentFileArray;
