@@ -32,9 +32,6 @@ public class TestAssignment5v2 {
 		//check file extension, if not .wav return
 		//ERROR: fileName is not a supported format
 
-		//check file is in WAVE format, if not return
-		//ERROR: File not in WAVE format
-
 		//check file lengths, NO MATCH if files are
 		//of different lengths
 
@@ -54,12 +51,15 @@ public class TestAssignment5v2 {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		//check file is in WAVE format, if not return
+		//ERROR: File not in WAVE format
 
-
-		//extract left channel bytes
-		fileOneLeftChannel = new byte[fileOneArray.length / 2];
-		fileTwoLeftChannel = new byte[fileTwoArray.length / 2];
-		for (int i = 0; i < fileOneArray.length / 2; i+=2) {
+		//extract left channel bytes, and ignores the first 44 bytes
+		//which contain the header information
+		fileOneLeftChannel = new byte[fileOneArray.length - 44 / 2];
+		fileTwoLeftChannel = new byte[fileTwoArray.length - 44 / 2];
+		for (int i = 44; i < fileOneArray.length / 2; i+=2) {
 			fileOneLeftChannel[i] = fileOneArray[2*i];
 			fileOneLeftChannel[i] = fileTwoArray[2*i + 1];
 		}
