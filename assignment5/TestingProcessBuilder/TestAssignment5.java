@@ -39,35 +39,37 @@ public class TestAssignment5 {
 		
 		//extract bytes for each file and input to byte arrays
 		for (int i = 0; i < args.length; i++) {
-			byte[] currentFileArray;
-
-			try {
-				String filePath = args[i];
-				File file = new File(filePath);
-				InputStream inputStream = new FileInputStream(file);
-				currentFileArray = new byte[(int)file.length()];
-				inputStream.read(currentFileArray, 0, currentFileArray.length);
-
-				if (i == 0) {
-					fileOneArray = currentFileArray;
-				} else {
-					fileTwoArray = currentFileArray;
+			if (i == 1 || i == 3) {
+				byte[] currentFileArray;
+	
+				try {
+					String filePath = args[i];
+					File file = new File(filePath);
+					InputStream inputStream = new FileInputStream(file);
+					currentFileArray = new byte[(int)file.length()];
+					inputStream.read(currentFileArray, 0, currentFileArray.length);
+	
+					if (i == 1) {
+						fileOneArray = currentFileArray;
+					} else {
+						fileTwoArray = currentFileArray;
+					}
+	
+					inputStream.close();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					System.out.println("File not found");
+					System.exit(1);
+				} catch (IOException e) {
+					e.printStackTrace();
+					System.exit(1);
 				}
-
-				inputStream.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				System.out.println("File not found");
-				System.exit(1);
-			} catch (IOException e) {
-				e.printStackTrace();
-				System.exit(1);
 			}
 		}
 
 
-		extractLeftChannels();
-		convertToDoubles();	
+		extractLeftChannels();	
+		convertToDoubles();		
 		applyFFT();
 		convertToFrequencies();
 		calculateMSE();
@@ -77,7 +79,6 @@ public class TestAssignment5 {
 		} else {
 			System.out.println("NO MATCH");
 		}
-
 	}
 
 	//Calculates the mean squared error for comparing
