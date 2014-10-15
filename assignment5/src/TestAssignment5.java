@@ -1,6 +1,6 @@
 
 public class TestAssignment5 {
-	private static double THRESHOLD=0.1;
+	private static double THRESHOLD=5;
 	public static void main(String[] args) {
 
 		//check file path is ok, if not return 

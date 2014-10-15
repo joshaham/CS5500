@@ -32,7 +32,7 @@ class HeaderChecker{
 				System.err.println("ERROR: incorrect command line");
 			}
 			else if(err==Error.ARGUMENTSLENGTH){
-				System.err.println("ERROR: incorrect arguments length");
+				System.err.println("ERROR: incorrect command line");
 			}
 			else{
 				System.err.println("ERROR: default error");
