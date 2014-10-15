@@ -7,7 +7,7 @@ class Comparator{
 
 	static boolean DEBUG=true;
 
-	public static void main(String[] args){
+	public static void CheckFormat(String[] args){
 
 		Comparator instance = new Comparator();
 		int r=instance.checkInput(args);
@@ -42,8 +42,6 @@ class Comparator{
 				System.exit(cd2);
 			}
 			
-			// begin code here
-
 
 		}
 	}
