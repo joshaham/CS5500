@@ -5,7 +5,7 @@ import java.io.InputStream;
 
 class HeaderChecker{
 
-	static boolean DEBUG=true;
+	static boolean DEBUG=false;
 	enum Error{
 		ARGUMENTSLENGTH,
 		INCORRECTCOMMAND,
@@ -14,7 +14,7 @@ class HeaderChecker{
 	}
 
 
-	public static void CheckFormat(String[] args){
+	public static boolean CheckFormat(String[] args){
 
 		HeaderChecker instance = new HeaderChecker();
 		Error err =instance.checkInput(args);
@@ -37,6 +37,7 @@ class HeaderChecker{
 			else{
 				System.err.println("ERROR: default error");
 			}
+			return false;
 		} 
 		
 		else { // If inputs are of the correct form
@@ -55,6 +56,7 @@ class HeaderChecker{
 			
 
 		}
+		return true;
 	}
 
 	// Checks to see if the inputs are used correctly
