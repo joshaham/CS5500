@@ -17,7 +17,7 @@ public class TestAssignment5 {
 		
 		//extract bytes for each file and input to byte arrays
 		
-		Comparator.CheckFormat(args);
+		HeaderChecker.CheckFormat(args);
 		Audio file1 =new Audio(args[1]);
 		Audio file2 =new Audio(args[3]);
 		double meanSquaredError = Audio.calculateMSE(file1,file2);

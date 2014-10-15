@@ -1,4 +1,4 @@
 default:
-	javac -d ./bin ./*.java
+	javac -d ./bin ./src/*.java
 clean:
 	$(RM) ./bin/*.class
