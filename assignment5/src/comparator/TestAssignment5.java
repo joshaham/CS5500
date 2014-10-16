@@ -2,22 +2,7 @@ package comparator;
 
 public class TestAssignment5 {
 	private static double THRESHOLD=5;
-	public static void main(String[] args) {
-
-		//check file path is ok, if not return 
-		//ERROR: incorrect command line
-
-		//check file extension, if not .wav return
-		//ERROR: fileName is not a supported format
-
-		//check file is in WAVE format, if not return
-		//ERROR: File not in WAVE format
-		
-		//check file lengths, NO MATCH if files are
-		//of different lengths
-		
-		//extract bytes for each file and input to byte arrays
-		
+	public static void main(String[] args) {		
 		if(!HeaderChecker.CheckFormat(args)){
 			System.exit(-1);
 		};
