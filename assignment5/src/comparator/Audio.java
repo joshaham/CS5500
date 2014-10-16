@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 /*
- * @author: Zhuoli Liang
- * @email: liang.zhu@husky.neu.edu
  */
 
 // Audio class
