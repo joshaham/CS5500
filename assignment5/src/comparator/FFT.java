@@ -1,3 +1,4 @@
+package comparator;
 /*
  *  Copyright 2006-2007 Columbia University.
  *

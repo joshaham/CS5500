@@ -1,3 +1,4 @@
+package comparator;
 
 public class TestAssignment5 {
 	private static double THRESHOLD=5;
