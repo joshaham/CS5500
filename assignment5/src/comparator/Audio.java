@@ -18,6 +18,7 @@ public class Audio {
 	int bitesPerSecond;
 	
 	byte[] fileArray;
+	short[] leftChannelSamples;
 	double[] timeZoneData;
 	double[] frequenciesData;
 	/** PUBLIC METHOD	**/
@@ -38,6 +39,7 @@ public class Audio {
 	
 		byte[] fileLeftChannel = extractLeftChannels();	
 		timeZoneData = convertToDoubles(fileLeftChannel);
+		leftChannelSamples=convertToShort(fileLeftChannel);
 		double[] fileImg=applyFFT(timeZoneData);
 		frequenciesData=convertToFrequencies(fileImg,timeZoneData);
 	}
@@ -73,18 +75,20 @@ public class Audio {
 	public double[] getFrequencies(){
 		return this.frequenciesData;
 	}
-	public double[] getTimeZoneData(){
-		return this.timeZoneData;
+	public short[] getTimeZoneData(){
+		return this.leftChannelSamples;
 	}
-	
+	public double getSampleRate(){
+		return this.sampleRate;
+	}
 	/** Private Methods 		**/
 	private double getSampleRate(byte[] bytes){
 		return 44.1;
 	}
-	private String getWaveFormat(byte[] bytes){
+	public String getWaveFormat(byte[] bytes){
 		return "PCM";
 	}
-	private int getBitsPerSample(byte[] bytes){
+	public int getBitsPerSample(byte[] bytes){
 		return 16;
 	}
 	// read file to array
@@ -137,12 +141,11 @@ public class Audio {
 	
 	//Extract left channel bytes
 	private  byte[] extractLeftChannels() {
-		byte[] fileLeftChannel;
-		fileLeftChannel = new byte[fileArray.length - 44 / 2];
-		for (int i = 44; i < fileArray.length / 2; i+=2) {
-			fileLeftChannel[i] = fileArray[2*i];
-			fileLeftChannel[i] = fileArray[2*i + 1];
-		}		
+		byte[] fileLeftChannel = new byte[(fileArray.length - 44) / 2];
+		for(int i=0;i<fileLeftChannel.length/2;i++){
+			fileLeftChannel[i]=fileArray[44+i*4];
+			fileLeftChannel[i+1]=fileArray[44+i*4+1];
+		}
 		return fileLeftChannel;
 	}
 	
@@ -159,6 +162,19 @@ public class Audio {
 			i++;
 		}
 		return fileDouble;
+	}
+	// converts byte arrays to short int
+	private short[] convertToShort(byte[] fileLeftChannel){
+		short[] array;
+		ByteBuffer byteBuffer = ByteBuffer.wrap(fileLeftChannel);
+		array = new short[fileLeftChannel.length / 2];
+		int i = 0;
+		while (byteBuffer.remaining() > 2) {
+			short t = byteBuffer.getShort();
+			array[i] = t;
+			i++;
+		}
+		return array;
 	}
 	
 	//Applies the FFT to the double arrays

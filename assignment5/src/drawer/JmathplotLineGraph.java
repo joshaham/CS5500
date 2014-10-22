@@ -15,31 +15,45 @@ import comparator.Audio;
  *
  */
 public class JmathplotLineGraph {	// TEST
+	static String audoPath="./examples/z01.wav";
 	public static void main(String[] args) {	
-		if (args.length!=2){
-			System.err.println("Wrong input format: &java JmathplotLineGraph -draw AUDIOFILE");
-			System.exit(1);
-		}
+//		if (args.length!=2){
+//			System.err.println("Wrong input format: &java JmathplotLineGraph -draw AUDIOFILE");
+//			System.exit(1);
+//		}
 		JmathplotLineGraph obj = new JmathplotLineGraph();
-		Audio file=new Audio(args[1]);
+		Audio file=new Audio(audoPath);
 		obj.DrawTimeZone(file);
+		//obj.DrawFrequency(file);
 	}
 	
-	public void DrawFrequency(Audio file){
-		double[] y=file.getFrequencies();
+	public void DrawFrequency(Audio file){	
+		int samplerate=(int)file.getSampleRate();	
+		int n=(file.getFrequencies().length)/(samplerate*100);
+		double[] y=new double[n];
+		for(int i=0;i<n;i++){
+			y[i]=file.getFrequencies()[i*samplerate*100];
+		}
 		double[] x=new double[y.length];
 		for(int i=0;i<x.length;i++){
 			x[i]=i;
 		}
-		this.plot2d(x, y, "F(w)", "w",file.getFileName()+" Frequency Domain");
+		this.plot2d(x, y, "w(HZ)", "F(w)",file.getFileName()+" Frequency Domain");
 	}
+	// 10 nodes per second
 	public void DrawTimeZone(Audio file){
-		double[] y=file.getTimeZoneData();
+		int samplerate=(int)file.getSampleRate();
+		int n=(file.getTimeZoneData().length)/(samplerate*100);
+		double[] y=new double[n];
+		for(int i=0;i<n;i++){
+			y[i]=file.getTimeZoneData()[i*samplerate*100];
+		}
 		double[] x=new double[y.length];
 		for(int i=0;i<x.length;i++){
-			x[i]=i;
+			x[i]=i*0.1;
 		}
-		this.plot2d(x, y, "Amplitude", "t",file.getFileName()+" Time Domain");
+		System.out.println("X samples: "+ x.length+'\n'+"y samples: "+y.length);
+		this.plot2d(x, y, "t(second)", "Amplitude",file.getFileName()+" Time Domain");
 	}
 	
 	public void plot2d(double[] x,double[] y,String xaxisLabel,String yaxisLabel,String title) {
@@ -55,11 +69,11 @@ public class JmathplotLineGraph {	// TEST
         plot.setAxisLabel(1, yaxisLabel);
 
         // add a line plot to the PlotPanel
-        plot.addLinePlot("title", x, y);
+        plot.addLinePlot(title, x, y);
 
         // put the PlotPanel in a JFrame like a JPanel
         JFrame frame = new JFrame("title");
-        frame.setSize(1200, 1200);
+        frame.setSize(1200, 900);
         frame.setContentPane(plot);
         frame.setVisible(true);
 
