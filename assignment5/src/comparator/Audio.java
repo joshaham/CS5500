@@ -37,7 +37,7 @@ public class Audio {
 		waveFormat=getWaveFormat(header);
 		bitesPerSecond=getBitsPerSample(header);
 	
-		byte[] fileLeftChannel = extractLeftChannels();	
+		final byte[] fileLeftChannel = extractLeftChannels();	
 		timeZoneData = convertToDoubles(fileLeftChannel);
 		leftChannelSamples=convertToShort(fileLeftChannel);
 		double[] fileImg=applyFFT(timeZoneData);
@@ -141,10 +141,12 @@ public class Audio {
 	
 	//Extract left channel bytes
 	private  byte[] extractLeftChannels() {
+		// subtract 44 head bytes, divide by 2 leaving left channel
 		byte[] fileLeftChannel = new byte[(fileArray.length - 44) / 2];
+		// 
 		for(int i=0;i<fileLeftChannel.length/2;i++){
-			fileLeftChannel[i]=fileArray[44+i*4];
-			fileLeftChannel[i+1]=fileArray[44+i*4+1];
+			fileLeftChannel[i*2]=fileArray[44+i*4];
+			fileLeftChannel[i*2+1]=fileArray[44+i*4+1];
 		}
 		return fileLeftChannel;
 	}
@@ -159,7 +161,7 @@ public class Audio {
 		while (byteBuffer.remaining() > 2) {
 			short t = byteBuffer.getShort();
 			fileDouble[i] = t / 32768.0;
-			i++;
+			i++;			
 		}
 		return fileDouble;
 	}
