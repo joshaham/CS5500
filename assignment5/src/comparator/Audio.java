@@ -28,8 +28,8 @@ public class Audio {
 		File file = new File(filePath);
 		this.fileArray=readFile2ByteArray(file);
 		
-		byte[] header=Arrays.copyOfRange(fileArray, 0, 36);
-		if(this.checkCDSpecs(header)!=0){
+		byte[] header=Arrays.copyOfRange(fileArray, 0, 44);
+		if(this.checkCDSpecs(header,fileArray.length-44)!=0){
 				System.err.println("File one does not match CD specification");
 				System.exit(1);
 		}
@@ -109,33 +109,42 @@ public class Audio {
 		} 
 		return fileArray;
 	}
-	private int checkCDSpecs(byte[] bytes) {
+	private int checkCDSpecs(byte[] bytes,int datasize) {
 			//Check format = wave
-			if (bytes[8] == 87 && bytes[9] == 65 &&
-					bytes[10] == 86 && bytes[11] == 69) {
+			if (bytes[8] != 87 || bytes[9] != 65 ||
+					bytes[10] != 86 || bytes[11] != 69) {
 				if (DEBUG) { System.out.println("Wave Format"); }
-				//Check audio format = PCM
-				if (bytes[20] == 1 && bytes[21] == 0) {
-					if (DEBUG) { System.out.println("PCM"); }
-					//Check channels = stereo
-					if (bytes[22] == 2 && bytes[23] == 0) {
-						if (DEBUG) {System.out.println("Stereo Channels"); }
-						//Check sample rate is 44.1 kHz
-						if (bytes[24] == 68 && bytes[25] == -84
-								&& bytes[26] == 0 && bytes[27] == 0) {
-							if (DEBUG) { 
-								System.out.println("44100 Sample Rate "); }
-							if (bytes[34] == 16 && bytes[35] == 0) {
-								if (DEBUG) {
-									System.out.println("16 bits per sample");
-								}
-								return 0;
-							}
-						}
-					}
-				}
+				return -1;
+				
 			}
-			return -1;
+			//Check audio format = PCM
+			if (bytes[20] != 1 || bytes[21] != 0) {
+				if (DEBUG) { System.out.println("PCM"); }
+				return -1;
+			}
+			//Check channels = stereo
+			if (bytes[22] != 2 || bytes[23] != 0) {
+				if (DEBUG) {System.out.println("Stereo Channels"); }
+				return -1;
+			}
+			//Check sample rate is 44.1 kHz
+			if (bytes[24] != 68 || bytes[25] != -84
+					|| bytes[26] != 0 || bytes[27] != 0) {
+				if (DEBUG) { System.out.println("44100 Sample Rate "); }
+				return -1;
+			}
+			//check BitsPerSample is 16
+			if (bytes[34] != 16 || bytes[35] != 0) {
+				if (DEBUG) {System.out.println("16 bits per sample");}
+				return -1;
+			}
+			//check file size
+			int subChunk2Size=bytes[36]+bytes[37]<<8;
+			if(subChunk2Size!=datasize){
+				if(DEBUG){System.out.println("Audio File data incomplete");};
+				return -1;
+			}
+			return 0;
 	}
 
 	

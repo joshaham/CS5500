@@ -1,7 +1,7 @@
 package comparator;
 
 
-class HeaderChecker{
+class ParameterChecker{
 
 	static boolean DEBUG=false;
 	enum Error{
@@ -14,7 +14,7 @@ class HeaderChecker{
 
 	public static boolean CheckFormat(String[] args){
 
-		HeaderChecker instance = new HeaderChecker();
+		ParameterChecker instance = new ParameterChecker();
 		Error err =instance.checkInput(args);
 		
 		if(err != null) { 

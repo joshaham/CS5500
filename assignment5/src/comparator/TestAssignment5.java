@@ -3,7 +3,7 @@ package comparator;
 public class TestAssignment5 {
 	private static double THRESHOLD=5;
 	public static void main(String[] args) {		
-		if(!HeaderChecker.CheckFormat(args)){
+		if(!ParameterChecker.CheckFormat(args)){
 			System.exit(-1);
 		};
 		Audio file1 =new Audio(args[1]);
