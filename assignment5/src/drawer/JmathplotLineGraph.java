@@ -5,7 +5,7 @@ import javax.swing.*;
 
 import org.math.plot.*;
 
-import comparator.Audio;
+import audio.Audio;
  
 
 /**
@@ -22,17 +22,17 @@ public class JmathplotLineGraph {	// TEST
 //			System.exit(1);
 //		}
 		JmathplotLineGraph obj = new JmathplotLineGraph();
-		Audio file=new Audio(audoPath);
+		Audio file=Audio.getInstance(audoPath);
 		obj.DrawTimeZone(file);
 		//obj.DrawFrequency(file);
 	}
 	
 	public void DrawFrequency(Audio file){	
 		int samplerate=(int)file.getSampleRate();	
-		int n=(file.getFrequencies().length)/(samplerate*100);
+		int n=(file.getFrequenciesData().length)/(samplerate*100);
 		double[] y=new double[n];
 		for(int i=0;i<n;i++){
-			y[i]=file.getFrequencies()[i*samplerate*100];
+			y[i]=file.getFrequenciesData()[i*samplerate*100];
 		}
 		double[] x=new double[y.length];
 		for(int i=0;i<x.length;i++){
