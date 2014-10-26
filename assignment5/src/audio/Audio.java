@@ -86,6 +86,7 @@ public abstract class Audio {
 		sb.append("Audio Format: "+this.format+"\n");
 		sb.append("Sample Rate: "+this.sampleRate+"\n");
 		sb.append("Bites per Second: "+this.bitesPerSecond+"\n");
+		sb.append("Number of Channels: "+this.numChannels);
 		return sb.toString();
 	}
 

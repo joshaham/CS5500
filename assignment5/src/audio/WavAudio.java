@@ -1,7 +1,10 @@
 package audio;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 class WavAudio extends Audio{
-	static boolean DEBUG = false;
+	static boolean DEBUG = true;
 	public WavAudio(String filePath) {
 		super(filePath);
 	}
@@ -10,8 +13,10 @@ class WavAudio extends Audio{
 	@Override
 	// check audio file headline format
 	int checkCDSpecs(byte[] bytes,int datasize,double[] sampleRate ,String[] format, int[] bps,int[] nc) {
+			ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
+			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
 			//Check format = wave
-			if (bytes[8] != 87 || bytes[9] != 65 ||
+			if (byteBuffer.get(8) != 87 || byteBuffer.get(9) != 65 ||
 					bytes[10] != 86 || bytes[11] != 69) {
 				if (DEBUG) { System.err.println("ERROR: NOT Wave Format"); }
 				return -1;
@@ -19,37 +24,37 @@ class WavAudio extends Audio{
 			}
 			format[0]="wav";
 			//Check audio format = PCM
-			if (bytes[20] != 1 || bytes[21] != 0) {
+			if (byteBuffer.get(20) != 1 || byteBuffer.get(21) != 0) {
 				if (DEBUG) { System.err.println("ERROR: NOT PCM"); }
 				return -1;
 			}
 			//Check channels = stereo or Mono
-			if (bytes[22] == 2 && bytes[23] == 0) {
+			if (byteBuffer.get(22) == 2 && byteBuffer.get(23) == 0) {
 				nc[0]=2;
-			}else if(bytes[22]==1 && bytes[23]==0){
+			}else if(byteBuffer.get(22)==1 && byteBuffer.get(23)==0){
 				nc[0]=1;
 			}else{
 				if(DEBUG){System.err.println("ERROR: Incorrect num of channels");}
 				return -1;
 			}
 			//Check sample rate is 44.1 kHz
-			long sr=bytes[24]+bytes[25]<<8+bytes[26]<<16+bytes[27]<<32;
+			int sr=byteBuffer.getInt(24);
 			if(sr!=11025 && sr!=22050 && sr!=44100 && sr!=48000){
 				if(DEBUG){System.err.println("ERROR: Incorrect sample rate "+sr);}
 				return -1;
 			}
 			sampleRate[0]=sr;
 			//check BitsPerSample is 16
-			int t=bytes[34]+bytes[35]<<8;
+			int t=byteBuffer.getShort(34);
 			if (t != 16 && t != 8) {
 				if (DEBUG) {System.out.println("ERROR: Incorrect bites per sample "+ t);}
 				return -1;
 			}
 			bps[0]=t;
 			//check file size
-			int subChunk2Size=bytes[36]+bytes[37]<<8;
+			int subChunk2Size=byteBuffer.getInt(40);
 			if(subChunk2Size!=datasize){
-				if(DEBUG){System.out.println("Audio File data incomplete");};
+				if(DEBUG){System.out.println("Audio File data incomplete: "+subChunk2Size +" vs "+datasize);};
 				return -1;
 			}
 			return 0;

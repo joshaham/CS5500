@@ -43,15 +43,16 @@ public class JmathplotLineGraph {	// TEST
 	// 10 nodes per second
 	public void DrawTimeZone(Audio file){
 		int samplerate=(int)file.getSampleRate();
-		int n=(file.getTimeZoneData().length)/(samplerate*100);
+		int n=(file.getTimeZoneData().length)/(samplerate/10);
 		double[] y=new double[n];
 		for(int i=0;i<n;i++){
-			y[i]=file.getTimeZoneData()[i*samplerate*100];
+			y[i]=file.getTimeZoneData()[i*samplerate/10];
 		}
 		double[] x=new double[y.length];
 		for(int i=0;i<x.length;i++){
 			x[i]=i*0.1;
 		}
+		System.out.println(file);
 		System.out.println("X samples: "+ x.length+'\n'+"y samples: "+y.length);
 		this.plot2d(x, y, "t(second)", "Amplitude",file.getFileName()+" Time Domain");
 	}
