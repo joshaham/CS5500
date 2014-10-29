@@ -21,7 +21,8 @@ public abstract class Audio {
 	double[] timeZoneData;
 	double[] frequenciesData;
 	
-	abstract int checkCDSpecs(byte[] bytes,int datasize,double[] sampleRate ,String[] format, int[] bps,int[] nc);
+	abstract int checkCDSpecs(byte[] bytes,int datasize,double[] sampleRate ,
+			String[] format, int[] bps,int[] nc);
 	abstract  byte[] extractLeftChannels(int numsOfChannel,int bps);
 	abstract double[] convertToDoubles(byte[] fileLeftChannel,int bps);
 	abstract short[] convertToShort(byte[] fileLeftChannel,int bps);
