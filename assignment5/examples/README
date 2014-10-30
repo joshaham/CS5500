@@ -1,0 +1,65 @@
+This directory holds some of the recordings used to grade
+CS 4500 assignment 4.
+
+The originals (see credits and licensing information at end):
+
+JanacekSinfoniettaPart1.mp3    first movement of Janacek's Sinfonietta
+RussianEasterOverture.mp3      Rimsky-Korsakov's Russian Easter Overture
+WhoopeeTiYiYo.mp3              traditional, recorded by Sons of the Pioneers
+Piste1.mp3                     Piste 1, by Son Altesse curieuse
+MMW.mp3                        MMW, by Mild Maynyrd
+
+WAVE files excerpted from those originals:
+
+curieuse.wav      20-second extract (0, 20) from Piste1.mp3
+janacek.wav       20-second extract (0, 20) from JanacekSinfoniettaPart1.mp3
+maynard.wav       20-second extract (0, 20) from MMW.mp3
+rimsky.wav        20-second extract (0, 20) from RussianEasterOverture.mp3
+sons.wav          20-second extract (0, 20) from WhoopeeTiYiYo.mp3
+
+WAVE files modified from those excerpts:
+
+curieuse2.wav     noise added and channels swapped
+janacek2.wav      louder (1.2, 1.2)
+maynard2.wav      channels mixed (0.9, -0.1, 0.1, -0.9)
+rimsky2.wav       converted to MP3 and back to WAVE
+sons2.wav         softer (.9, .9)
+
+================================================================
+
+CREDITS
+
+================
+
+Originals downloaded from www.musopen.org :
+
+JanacekSinfoniettaPart1.mp3    first movement of Janacek's Sinfonietta
+RussianEasterOverture.mp3      Rimsky-Korsakov's Russian Easter Overture
+
+================
+
+Originals downloaded from the Free Music Archive:
+
+WhoopeeTiYiYo.mp3              traditional, recorded by Sons of the Pioneers
+
+licensing: Attribution-Noncommercial-Share Alike 3.0 US License
+
+http://freemusicarchive.org/music/The_Sons_Of_The_Pioneers/Sons_of_the_Pioneers__Symphonies_of_the_Sage/Whoopee_Ti_Yi_Yo
+
+====
+
+Piste1.mp3                     Piste 1, by Son Altesse curieuse
+
+licensing: Attribution-Noncommercial-Share Alike 3.0 US License
+
+http://freemusicarchive.org/music/Son_Altesse_curieuse/Frivolits/01-Preambule
+
+====
+
+MMW.mp3                        MMW, by Mild Maynyrd
+
+licensing: Attribution-Noncommercial-Share Alike 3.0 US License
+
+http://freemusicarchive.org/music/Mild_Maynyrd/Dead_Herring/04_MMW
+
+================

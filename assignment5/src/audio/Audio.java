@@ -29,10 +29,10 @@ public abstract class Audio {
 	
 	public static Audio getInstance(String filePath){
 		if(filePath.endsWith("wav")){
-			return new WavAudio(filePath);
+			return  WavAudio.getInstance(filePath);
 		}
 		if(filePath.endsWith("mp3")){
-			return new Mp3Audio(filePath);
+			return  Mp3Audio.getInstance(filePath);
 		}
 		return null;
 	}

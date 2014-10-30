@@ -9,6 +9,9 @@ class WavAudio extends Audio{
 		super(filePath);
 	}
 	
+	public static Audio getInstance(String filePath){
+		return new WavAudio(filePath);
+	}
 	
 	@Override
 	// check audio file headline format
