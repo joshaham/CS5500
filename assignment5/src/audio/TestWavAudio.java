@@ -29,30 +29,30 @@ public class TestWavAudio {
 	@Test
 	// test for different bites per second
 	public void bpsTest(){
-		Audio z01 = new WavAudio("examples/z01.wav");
+		Audio z01 = new WavAudio("examples/curieuse.wav");
 		// test 16 bites per second
 		assertEquals(16,z01.getBitesPerSecond());
 	}
 	@Test
 	// test for different num of channels
 	public void channelsTest(){
-		Audio z02 = new WavAudio("examples/z02.wav");
+		Audio z02 = new WavAudio("examples/curieuse.wav");
 		// test 2 channels
 		assertEquals(2,z02.getNumChannels());
 	}
 	@Test
 	// test for different sample rate
 	public void sampleRateTest(){
-		Audio z03 = new WavAudio("examples/z03.wav");
+		Audio z03 = new WavAudio("examples/curieuse.wav");
 		// test 2 channels
 		assertEquals(44100.0,z03.getSampleRate(),0.01);
 	}	
 	@Test
 	// test for file name
 	public void fileNameTest(){
-		Audio z04 = new WavAudio("examples/z04.wav");
+		Audio z04 = new WavAudio("examples/curieuse.wav");
 		// test 2 channels
-		assertEquals("z04.wav",z04.getFileName());
+		assertEquals("curieuse.wav",z04.getFileName());
 	}
 
 }
