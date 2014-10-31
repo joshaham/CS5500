@@ -45,4 +45,10 @@ class Mp3Audio extends Audio{
 		return null;
 	}
 
+    @Override
+    byte[] convertToDualChannels(int bps) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

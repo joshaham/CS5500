@@ -17,13 +17,14 @@ public abstract class Audio {
 	int numChannels;
 	
 	byte[] fileArray;
-	short[] leftChannelSamples;
+	short[] dualChannelSamples;
 	double[] timeZoneData;
 	double[] frequenciesData;
 	
 	abstract int checkCDSpecs(byte[] bytes,int datasize,double[] sampleRate ,
 			String[] format, int[] bps,int[] nc);
 	abstract  byte[] extractLeftChannels(int numsOfChannel,int bps);
+	abstract byte[] convertToDualChannels(int bps);
 	abstract double[] convertToDoubles(byte[] fileLeftChannel,int bps);
 	abstract short[] convertToShort(byte[] fileLeftChannel,int bps);
 	
@@ -57,11 +58,15 @@ public abstract class Audio {
 		bitesPerSecond=bps[0];
 		numChannels=nc[0];
 		
-		
-		final byte[] fileLeftChannel = 
-				extractLeftChannels(this.numChannels,this.bitesPerSecond);	
-		timeZoneData = convertToDoubles(fileLeftChannel,this.bitesPerSecond);
-		leftChannelSamples=convertToShort(fileLeftChannel,this.bitesPerSecond);
+		final byte[] fileDualChannels;
+		if (this.numChannels == 1) {
+		    fileDualChannels = convertToDualChannels(this.bitesPerSecond);
+		} else {
+		    fileDualChannels = this.fileArray;
+		}
+
+		timeZoneData = convertToDoubles(fileDualChannels,this.bitesPerSecond);
+		dualChannelSamples=convertToShort(fileDualChannels,this.bitesPerSecond);
 		double[] fileImg=applyFFT(timeZoneData);
 		frequenciesData=convertToFrequencies(fileImg,timeZoneData);
 	}
@@ -171,8 +176,8 @@ public abstract class Audio {
 		return fileArray;
 	}
 
-	public short[] getLeftChannelSamples() {
-		return leftChannelSamples;
+	public short[] getdualChannelSamples() {
+		return dualChannelSamples;
 	}
 
 	public double[] getTimeZoneData() {
