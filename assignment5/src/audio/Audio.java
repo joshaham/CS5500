@@ -67,11 +67,14 @@ public abstract class Audio {
 
 	
 	//Calculates the mean squared error for comparing
-	//two files
+	//two files. Assumes a sample rate of 41,000
+	//and an fft sample size of 2^15
 	public static double calculateMSE(Audio file1, Audio file2) {
+		int indexFor20Hz = 14;
+		int indexFor20000Hz = 14860;
 		double squaredError = 0;
 		double meanSquaredError = 0;
-		for (int j = 0; j < file1.frequenciesData.length; j++) {
+		for (int j = indexFor20Hz; j < indexFor20000Hz; j++) {
 			double value1 = file1.frequenciesData[j];
 			double value2 = file2.frequenciesData[j];
 			double error = Math.pow((value1 - value2), 2);
