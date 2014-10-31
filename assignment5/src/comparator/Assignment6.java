@@ -3,7 +3,7 @@ package comparator;
 import audio.Audio;
 
 public class Assignment6 {
-	private static double THRESHOLD=20;
+	private static double THRESHOLD=30;
 	public static void main(String[] args) {		
 		if(!ParameterChecker.CheckFormat(args)){
 			System.exit(-1);

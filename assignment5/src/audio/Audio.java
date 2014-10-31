@@ -58,7 +58,8 @@ public abstract class Audio {
 		numChannels=nc[0];
 		
 		
-		final byte[] fileLeftChannel = extractLeftChannels(this.numChannels,this.bitesPerSecond);	
+		final byte[] fileLeftChannel = 
+				extractLeftChannels(this.numChannels,this.bitesPerSecond);	
 		timeZoneData = convertToDoubles(fileLeftChannel,this.bitesPerSecond);
 		leftChannelSamples=convertToShort(fileLeftChannel,this.bitesPerSecond);
 		double[] fileImg=applyFFT(timeZoneData);
@@ -82,6 +83,12 @@ public abstract class Audio {
 			squaredError += error;
 		}
 		meanSquaredError = squaredError / file1.frequenciesData.length;
+		
+
+		System.out.println("MSE: "+meanSquaredError);
+		System.out.println(file1);
+		System.out.println(file2);
+		
 		return meanSquaredError;
 	}
 	//@overwrite
@@ -92,6 +99,7 @@ public abstract class Audio {
 		sb.append("Sample Rate: "+this.sampleRate+"\n");
 		sb.append("Bites per Second: "+this.bitesPerSecond+"\n");
 		sb.append("Number of Channels: "+this.numChannels);
+		sb.append('\n');
 		return sb.toString();
 	}
 

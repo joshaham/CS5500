@@ -10,13 +10,14 @@ class Mp3Audio extends Audio{
 	
 	public static WavAudio getInstance(String filePath){
 //		// TODO Auto-generated constructor stub
+		String fileWav=filePath.substring(0, filePath.indexOf(".mp3"))+".wav";
 		try {
-			java.lang.Runtime.getRuntime().exec("lame" +  filePath +"- wav "+filePath+ ".mp3");
+			java.lang.Runtime.getRuntime().exec("lame" + " --mp3input "+filePath+ "  "+fileWav);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return new WavAudio(filePath+".mp3");
+		return new WavAudio(fileWav);
 	}
 
 	@Override

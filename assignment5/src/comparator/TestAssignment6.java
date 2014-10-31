@@ -9,7 +9,7 @@ import audio.Audio;
 public class TestAssignment6 {
 
 	@Test
-	public void testEqual(){
+	public void testWAVEqual(){
 		Audio file1 = Audio.getInstance("examples/curieuse.wav");
 		Audio file2 = Audio.getInstance("examples/curieuse.wav");
 		assertTrue(Assignment6.isMatch(Audio.calculateMSE(file1, file2)));
@@ -23,12 +23,37 @@ public class TestAssignment6 {
 		assertTrue("MSE: "+Audio.calculateMSE(maynard, maynard2),Assignment6.isMatch(Audio.calculateMSE(maynard, maynard2)));
 		
 		Audio rimsky = Audio.getInstance("examples/rimsky.wav");
+		System.out.println("rimsky:\n"+rimsky);
 		Audio rimsky2 = Audio.getInstance("examples/rimsky2.wav");
+		System.out.println("rimsky2:\n"+rimsky2);
 		assertTrue("MSE: "+Audio.calculateMSE(rimsky, rimsky2),Assignment6.isMatch(Audio.calculateMSE(rimsky, rimsky2)));
 		
 		Audio sons = Audio.getInstance("examples/sons.wav");
 		Audio sons2 = Audio.getInstance("examples/sons2.wav");
 		assertTrue("MSE: "+Audio.calculateMSE(sons, sons2),Assignment6.isMatch(Audio.calculateMSE(sons, sons2)));
+	}
+	@Test
+	public void testWAVNotEqual(){
+		System.out.println("testWAVNotEqual");
+		Audio file1 = Audio.getInstance("examples/curieuse.wav");
+		Audio file2 = Audio.getInstance("examples/janacek.wav");
+		assertFalse(Assignment6.isMatch(Audio.calculateMSE(file1, file2)));
+		
+		Audio janacek = Audio.getInstance("examples/curieuse.wav");
+		Audio janacek2 = Audio.getInstance("examples/janacek2.wav");
+		assertFalse(Assignment6.isMatch(Audio.calculateMSE(janacek, janacek2)));
+		
+		Audio maynard = Audio.getInstance("examples/maynard.wav");
+		Audio maynard2 = Audio.getInstance("examples/rimsky2.wav");
+		assertFalse("MSE: "+Audio.calculateMSE(maynard, maynard2),Assignment6.isMatch(Audio.calculateMSE(maynard, maynard2)));
+		
+		Audio rimsky = Audio.getInstance("examples/maynard.wav");
+		Audio rimsky2 = Audio.getInstance("examples/rimsky2.wav");
+		assertFalse("MSE: "+Audio.calculateMSE(rimsky, rimsky2),Assignment6.isMatch(Audio.calculateMSE(rimsky, rimsky2)));
+		
+		Audio sons = Audio.getInstance("examples/curieuse.wav");
+		Audio sons2 = Audio.getInstance("examples/sons2.wav");
+		assertFalse("MSE: "+Audio.calculateMSE(sons, sons2),Assignment6.isMatch(Audio.calculateMSE(sons, sons2)));
 	}
 
 }

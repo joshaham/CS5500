@@ -15,7 +15,8 @@ class WavAudio extends Audio{
 	
 	@Override
 	// check audio file headline format
-	int checkCDSpecs(byte[] bytes,int datasize,double[] sampleRate ,String[] format, int[] bps,int[] nc) {
+	int checkCDSpecs(byte[] bytes,int datasize,double[] sampleRate ,String[] format, 
+			int[] bps,int[] nc) {
 			ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
 			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
 			//Check format = wave
@@ -57,7 +58,8 @@ class WavAudio extends Audio{
 			//check file size
 			int subChunk2Size=byteBuffer.getInt(40);
 			if(subChunk2Size!=datasize){
-				if(DEBUG){System.out.println("Audio File data incomplete: "+subChunk2Size +" vs "+datasize);};
+				if(DEBUG){System.out.println("Audio File data incomplete: "+
+						subChunk2Size +" vs "+datasize);};
 				return -1;
 			}
 			return 0;
