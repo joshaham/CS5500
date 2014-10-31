@@ -12,3 +12,5 @@ $ make
 $ chmod +x ./dam
 $ ./dam -f <pathname> -f <pathname>
 
+FFT class copyrighted by Columbia University,
+used with instructor's permission
