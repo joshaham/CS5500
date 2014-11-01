@@ -6,7 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import comparator.FFT;
+
+import fft.FFT;
 
 // Audio class
 public abstract class Audio {

@@ -3,7 +3,7 @@ package audio;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-class WavAudio extends Audio{
+public class WavAudio extends Audio{
 	static boolean DEBUG = true;
 	public WavAudio(String filePath) {
 		super(filePath);
