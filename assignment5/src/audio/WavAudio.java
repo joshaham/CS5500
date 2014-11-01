@@ -90,14 +90,17 @@ public class WavAudio extends Audio{
 	    // subtract 44 head bytes, divide by numsOfChannel leaving one channel
         byte[] fileDualChannels = new byte[(fileArray.length - 44) * 2];
         if(bps==16){
-            for(int i=0;i<fileDualChannels.length;i+=4){
+            for(int i=0;i<fileArray.length-44;i+=2){
+                fileDualChannels[i] = fileArray[44+i];
+                fileDualChannels[i+1] = fileArray[44+i+1];
                 fileDualChannels[i+2] = fileArray[44+i];
                 fileDualChannels[i+3] = fileArray[44+i+1];
                 
             }
         }else if(bps==8){
-            for(int i=0;i<fileDualChannels.length;i+=2){
-                fileDualChannels[i+1]=fileArray[44+i];
+            for(int i=0;i<fileArray.length-44;i++){
+                fileDualChannels[i] = fileArray[44+i];
+                fileDualChannels[i+1]=fileArray[44+i+1];
             }
         }else{
             if(DEBUG){System.err.println("ERROR: incorrect bps in extractLeftChannels "+bps);}
