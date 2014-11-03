@@ -30,6 +30,9 @@ public class JmathplotLineGraph {	// TEST
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		obj.DrawTimeZone(file);
 		//obj.DrawFrequency(file);

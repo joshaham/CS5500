@@ -6,6 +6,7 @@ import java.nio.ByteOrder;
 public class AudioHeader {
 	static boolean DEBUG=true;
 	String fileName;
+
 	String format;
 	double sampleRate;
 	int bitesPerSecond;
@@ -13,7 +14,8 @@ public class AudioHeader {
 	int audioLength;
 	
 	
-	private AudioHeader(String fileName,String format,int nc,int sampleRate,int bps,int audioLength){
+	private AudioHeader(String fileName,String format,int nc,
+			int sampleRate,int bps,int audioLength){
 		this.fileName=fileName;
 		this.format=format;
 		this.numChannels=nc;
@@ -108,5 +110,8 @@ public class AudioHeader {
 
 	public int getAudioLength() {
 		return audioLength;
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 }

@@ -29,6 +29,9 @@ public class Comparator {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				continue;
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			if(audio==null){
 				continue;
@@ -42,7 +45,9 @@ public class Comparator {
 		for(Audio file1:container1){
 			for(Audio file2:container2){
 				if (isMatch(file1,file2)) {
-					System.out.println("MATCH "+file1.getFileName()+" "+file2.getFileName() + " MSE: "+ComparatorAlgorithm.calculateMSE(file1,file2));
+					String msg="MATCH "+file1.getFileName()+" "+file2.getFileName() +
+							" MSE: "+ComparatorAlgorithm.calculateMSE(file1,file2);
+					System.out.println(msg);
 				} else {
 //					System.out.println("ahaha");
 				}

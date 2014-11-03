@@ -27,21 +27,30 @@ public  class Audio {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		System.out.println(audio);
 	}
-	
-	public static Audio getInstance(String filePath) throws IOException{
+	// return instance of audio
+	public static Audio getInstance(String filePath) throws IOException, InterruptedException{
 		if(filePath.endsWith(".mp3")){
-			String fileWav="/tmp/assignment7Sanguoyanyi" + count+".wav";
+			String fileWav="/tmp/assignment7Sanguoyanyi" + (count++)+".wav";
 			String cmd="./lame --decode "+filePath+" "+fileWav;
-			java.lang.Runtime.getRuntime().exec(cmd);
-			Audio instance =   checkAndGetInstance(fileWav);
-//			java.lang.Runtime.getRuntime().exec("rm "+fileWav);
+			Process p =java.lang.Runtime.getRuntime().exec(cmd);
+			synchronized(p){
+				p.wait(3000);
+			}
+			Audio instance =   getInstanceHelper(fileWav,filePath);
+			p =java.lang.Runtime.getRuntime().exec("rm "+fileWav);
+			synchronized(p){
+				p.wait(3000);
+			}
 			return instance;
 		}
 		else if(filePath.endsWith(".wav")){
-			return   checkAndGetInstance(filePath);
+			return   getInstanceHelper(filePath);
 		}else{
 			if(DEBUG){
 				System.err.println("ERROR: file not ends with audio format");
@@ -49,8 +58,19 @@ public  class Audio {
 		}
 		return null;
 	}
-	
-	
+	// change filename if in need
+	private static Audio getInstanceHelper(String fileWav,String filePath){
+		Audio audio=checkAndGetInstance(fileWav);
+		if(audio!=null){
+			audio.header.setFileName(filePath);
+		}
+		return audio;
+	}
+	// change filename if in need
+	private static Audio getInstanceHelper(String fileWav){
+		return checkAndGetInstance(fileWav);
+	}
+	// check file format and return audio instance if correct
 	private static Audio checkAndGetInstance(String filePath){
 
 		String[] strs = filePath.split("/");
@@ -61,13 +81,15 @@ public  class Audio {
 		}
 		byte[] fileArray=readFile2ByteArray(file);
 		byte[] dataheader=Arrays.copyOfRange(fileArray, 0, 44);
-		AudioHeader header=AudioHeader.getInstance(strs[strs.length-1],dataheader,fileArray.length-44);
+		AudioHeader header=
+				AudioHeader.getInstance(strs[strs.length-1],dataheader,fileArray.length-44);
 		if(header==null){
 			System.err.println("File does not match CD specification: " + filePath);
 			return null;
 		}
 		return new Audio(header,filePath,fileArray);
 	}
+	
 	
 	protected Audio(AudioHeader header,String filePath,byte[] fileArray){
 		this.header=header;
@@ -82,7 +104,9 @@ public  class Audio {
 		}else{
 			fileLeftChannel=extractLeftChannels(header.getBitesPerSecond());
 			fileRightChannel=extractRightChannels(header.getBitesPerSecond());
-			timeZoneData = StereoConvert2Doubles(fileLeftChannel,fileRightChannel,header.getBitesPerSecond());
+			timeZoneData = 
+					StereoConvert2Doubles(
+							fileLeftChannel,fileRightChannel,header.getBitesPerSecond());
 			int[] leftShort=convertToShort(fileLeftChannel,header.getBitesPerSecond());
 			int[] rightShort=convertToShort(fileRightChannel,header.getBitesPerSecond());
 			dualChannelSamples=new int[leftShort.length];
@@ -111,7 +135,8 @@ public  class Audio {
 				fileLeftChannel[i]=fileArray[44+i*2];
 			}
 		}else{
-			if(DEBUG){System.err.println("ERROR: incorrect bps in extractLeftChannels "+bps);}
+			if(DEBUG){
+				System.err.println("ERROR: incorrect bps in extractLeftChannels "+bps);}
 			return null;
 		}
 		return fileLeftChannel;
@@ -129,7 +154,8 @@ public  class Audio {
 				fileLeftChannel[i]=fileArray[44+i*2+1];
 			}
 		}else{
-			if(DEBUG){System.err.println("ERROR: incorrect bps in extractLeftChannels "+bps);}
+			if(DEBUG){
+				System.err.println("ERROR: incorrect bps in extractLeftChannels "+bps);}
 			return null;
 		}
 		return fileLeftChannel;
