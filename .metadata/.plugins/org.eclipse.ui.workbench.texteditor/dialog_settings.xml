@@ -3,26 +3,26 @@
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item value="265" key="DIALOG_WIDTH"/>
 		<item value="198" key="DIALOG_Y_ORIGIN"/>
-		<item value="615" key="DIALOG_X_ORIGIN"/>
 		<item value="399" key="DIALOG_HEIGHT"/>
+		<item value="615" key="DIALOG_X_ORIGIN"/>
 		<item value="1|.Helvetica Neue DeskInterface|11.0|0|COCOA|1|.HelveticaNeueDeskInterface-Regular" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="true" key="wrap"/>
-		<item value="false" key="casesensitive"/>
 		<item value="false" key="isRegEx"/>
+		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="applyFFT" key="selection"/>
+		<item value="CD spe" key="selection"/>
 		<list key="findhistory">
+			<item value="CD spe"/>
+			<item value="getInstance"/>
+			<item value="File length"/>
+			<item value="NOT Wave Format"/>
+			<item value="not wave format"/>
+			<item value="File open exception"/>
 			<item value="applyFFT"/>
 			<item value="apply"/>
-			<item value="appfy"/>
-			<item value="fileDualChannels"/>
-			<item value="mp3"/>
-			<item value="convertToDualChannels"/>
-			<item value="&#x0A;&#x09;&#x09;header=AudioHeader.getInstance(strs[strs.length-1],dataheader,fileArray.length-44);"/>
-			<item value="getInstance"/>
 		</list>
 		<list key="replacehistory">
 			<item value="fileFFT"/>

@@ -1,5 +1,0 @@
-MATCH z03.wav z04.wav
-MATCH z05.wav z06.wav
-MATCH z07.wav z08.wav
-NO MATCH
-NO MATCH
