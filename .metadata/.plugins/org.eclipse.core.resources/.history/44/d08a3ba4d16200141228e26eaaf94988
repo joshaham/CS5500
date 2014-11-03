@@ -1,0 +1,60 @@
+package audio;
+
+import java.io.File;
+
+
+public class Assignment6 {
+	private static double THRESHOLD=30;
+	private static int SECOND=2;
+	public static void main(String[] args) {		
+		if(!ParameterChecker.CheckFormat(args)){
+			System.exit(-1);
+		};
+		String[] paths1=getFilePaths(args[1],args[0]);
+		String[] paths2=getFilePaths(args[3],args[2]);
+		for(String path1:paths1){
+			for(String path2:paths2){
+				Audio file1=Audio.getInstance(path1);
+				Audio file2=Audio.getInstance(path2);
+				if(file1==null){
+					System.out.println("ERROR: file not exist, "+path1);
+					continue;
+				}
+				if(file2==null){
+					System.out.println("ERROR: file not exist, "+path2);
+					continue;
+				}
+				if (isMatch(file1,file2)) {
+					System.out.println("MATCH "+file1.getFileName()+" "+file2.getFileName());
+				} else {
+				}
+			}
+		}
+	}
+	
+	public static boolean isMatch(Audio file1, Audio file2){
+		// fast method
+		if(Math.abs(file1.getAudioLength()-file2.getAudioLength()) > SECOND){
+			return false;
+		}
+		// accurate method
+		else{
+			double meanSquaredError = Audio.calculateMSE(file1,file2);
+			return meanSquaredError < THRESHOLD;
+		}
+	}
+	
+	public static String[] getFilePaths(String path, String parameter){
+		String[] filePaths=null;
+		if(parameter.trim().equals("-f")){
+			filePaths=new String[1];
+			filePaths[0]=path;
+		}
+		else if(parameter.trim().equals("-d")){
+			filePaths=new File(path).list();
+		}
+		return filePaths;
+	}
+
+}
+

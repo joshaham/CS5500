@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item value="263" key="DIALOG_WIDTH"/>
+		<item value="265" key="DIALOG_WIDTH"/>
 		<item value="198" key="DIALOG_Y_ORIGIN"/>
-		<item value="399" key="DIALOG_HEIGHT"/>
 		<item value="615" key="DIALOG_X_ORIGIN"/>
-		<item value="1|Lucida Grande|11.0|0|COCOA|1|LucidaGrande" key="DIALOG_FONT_NAME"/>
+		<item value="399" key="DIALOG_HEIGHT"/>
+		<item value="1|.Helvetica Neue DeskInterface|11.0|0|COCOA|1|.HelveticaNeueDeskInterface-Regular" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="true" key="wrap"/>
-		<item value="false" key="isRegEx"/>
 		<item value="false" key="casesensitive"/>
+		<item value="false" key="isRegEx"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="checkCDSpecs" key="selection"/>
+		<item value="applyFFT" key="selection"/>
 		<list key="findhistory">
-			<item value="checkCDSpecs"/>
-			<item value="convertToFrequencies"/>
-			<item value="calculateMSE"/>
-			<item value="fileOneFFT"/>
-			<item value="fileFFT"/>
-			<item value="fileOneDouble"/>
 			<item value="applyFFT"/>
-			<item value="fileOneLeftChannel"/>
+			<item value="apply"/>
+			<item value="appfy"/>
+			<item value="fileDualChannels"/>
+			<item value="mp3"/>
+			<item value="convertToDualChannels"/>
+			<item value="&#x0A;&#x09;&#x09;header=AudioHeader.getInstance(strs[strs.length-1],dataheader,fileArray.length-44);"/>
+			<item value="getInstance"/>
 		</list>
 		<list key="replacehistory">
 			<item value="fileFFT"/>

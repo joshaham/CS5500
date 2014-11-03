@@ -1,0 +1,43 @@
+package audio;
+
+import java.util.ArrayList;
+
+public class Comparator {
+	ArrayList<Audio> container1=null;
+	ArrayList<Audio> container2=null;
+	public Comparator(String[] files1,String[] files2){
+		container1=new ArrayList<Audio>();
+		container2=new ArrayList<Audio>();
+		fillContainer(container1,files1);
+		fillContainer(container2,files2);
+	}
+	
+	private void fillContainer(ArrayList<Audio> container,String[] files){
+		for(String file : files){
+			Audio audio=Audio.getInstance(file);
+			if(audio!=null){
+				container.add(audio);
+			}
+		}
+	}
+	public void compare(){
+		for(Audio path1:container1){
+			for(Audio path2:container2){
+				Audio file1=Audio.getInstance(path1);
+				Audio file2=Audio.getInstance(path2);
+				if(file1==null){
+					System.out.println("ERROR: file not exist, "+path1);
+					continue;
+				}
+				if(file2==null){
+					System.out.println("ERROR: file not exist, "+path2);
+					continue;
+				}
+				if (isMatch(file1,file2)) {
+					System.out.println("MATCH "+file1.getFileName()+" "+file2.getFileName());
+				} else {
+				}
+			}
+		}
+	}
+}

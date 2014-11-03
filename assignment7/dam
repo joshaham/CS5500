@@ -1,0 +1,6 @@
+#!/bin/sh
+if [[ "$1" == "-draw" ]]; then
+java .:lib/jmathplot.jar -cp  drawer.JmathplotLineGraph $@
+else
+java -cp ./bin audio.Assignment6 $@
+fi

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Move element &apos;Audio.java&apos; to &apos;assignment5/src/audio&apos;&#x0A;- Original project: &apos;assignment5&apos;&#x0A;- Destination element: &apos;assignment5/src/audio&apos;&#x0A;- Original element: &apos;comparator.Audio.java&apos;&#x0A;- Update references to refactored element" description="Move compilation unit" destination="/src&lt;audio" element1="/src&lt;comparator{Audio.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.move" patterns="*" policy="org.eclipse.jdt.ui.moveResources" qualified="false" references="true" stamp="1414271763629" units="1" version="1.0"/>
+</session>

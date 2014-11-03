@@ -1,0 +1,47 @@
+package audio;
+
+import java.util.ArrayList;
+
+public class Comparator {
+	private static double THRESHOLD=30;
+	private static int SECOND=2;
+	ArrayList<Audio> container1=null;
+	ArrayList<Audio> container2=null;
+	public Comparator(String[] files1,String[] files2){
+		container1=new ArrayList<Audio>();
+		container2=new ArrayList<Audio>();
+		fillContainer(container1,files1);
+		fillContainer(container2,files2);
+	}
+	
+	private void fillContainer(ArrayList<Audio> container,String[] files){
+		for(String file : files){
+			Audio audio=Audio.getInstance(file);
+			if(audio==null){
+				System.err.println("ERROR: file not exists, "+file);
+			}
+		}
+	}
+	public void compare(){
+		for(Audio file1:container1){
+			for(Audio file2:container2){
+				if (isMatch(file1,file2)) {
+					System.out.println("MATCH "+file1.getFileName()+" "+file2.getFileName());
+				} else {
+					System.out.println("ahaha);
+				}
+			}
+		}
+	}
+	public static boolean isMatch(Audio file1, Audio file2){
+		// fast method
+		if(Math.abs(file1.getAudioLength()-file2.getAudioLength()) > SECOND){
+			return false;
+		}
+		// accurate method
+		else{
+			double meanSquaredError = Audio.calculateMSE(file1,file2);
+			return meanSquaredError < THRESHOLD;
+		}
+	}
+}

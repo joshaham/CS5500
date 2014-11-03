@@ -1,0 +1,15 @@
+package test;
+
+import static org.junit.Assert.*;
+import javax.sound.sampled.AudioFileFormat;
+
+import org.junit.Test;
+
+public class TestMp3Audio {
+
+	@Test
+	public void test() {
+		assertTrue(true);
+	}
+
+}
