@@ -8,10 +8,11 @@ import java.util.ArrayList;
  * @purpose: comparator containers, 
  */
 public class Comparator {
-	private static double THRESHOLD=30;
+	public static double THRESHOLD=30;
 	private static int SECOND=2;
 	ArrayList<Audio> container1=null;
 	ArrayList<Audio> container2=null;
+	// contain files from args1 and files from args3
 	public Comparator(String[] files1,String[] files2){
 		container1=new ArrayList<Audio>();
 		container2=new ArrayList<Audio>();
@@ -39,30 +40,58 @@ public class Comparator {
 			container.add(audio);
 		}
 	}
+	// compare the two files
 	public void compare(){
 //		System.out.println(container1.size());
 //		System.out.println(container2.size());
 		for(Audio file1:container1){
 			for(Audio file2:container2){
 				if (isMatch(file1,file2)) {
-					String msg="MATCH "+file1.getFileName()+" "+file2.getFileName() +
-							" MSE: "+ComparatorAlgorithm.calculateMSE(file1,file2);
+					String msg="MATCH "+file1.getFileName()+" "+file2.getFileName();
 					System.out.println(msg);
 				} else {
-//					System.out.println("ahaha");
 				}
 			}
 		}
 	}
+	// match method
 	public static boolean isMatch(Audio file1, Audio file2){
 		// fast method
-		if(Math.abs(file1.getAudioLength()-file2.getAudioLength()) > SECOND){
+		if(!fastMatch(file1,file2)){
 			return false;
 		}
-		// accurate method
+		// time zone MSE method
+//		else{
+//			return TMSEMatch(file1,file2);
+//		}
+		// frequency zone MSE method
 		else{
-			double meanSquaredError = ComparatorAlgorithm.calculateMSE(file1,file2);
-			return meanSquaredError < THRESHOLD;
+			return MSEMatch(file1,file2);
 		}
+		// Segment compare
+//		else{
+//			return SegmentMatch(file1,file2);
+//		}
+	}
+	// fast match method
+	private static boolean fastMatch(Audio file1, Audio file2){
+		return Math.abs(file1.getAudioLength()-file2.getAudioLength()) < SECOND;
+	}
+	// time zone MSE compare
+	private static boolean TMSEMatch(Audio file1, Audio file2){
+		int meanSquaredError=ComparatorAlgorithm.calculateTMSE(file1, file2);
+//		System.out.println("TMSE: "+meanSquaredError);
+		return meanSquaredError < THRESHOLD;
+	}
+	// frequency zone MSE compare
+	private static boolean MSEMatch(Audio file1, Audio file2){
+		double meanSquaredError = ComparatorAlgorithm.calculateMSE(file1,file2);
+		return meanSquaredError < THRESHOLD;
+		
+	}
+	// segment MSE compare
+	private static boolean SegmentMatch(Audio file1, Audio file2){
+		int matchs=ComparatorAlgorithm.calculateMatchSegments(file1, file2);
+		return matchs>=1;
 	}
 }

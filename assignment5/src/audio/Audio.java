@@ -13,25 +13,28 @@ public  class Audio {
 	static boolean DEBUG=true;
 	static int count=1;
 	AudioHeader header;
+	AudioBody body;
 	byte[] fileArray;
 	int[] dualChannelSamples;
-	double[] timeZoneData;
 	double[] frequenciesData;
 	
 	// for test
 	public static void main(String[] args){
-		String path="examples/janacek2.wav";
-		Audio audio=null;
-		try {
-			audio = Audio.getInstance(path);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		String filePath="A5/D2";
+		String[] paths=Assignment6.getFilePaths(filePath, "-d");
+		for(String path : paths){
+			Audio audio=null;
+			try {
+				audio = Audio.getInstance(path);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println(audio);
 		}
-		System.out.println(audio);
 	}
 	// return instance of audio
 	public static Audio getInstance(String filePath) throws IOException, InterruptedException{
@@ -60,7 +63,7 @@ public  class Audio {
 	}
 	// change filename if in need
 	private static Audio getInstanceHelper(String fileWav,String filePath){
-		Audio audio=checkAndGetInstance(fileWav);
+		Audio audio=checkAndGetInstance(fileWav,filePath);
 		if(audio!=null){
 			audio.header.setFileName(filePath);
 		}
@@ -68,10 +71,10 @@ public  class Audio {
 	}
 	// change filename if in need
 	private static Audio getInstanceHelper(String fileWav){
-		return checkAndGetInstance(fileWav);
+		return checkAndGetInstance(fileWav,fileWav);
 	}
 	// check file format and return audio instance if correct
-	private static Audio checkAndGetInstance(String filePath){
+	private static Audio checkAndGetInstance(String filePath,String actualPath){
 
 		String[] strs = filePath.split("/");
 		File file = new File(filePath);
@@ -84,7 +87,8 @@ public  class Audio {
 		AudioHeader header=
 				AudioHeader.getInstance(strs[strs.length-1],dataheader,fileArray.length-44);
 		if(header==null){
-			System.err.println("File does not match CD specification: " + filePath);
+			strs=actualPath.split("/");
+			System.err.println("File does not match CD specification: " + strs[strs.length-1]);
 			return null;
 		}
 		return new Audio(header,filePath,fileArray);
@@ -97,14 +101,15 @@ public  class Audio {
 		byte[] oneChannel;
 		byte[] fileLeftChannel;
 		byte[] fileRightChannel;
+		double[] datas=null;
 		if(header.getNumChannels()==1){
 			oneChannel=extractMonoChannel(header.getBitesPerSecond());
-			timeZoneData = monoConvert2Doubles(oneChannel,header.getBitesPerSecond());
+			datas = monoConvert2Doubles(oneChannel,header.getBitesPerSecond());
 			dualChannelSamples=convertToShort(oneChannel,header.getBitesPerSecond());
 		}else{
 			fileLeftChannel=extractLeftChannels(header.getBitesPerSecond());
 			fileRightChannel=extractRightChannels(header.getBitesPerSecond());
-			timeZoneData = 
+			datas = 
 					StereoConvert2Doubles(
 							fileLeftChannel,fileRightChannel,header.getBitesPerSecond());
 			int[] leftShort=convertToShort(fileLeftChannel,header.getBitesPerSecond());
@@ -114,8 +119,8 @@ public  class Audio {
 				dualChannelSamples[i]=leftShort[i]/2+rightShort[i]/2;
 			}
 		}
-		double[] fileImg=applyFFT(timeZoneData);
-		frequenciesData=convertToFrequencies(fileImg,timeZoneData);
+		frequenciesData=calculateFrequencyArray(datas);
+		body=new AudioBody(header.getFileName(),this.dualChannelSamples,datas,this.header);
 	}
 
 	
@@ -242,22 +247,30 @@ public  class Audio {
 	}
 
 	
+//	//Applies the FFT to the double arrays
+//	private double[] applyFFT(double[] fileDouble) {
+//		double[] fileImg;
+//		//create arrays to store imaginary components of frequencies
+//		fileImg = new double[fileDouble.length];
+//		
+//		//Convert to frequency domain using FFT
+//		FFT fft = new FFT((int) Math.pow(2, 15));
+//		fft.fft(fileDouble, fileImg);
+//		return fileImg;
+//	}
+	
 	//Applies the FFT to the double arrays
-	private double[] applyFFT(double[] fileDouble) {
+	public static double[] calculateFrequencyArray(double[] data) {
 		double[] fileImg;
+		double[] frequenciesData;
+		double[] fileDouble=Arrays.copyOf(data, data.length);
 		//create arrays to store imaginary components of frequencies
 		fileImg = new double[fileDouble.length];
 		
 		//Convert to frequency domain using FFT
 		FFT fft = new FFT((int) Math.pow(2, 15));
 		fft.fft(fileDouble, fileImg);
-		return fileImg;
-	}
-	
-	//Convert the real and imaginary components of results to
-	//frequencies using sqrt (real * real + img * img)
-	private double[] convertToFrequencies(double[] fileImg,double[] fileDouble) {
-		double[] frequenciesData;
+
 		frequenciesData = new double[fileDouble.length / 2];
 		for (int j = 0; j < frequenciesData.length; j++) {
 			double real = fileDouble[j];
@@ -267,6 +280,20 @@ public  class Audio {
 		}
 		return frequenciesData;
 	}
+	
+//	//Convert the real and imaginary components of results to
+//	//frequencies using sqrt (real * real + img * img)
+//	private double[] convertToFrequencies(double[] fileImg,double[] fileDouble) {
+//		double[] frequenciesData;
+//		frequenciesData = new double[fileDouble.length / 2];
+//		for (int j = 0; j < frequenciesData.length; j++) {
+//			double real = fileDouble[j];
+//			double img = fileImg[j];
+//			double freq = Math.sqrt(real*real + img*img);
+//			frequenciesData[j] = freq;
+//		}
+//		return frequenciesData;
+//	}
 	public String getFileName() {
 		return header.getFileName();
 	}
@@ -293,11 +320,6 @@ public  class Audio {
 	public int[] getdualChannelSamples() {
 		return dualChannelSamples;
 	}
-
-	public double[] getTimeZoneData() {
-		return timeZoneData;
-	}
-
 	public double[] getFrequenciesData() {
 		return frequenciesData;
 	}

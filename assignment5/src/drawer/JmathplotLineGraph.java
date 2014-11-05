@@ -17,16 +17,34 @@ import audio.Audio;
  *
  */
 public class JmathplotLineGraph {	// TEST
-	static String audoPath="A5/D1/bad0616.wav";
+	static String audioPath="A5/D1/z07.wav";
+	
 	public static void main(String[] args) {	
-//		if (args.length!=2){
-//			System.err.println("Wrong input format: &java JmathplotLineGraph -draw AUDIOFILE");
-//			System.exit(1);
-//		}
+//		drawFrequency(audioPath);
+		drawTimeZone(audioPath);
+		
+	}
+	
+	public static void drawFrequency(String path){
+
 		JmathplotLineGraph obj = new JmathplotLineGraph();
 		Audio file=null;
 		try {
-			file = Audio.getInstance(audoPath);
+			file = Audio.getInstance(path);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		obj.DrawFrequency(file);
+	}
+	public static void drawTimeZone(String path){
+		JmathplotLineGraph obj = new JmathplotLineGraph();
+		Audio file=null;
+		try {
+			file = Audio.getInstance(path);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -35,15 +53,18 @@ public class JmathplotLineGraph {	// TEST
 			e.printStackTrace();
 		}
 		obj.DrawTimeZone(file);
-		//obj.DrawFrequency(file);
+		
 	}
 	
-	public void DrawFrequency(Audio file){	
-		int samplerate=(int)file.getSampleRate();	
-		int n=(file.getFrequenciesData().length)/(samplerate*100);
-		double[] y=new double[n];
-		for(int i=0;i<n;i++){
-			y[i]=file.getFrequenciesData()[i*samplerate*100];
+	public void DrawFrequency(Audio file){			
+		System.out.println(file);
+		int indexFor20Hz = (int)(Math.floor(20 * 
+				file.getFrequenciesData().length / file.getSampleRate()));
+		int indexFor20000Hz = (int)(Math.ceil(20000 * 
+				file.getFrequenciesData().length / file.getSampleRate()));
+		double[] y=new double[indexFor20000Hz-indexFor20Hz+1];
+		for(int i=0;i<indexFor20000Hz-indexFor20Hz;i++){
+			y[i]=file.getFrequenciesData()[i+indexFor20000Hz];
 		}
 		double[] x=new double[y.length];
 		for(int i=0;i<x.length;i++){
@@ -57,10 +78,10 @@ public class JmathplotLineGraph {	// TEST
 			return;
 		}
 		int samplerate=(int)file.getSampleRate();
-		int n=(file.getTimeZoneData().length)/(samplerate/10);
+		int n=(file.getdualChannelSamples().length)/(samplerate/10);
 		double[] y=new double[n];
 		for(int i=0;i<n;i++){
-			y[i]=file.getTimeZoneData()[i*samplerate/10];
+			y[i]=file.getdualChannelSamples()[i*samplerate/10];
 		}
 		double[] x=new double[y.length];
 		for(int i=0;i<x.length;i++){

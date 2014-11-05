@@ -8,7 +8,7 @@ public class AudioHeader {
 	String fileName;
 
 	String format;
-	double sampleRate;
+	int sampleRate;
 	int bitesPerSecond;
 	int numChannels;
 	int audioLength;
@@ -36,13 +36,13 @@ public class AudioHeader {
 		//Check format = wave
 		if (byteBuffer.get(8) != 87 || byteBuffer.get(9) != 65 ||
 			bytes[10] != 86 || bytes[11] != 69) {
-			if (DEBUG) { System.err.println("ERROR: NOT Wave Format"); }
+			if (DEBUG) { System.err.print("ERROR: NOT Wave Format"+"  "); }
 			return null;		
 		}
 		format="wav";
 		//Check audio format = PCM
 		if (byteBuffer.get(20) != 1 || byteBuffer.get(21) != 0) {
-			if (DEBUG) { System.err.println("ERROR: NOT PCM"); }
+			if (DEBUG) { System.err.print("ERROR: NOT PCM"+"  "); }
 			return null;
 		}
 		//Check channels = stereo or Mono
@@ -51,26 +51,26 @@ public class AudioHeader {
 		}else if(byteBuffer.get(22)==1 && byteBuffer.get(23)==0){
 			nc=1;
 		}else{
-			if(DEBUG){System.err.println("ERROR: Incorrect num of channels");}
+			if(DEBUG){System.err.print("ERROR: Incorrect num of channels"+"  ");}
 			return null;
 		}
 		//Check sample rate is 44.1 kHz
 		sampleRate=byteBuffer.getInt(24);
 		if(sampleRate!=11025 && sampleRate!=22050 && sampleRate!=44100 && sampleRate!=48000){
-			if(DEBUG){System.err.println("ERROR: Incorrect sample rate "+sampleRate);}
+			if(DEBUG){System.err.print("ERROR: Incorrect sample rate "+sampleRate+"  ");}
 			return null;
 		}
 		//check BitsPerSample is 16
 		bps=byteBuffer.getShort(34);
 		if (bps != 16 && bps != 8) {
-			if (DEBUG) {System.out.println("ERROR: Incorrect bites per sample "+ bps);}
+			if (DEBUG) {System.out.print("ERROR: Incorrect bites per sample "+ bps+"  ");}
 				return null;
 		}
 		//check file size
 		int subChunk2Size=byteBuffer.getInt(40);
 		if(subChunk2Size!=datasize){
-			if(DEBUG){System.out.println("Audio File data incomplete: "+
-				subChunk2Size +" vs "+datasize);};
+			if(DEBUG){System.out.print("Audio File data incomplete: "+ " expected chunksize "+
+					datasize +" actual chunksize "+subChunk2Size+"   ");};
 			return null;
 		}
 		int audioLength=0;
@@ -96,7 +96,7 @@ public class AudioHeader {
 		return format;
 	}
 
-	public double getSampleRate() {
+	public int getSampleRate() {
 		return sampleRate;
 	}
 

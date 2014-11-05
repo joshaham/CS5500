@@ -168,28 +168,28 @@ public class FFT {
     re[0] = 1; im[0] = 0;
     for(int i=1; i<N; i++)
       re[i] = im[i] = 0;
-    beforeAfter(fft, re, im);
+    beforeAfter(fft, re, im,"Impulse");
 
     // Nyquist
     for(int i=0; i<N; i++) {
       re[i] = Math.pow(-1, i);
       im[i] = 0;
     }
-    beforeAfter(fft, re, im);
+    beforeAfter(fft, re, im,"Nyquist");
 
     // Single sin
     for(int i=0; i<N; i++) {
       re[i] = Math.cos(2*Math.PI*i / N);
       im[i] = 0;
     }
-    beforeAfter(fft, re, im);
+    beforeAfter(fft, re, im,"sin");
 
     // Ramp
     for(int i=0; i<N; i++) {
       re[i] = i;
       im[i] = 0;
     }
-    beforeAfter(fft, re, im);
+    beforeAfter(fft, re, im,"Ramp");
 
     long time = System.currentTimeMillis();
     double iter = 30000;
@@ -199,7 +199,8 @@ public class FFT {
     System.out.println("Averaged " + (time/iter) + "ms per iteration");
   }
 
-  protected static void beforeAfter(FFT fft, double[] re, double[] im) {
+  protected static void beforeAfter(FFT fft, double[] re, double[] im,String msg) {
+	System.out.println(msg);
     System.out.println("Before: ");
     printReIm(re, im);
     fft.fft(re, im);
