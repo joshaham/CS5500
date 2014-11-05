@@ -64,9 +64,6 @@ public  class Audio {
 	// change filename if in need
 	private static Audio getInstanceHelper(String fileWav,String filePath){
 		Audio audio=checkAndGetInstance(fileWav,filePath);
-		if(audio!=null){
-			audio.header.setFileName(filePath);
-		}
 		return audio;
 	}
 	// change filename if in need
@@ -76,7 +73,8 @@ public  class Audio {
 	// check file format and return audio instance if correct
 	private static Audio checkAndGetInstance(String filePath,String actualPath){
 
-		String[] strs = filePath.split("/");
+		String[] strs = actualPath.split("/");
+		String fileName=strs[strs.length-1];
 		File file = new File(filePath);
 		if(!file.exists() || !file.isFile()){
 			System.err.println("ERROR: File not exist, "+filePath);
@@ -85,17 +83,16 @@ public  class Audio {
 		byte[] fileArray=readFile2ByteArray(file);
 		byte[] dataheader=Arrays.copyOfRange(fileArray, 0, 44);
 		AudioHeader header=
-				AudioHeader.getInstance(strs[strs.length-1],dataheader,fileArray.length-44);
+				AudioHeader.getInstance(fileName,dataheader,fileArray.length-44);
 		if(header==null){
-			strs=actualPath.split("/");
 			System.err.println("File does not match CD specification: " + strs[strs.length-1]);
 			return null;
 		}
-		return new Audio(header,filePath,fileArray);
+		return new Audio(header,fileArray);
 	}
 	
 	
-	protected Audio(AudioHeader header,String filePath,byte[] fileArray){
+	protected Audio(AudioHeader header,byte[] fileArray){
 		this.header=header;
 		this.fileArray=fileArray;
 		byte[] oneChannel;
