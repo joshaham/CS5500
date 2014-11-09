@@ -1,0 +1,8 @@
+package audio;
+
+public class AudioBody {
+	String fileName;
+	public AudioBody(String fileName,int[] timeZone,double[] frequencies,int audioLength){
+		this.fileName=fileName;
+	}
+}

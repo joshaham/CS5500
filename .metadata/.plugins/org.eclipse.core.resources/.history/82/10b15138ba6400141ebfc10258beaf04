@@ -1,0 +1,19 @@
+package audio;
+
+public class AudioBody {
+	String fileName;
+	static int interval=5;
+	public AudioBody(String fileName,int[] timeZone,double[] fftdata,AudioHeader header){
+		this.fileName=fileName;
+		int numSegments=(header.audioLength)/interval;
+		int fftDataRate=header.sampleRate;
+		int samplesPerSegment=interval*fftDataRate;
+	}
+}
+
+class TimeSegment{
+	protected TimeSegment(int segmentId, int[]timeSeg){
+		
+	}
+	
+}

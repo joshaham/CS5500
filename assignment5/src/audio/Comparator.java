@@ -1,6 +1,5 @@
 package audio;
 
-import java.io.IOException;
 import java.util.ArrayList;
 /**
  * 
@@ -23,17 +22,7 @@ public class Comparator {
 	private void fillContainer(ArrayList<Audio> container,String[] files){
 		for(String file : files){
 			Audio audio=null;
-			try {
-				audio = Audio.getInstance(file);
-			} catch (IOException e) {
-				System.out.println("File open exception: "+file);
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				continue;
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			audio = Audio.getInstance(file);
 			if(audio==null){
 				continue;
 			}
@@ -89,9 +78,26 @@ public class Comparator {
 		return meanSquaredError < THRESHOLD;
 		
 	}
-	// segment MSE compare
-	private static boolean SegmentMatch(Audio file1, Audio file2){
-		int matchs=ComparatorAlgorithm.calculateMatchSegments(file1, file2);
-		return matchs>=1;
+//	// segment MSE compare
+//	private static boolean SegmentMatch(Audio file1, Audio file2){
+//		int matchs=ComparatorAlgorithm.calculateMatchSegments(file1, file2);
+//		return matchs>=1;
+//	}
+}
+
+class AudioSegment {
+	Audio audio;
+	int segmentID;
+	String audioName;
+	int zcr;
+	
+	
+	@Override
+	public int hashCode(){ 
+		return audio.hashCode()+this.segmentID;
+	}
+	@Override
+	public String toString(){
+		return this.audio.toString()+'\n'+this.segmentID+'\n'+zcr+'\n';
 	}
 }

@@ -21,34 +21,47 @@ public  class Audio {
 	// for test
 	public static void main(String[] args){
 		String filePath="A5/D2";
-		String[] paths=Assignment6.getFilePaths(filePath, "-d");
+		String[] paths=Assignment7.getFilePaths(filePath, "-d");
 		for(String path : paths){
 			Audio audio=null;
-			try {
 				audio = Audio.getInstance(path);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			System.out.println(audio);
 		}
 	}
 	// return instance of audio
-	public static Audio getInstance(String filePath) throws IOException, InterruptedException{
+	public static Audio getInstance(String filePath) {
 		if(filePath.endsWith(".mp3")){
 			String fileWav="/tmp/assignment7Sanguoyanyi" + (count++)+".wav";
 			String cmd="./lame --decode "+filePath+" "+fileWav;
-			Process p =java.lang.Runtime.getRuntime().exec(cmd);
+			Process p=null;
+			try {
+				p = java.lang.Runtime.getRuntime().exec(cmd);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			synchronized(p){
-				p.wait(3000);
+				try {
+					p.wait(3000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			Audio instance =   getInstanceHelper(fileWav,filePath);
-			p =java.lang.Runtime.getRuntime().exec("rm "+fileWav);
+			try {
+				p =java.lang.Runtime.getRuntime().exec("rm "+fileWav);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			synchronized(p){
-				p.wait(3000);
+				try {
+					p.wait(3000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			return instance;
 		}
@@ -168,6 +181,7 @@ public  class Audio {
 	 }
 	//Converts byte arrays to double arrays so that they can be
 	//passed through the FFT code
+	 // RETURN: double array in range [-1,+1];
 	 double[] monoConvert2Doubles(byte[] fileLeftChannel,int bps) {
 		double[] fileDouble=null;
 //		ByteBuffer byteBuffer = ByteBuffer.wrap(fileLeftChannel);
@@ -200,6 +214,7 @@ public  class Audio {
 		return fileDouble;
 	}
 		// converts byte arrays to short int
+	 // Return int array 
 	 int[] convertToShort(byte[] fileLeftChannel,int bps){
 			int[] array;
 			if(bps==16){

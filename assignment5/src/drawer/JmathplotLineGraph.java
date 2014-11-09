@@ -1,7 +1,6 @@
 package drawer;
 
 
-import java.io.IOException;
 
 import javax.swing.*;
 
@@ -29,29 +28,15 @@ public class JmathplotLineGraph {	// TEST
 
 		JmathplotLineGraph obj = new JmathplotLineGraph();
 		Audio file=null;
-		try {
-			file = Audio.getInstance(path);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		file = Audio.getInstance(path);
+	
 		obj.DrawFrequency(file);
 	}
 	public static void drawTimeZone(String path){
 		JmathplotLineGraph obj = new JmathplotLineGraph();
 		Audio file=null;
-		try {
-			file = Audio.getInstance(path);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		file = Audio.getInstance(path);
+
 		obj.DrawTimeZone(file);
 		
 	}

@@ -1,0 +1,77 @@
+package audio;
+
+public class ComparatorAlgorithm {
+	//Calculates the mean squared error for comparing
+	//two files. 
+	public static double calculateMSE(Audio file1, Audio file2) {
+		int indexFor20Hz = (int)(Math.floor(20 * 
+				file1.frequenciesData.length / file1.getSampleRate()));
+		int indexFor20000Hz = (int)(Math.ceil(20000 * 
+				file1.frequenciesData.length / file1.getSampleRate()));
+		double squaredError = 0;
+		double meanSquaredError = 0;
+		for (int j = indexFor20Hz; j < indexFor20000Hz; j++) {
+			double value1 = file1.frequenciesData[j];
+			double value2 = file2.frequenciesData[j];
+			double error = Math.pow((value1 - value2), 2);
+			squaredError += error;
+		}
+		meanSquaredError = squaredError / (indexFor20000Hz-indexFor20Hz);
+		
+		return meanSquaredError;
+	}
+	//Calculate the mean squared error in Time zone 
+	// this only works when two have same sample rate
+	public static int calculateTMSE(Audio file1,Audio file2){
+		if(Math.abs(file1.getSampleRate()-file2.getSampleRate())>10){
+			System.err.println("tried to calcualte TMSE on different sample rate");
+			System.exit(0);
+		}
+		int divider1=1,divider2=1;
+		if(file1.getBitesPerSecond()==16){
+			divider1=255;
+		}
+		if(file2.getBitesPerSecond()==16){
+			divider2=255;
+		}
+		int squaredError=0;
+		int meanSquaredError=0;
+		int n=Math.min(file1.getdualChannelSamples().length, file2.getdualChannelSamples().length);
+		for(int j=0;j<n;j++){
+			int value1=file1.getdualChannelSamples()[j]/divider1;
+			int value2=file2.getdualChannelSamples()[j]/divider2;
+			int error=(value1 - value2)*(value1-value2);
+			squaredError+=error;
+		}
+		meanSquaredError=squaredError/n;
+		return meanSquaredError;
+		
+	}
+	
+	public static int calculateMatchSegments(Audio file1,Audio file2){
+		int count=0;
+		int n=Math.min(file1.body.segments.length, file2.body.segments.length);
+		for(int i=0;i<file1.body.segments.length;i++){
+			for(int k=0;k<file2.body.segments.length;k++){
+				double mse = getMSE(file1.body.segments[i],file2.body.segments[k]);
+			}
+		}
+	}
+	
+	private static double getMSE(TimeSegment seg1, TimeSegment seg2){
+		int indexFor20Hz = (int)(Math.floor(20 * 
+				seg1.getFrequencyData().length / seg1.getSampleRate()));
+		int indexFor20000Hz = (int)(Math.ceil(20000 * 
+				seg2.getFrequencyData().length / seg2.getSampleRate()));
+		double squaredError = 0;
+		double meanSquaredError = 0;
+		for (int j = indexFor20Hz; j < indexFor20000Hz; j++) {
+			double value1 = seg1.getFrequencyData()[j];
+			double value2 = seg2.getFrequencyData()[j];
+			double error = Math.pow((value1 - value2), 2);
+			squaredError += error;
+		}
+		meanSquaredError = squaredError /  (indexFor20000Hz-indexFor20Hz);
+		return meanSquaredError;
+	}
+}

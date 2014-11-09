@@ -1,0 +1,10 @@
+package audio;
+
+public class AudioBody {
+	String fileName;
+	int[] timeZone;
+	double[] frequencies;
+	public AudioBody(String fileName,int[] timeZone,double[] frequencies){
+		
+	}
+}

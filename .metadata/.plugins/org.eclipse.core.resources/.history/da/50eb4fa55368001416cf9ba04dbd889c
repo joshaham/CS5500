@@ -1,0 +1,43 @@
+package audio;
+
+public class AudioBody {
+	
+	String fileName;
+	static int INTERVAL=5;
+	static int INCREASE = 1;
+	TimeSegment[] segments=null;
+	
+	public AudioBody(String fileName,int[] timeZone,double[] fftdata,AudioHeader header){
+		this.fileName=fileName;
+		int numSegments=(header.audioLength)/header.audioLength-INTERVAL;
+		// sample rate
+		int fftDataRate=header.sampleRate;
+		int samplesPerSegment=INTERVAL*fftDataRate;
+		
+		segments=new TimeSegment[numSegments];
+		for(int i=0;i<numSegments;i++){
+			int startIdx=i*samplesPerSegment;
+			double[] timeSeg=new double[samplesPerSegment];
+			for(int k=0;k<samplesPerSegment;k++){
+				timeSeg[k]=fftdata[startIdx+k];
+			}
+			segments[i]=new TimeSegment(i,header.getSampleRate());
+		}
+	}
+}
+
+class TimeSegment{
+
+	int segmentId;
+	int sampleRate;
+	protected TimeSegment(int segmentId,int sampleRate){
+		this.segmentId=segmentId;
+		this.sampleRate=sampleRate;
+	}
+	public int getSegmentId() {
+		return segmentId;
+	}
+	public int getSampleRate() {
+		return sampleRate;
+	}
+}

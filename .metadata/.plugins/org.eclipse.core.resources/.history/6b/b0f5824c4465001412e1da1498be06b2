@@ -1,0 +1,12 @@
+import java.util.ArrayList;
+
+
+
+public class IteratorS {
+
+	public static void mainInteger[] args){
+		ArrayList<Integer> a = new ArrayList<Integer>();
+		a.add(0);
+		a.add(1);
+	}
+}

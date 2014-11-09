@@ -48,37 +48,38 @@ public class ComparatorAlgorithm {
 		
 	}
 	
-	public static int calculateMatchSegments(Audio file1,Audio file2){
-		int count=0;
-		int n=Math.min(file1.body.segments.length, file2.body.segments.length);
-		for(int i=0;i<n;i++){
-			double mse = getMSE(file1.body.segments[i],file2.body.segments[i]);
-//			System.out.println("SEGMENT " + i+" MSE: "+mse);
-			if(mse<Comparator.THRESHOLD){
-				count++;
-			}
-		}
-//		System.out.println(count);
-		return count;
-	}
-	
-	private static double getMSE(TimeSegment seg1, TimeSegment seg2){
-		int indexFor20Hz = (int)(Math.floor(20 * 
-				(seg1.getFrequencyData().length / seg1.getSampleRate())));
-		int indexFor20000Hz = (int)(Math.ceil(20000 * 
-				(seg1.getFrequencyData().length / seg1.getSampleRate())));
-
-//		System.out.println(seg1.getSampleRate()+" frequence length: "+seg1.getFrequencyData().length);
-//		System.out.println("indexFor20Hz: "+indexFor20Hz+" indexFor20000Hz: "+indexFor20000Hz);
-		double squaredError = 0;
-		double meanSquaredError = 0;
-		for (int j = indexFor20Hz; j < indexFor20000Hz; j++) {
-			double value1 = seg1.getFrequencyData()[j];
-			double value2 = seg2.getFrequencyData()[j];
-			double error = Math.pow((value1 - value2), 2);
-			squaredError += error;
-		}
-		meanSquaredError = squaredError /  (indexFor20000Hz-indexFor20Hz);
-		return meanSquaredError;
-	}
+//	// FFT on segment
+//	public static int calculateMatchSegments(Audio file1,Audio file2){
+//		int count=0;
+//		int n=Math.min(file1.body.segments.length, file2.body.segments.length);
+//		for(int i=0;i<n;i++){
+//			double mse = getMSE(file1.body.segments[i],file2.body.segments[i]);
+////			System.out.println("SEGMENT " + i+" MSE: "+mse);
+//			if(mse<Comparator.THRESHOLD){
+//				count++;
+//			}
+//		}
+////		System.out.println(count);
+//		return count;
+//	}
+//	// help function
+//	private static double getMSE(TimeSegment seg1, TimeSegment seg2){
+//		int indexFor20Hz = (int)(Math.floor(20 * 
+//				(seg1.getFrequencyData().length / seg1.getSampleRate())));
+//		int indexFor20000Hz = (int)(Math.ceil(20000 * 
+//				(seg1.getFrequencyData().length / seg1.getSampleRate())));
+//
+////		System.out.println(seg1.getSampleRate()+" frequence length: "+seg1.getFrequencyData().length);
+////		System.out.println("indexFor20Hz: "+indexFor20Hz+" indexFor20000Hz: "+indexFor20000Hz);
+//		double squaredError = 0;
+//		double meanSquaredError = 0;
+//		for (int j = indexFor20Hz; j < indexFor20000Hz; j++) {
+//			double value1 = seg1.getFrequencyData()[j];
+//			double value2 = seg2.getFrequencyData()[j];
+//			double error = Math.pow((value1 - value2), 2);
+//			squaredError += error;
+//		}
+//		meanSquaredError = squaredError /  (indexFor20000Hz-indexFor20Hz);
+//		return meanSquaredError;
+//	}
 }
