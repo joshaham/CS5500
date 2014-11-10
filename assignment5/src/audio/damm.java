@@ -52,7 +52,7 @@ public class damm {
 	static int getzcr(byte[] B) {
 		int zero_crossings = 0;
 		int num_bins = (int) B.length / bin_size;
-		int last_sgn = 0; // holds the value of every 1024th byte
+		byte last_sgn = (byte) 0; // holds the value of every 1024th byte
 		int ith; // value of i * bin_size
 		
 		for (int i = 0; i < num_bins; i++) {
@@ -66,7 +66,7 @@ public class damm {
 				}
 			}
 			if (i < num_bins - 1) {
-				last_sgn = (i+1) * bin_size - 1;
+				last_sgn = B[ith + bin_size - 1];
 			}
 		}
 		
