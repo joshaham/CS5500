@@ -29,38 +29,48 @@ public class damm {
 		}
 	}
 	
-	// The negative byte, i.e 1000,0000
+	// The negative byte, i.e 10000000
 	static final byte neg = (byte) 128;
 	
-	// Checks the sign of the two's-complement byte.
+	// Check the sign of the two's-complement byte
 	static int sgn(byte b) {
 		if( (b & neg ) == neg) { return -1; } // leading bit is 1
 		return 1; // leading bit is 0
 	}
 	
-	// Check Zero Crossing
+	// Check two bytes for a zero crossing
+	// (when one is negative and the other is positive)
 	static boolean ckzc(byte b1, byte b2) {
 		if ( sgn(b1) * sgn(b2) == -1 ) { return true; }
 		return false;
 	}
 
-	// constant bin size = 2^10
-	static final int bin_size = 1024;
+	// Fix the bin size to a power of 2
+	static final int bin_size = 8;
 	
-	static float getzcr(byte[] B) {
+	// Get the Zero Crossing Rate
+	static int getzcr(byte[] B) {
 		int zero_crossings = 0;
-		
 		int num_bins = (int) B.length / bin_size;
+		int last_sgn = 0; // holds the value of every 1024th byte
+		int ith; // value of i * bin_size
 		
 		for (int i = 0; i < num_bins; i++) {
+			ith = i * bin_size;
+			if  (ckzc( B[ith] , last_sgn)) { 
+         			zero_crossings++;
+			 }
 			for (int j = 1; j < bin_size; j++) {
-				if ( ckzc(B[i + j - 1], B[i + j]) ) {
+				if ( ckzc(B[ith + j - 1], B[ith + j]) ) {
 					zero_crossings++;
 				}
 			}
+			if (i < num_bins - 1) {
+				last_sgn = (i+1) * bin_size - 1;
+			}
 		}
 		
-		return zero_crossings / num_bins;
+		return (int) (zero_crossings / num_bins) * 100;
 	}
 	
 }
