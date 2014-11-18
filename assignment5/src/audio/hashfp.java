@@ -31,32 +31,32 @@ public class hashfp {
 		System.out.println(sum);
 		System.out.println(FNV1a(sum));
 		*/
-		long[] blah = new long[50];
-		Random rand = new Random();
-		for(int i = 0; i < 50; i++) {
-			blah[i] = rand.nextLong() % 25;
-		}
-		System.out.println(Arrays.toString(blah));
-		quicksort(blah);
-		System.out.println(Arrays.toString(blah));
+		long[] blah = {3, 4, 3535};
+		System.out.println(get_deltas_sum(blah, 3));
+		System.out.println(FNV1a(get_deltas_sum(blah,3)));
 	}
 
-	// 32 bit hash algorithm
+	// 32bit hash algorithm
+	// NOTE: use longs because java does not have unsigned ints
 	private static long FNV1a(long fp) {
-		// 32 bit hash value
+		// 32bit parameters
 		final long FNV_prime = 16777619; // 2^24 + 2^8 + 0x93
 		Long offset_basis_object = new Long("2166136261");
-		long offset_basis = offset_basis_object.longValue();
+		final long offset_basis = offset_basis_object.longValue();
+		
+		// max value available to a 32bit number
+		Long max_value_object = new Long("4294967295");
+		final long max_value = max_value_object.longValue();
 		
 		// use bitwise operator & with the following longs
 		// to get the corresponding octet
-		long[] octets = { 255 << 24, 255 << 16, 255 << 8, 255 };
+		long[] octets = { (long) 255 << 24, 255 << 16, 255 << 8, 255 };
 		
 		// the 32bit algorithm
 		long hash = offset_basis;
-		for (int i = 0; i < 4; i++) {
+		for (int i = 3; i >= 0; i--) {
 			hash = hash ^ (fp & octets[i]);
-			hash = hash * FNV_prime;
+			hash = (hash * FNV_prime) % max_value;
 		}
 		return hash;
 	}
