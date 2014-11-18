@@ -17,9 +17,7 @@ public class AudioBody {
 	 */
 	
 	public AudioBody(String fileName,int[] timeZone,double[] fftTimeZoneData,AudioHeader header){
-		for(int i=0;i<timeZone.length;i++){
-			System.out.println(timeZone[i]);
-		}
+
 		this.fileName=fileName;
 		this.header=header;
 		// pre-calculate zcr for per second

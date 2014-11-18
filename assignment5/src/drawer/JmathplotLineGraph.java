@@ -16,7 +16,7 @@ import audio.Audio;
  *
  */
 public class JmathplotLineGraph {	// TEST
-	static String audioPath="A5/D1/z07.wav";
+	static String audioPath="A5/D2/z08.wav";
 	
 	public static void main(String[] args) {	
 //		drawFrequency(audioPath);
@@ -63,10 +63,12 @@ public class JmathplotLineGraph {	// TEST
 			return;
 		}
 		int samplerate=(int)file.getSampleRate();
-		int n=(file.getdualChannelSamples().length)/(samplerate/10);
+		int seamplesPerSecond = 100;
+		int offset=0;
+		int n=(file.getdualChannelSamples().length)/(samplerate/seamplesPerSecond);
 		double[] y=new double[n];
 		for(int i=0;i<n;i++){
-			y[i]=file.getdualChannelSamples()[i*samplerate/10];
+			y[i]=file.getdualChannelSamples()[i*(samplerate/seamplesPerSecond)+offset];
 		}
 		double[] x=new double[y.length];
 		for(int i=0;i<x.length;i++){

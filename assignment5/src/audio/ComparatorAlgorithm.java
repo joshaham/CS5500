@@ -16,9 +16,23 @@ public class ComparatorAlgorithm {
 			double error = Math.pow((value1 - value2), 2);
 			squaredError += error;
 		}
+		
+		for(int frequency = 20;frequency <20000;frequency++){
+			int j = getIndexOfFrequency(frequency,file1);
+			double value1 = file1.frequenciesData[j];
+			System.out.println("Frequency: "+frequency +" amplitude: "+value1);
+		}
 		meanSquaredError = squaredError / (indexFor20000Hz-indexFor20Hz);
 		
 		return meanSquaredError;
+	}
+	
+	private static int getIndexOfFrequency(int frequency,Audio audio){
+		int idx=0;
+
+		idx = (int)(Math.floor(frequency * 
+				(audio.frequenciesData.length / audio.getSampleRate())));
+		return idx;
 	}
 	//Calculate the mean squared error in Time zone 
 	// this only works when two have same sample rate
