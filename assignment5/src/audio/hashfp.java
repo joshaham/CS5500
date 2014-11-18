@@ -1,14 +1,10 @@
-import java.util.Arrays;
-import java.util.Random;
-
 public class hashfp {
-
-	public static void main(String[] args) {
+	
+	public static long gethash(String[] args) {
 		// given a set of n inputs of the form (time, frequency)
 		// sums the time differences in addition to the frequencies
 		// then returns the hash of the value
 		// using the FNV1a hash implemented below
-		/*
 		long sum = 0;
 		int split, n = args.length;
 		String time, freq;
@@ -23,17 +19,11 @@ public class hashfp {
 			times[i] = Long.parseLong(time);
 			sum += Long.parseLong(freq);
 		}
-		System.out.println(times);
+		
 		quicksort(times);
-		System.out.println(times);
-		System.out.println(sum);
 		sum += get_deltas_sum(times, n);
-		System.out.println(sum);
-		System.out.println(FNV1a(sum));
-		*/
-		long[] blah = {3, 4, 3535};
-		System.out.println(get_deltas_sum(blah, 3));
-		System.out.println(FNV1a(get_deltas_sum(blah,3)));
+		return FNV1a(sum);
+		
 	}
 
 	// 32bit hash algorithm
@@ -78,14 +68,14 @@ public class hashfp {
 		int size = high - low;
 		if (size < 2) { }
 		else if (size == 2) {
-			if (L[0] > L[1]) {
-				long temp = L[0];
-				L[0] = L[1];
-				L[1] = temp;
+			if (L[low] > L[low + 1]) {
+				long temp = L[low];
+				L[low] = L[low + 1];
+				L[low + 1] = temp;
 			}
 		}
 		else {
-			long pivot = median(L[low], L[(int) ((high + low) / 2)], L[high-1]);
+			long pivot = median(L[low], L[(int) (high + low) / 2], L[high-1]);
 			long[] above = new long[size];
 			long[] pivots = new long[size];
 			long[] below = new long[size];
@@ -113,8 +103,8 @@ public class hashfp {
 					L[low + below_cnt + pivots_cnt + i] = above[i];
 			}
 			
-			sort(L, low, low + below_cnt); // sort the lower half
-			sort(L, low + middle, high); // sort the upper half
+			sort(L, low, low + below_cnt); // sort everything below pivots
+			sort(L, low + middle, high); // sort everything above pivots
 		}
 		
 	}
