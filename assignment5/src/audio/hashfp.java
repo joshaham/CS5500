@@ -1,21 +1,44 @@
+import java.util.Arrays;
+import java.util.Random;
 
 public class hashfp {
 
-	public static long main(String[] args) {
+	public static void main(String[] args) {
 		// given a set of n inputs of the form (time, frequency)
 		// sums the time differences in addition to the frequencies
 		// then returns the hash of the value
 		// using the FNV1a hash implemented below
+		/*
 		long sum = 0;
-		int n = args.length;
-		long[] times;
-		for (int i = 0; i < n; i++) {
-			times[i] = args[i][0]; // instead of [0], use appropriate acccesor for time
-			sum += args[i][1];  // instead of [1], use appropriate accessor for frequency
-		}
-		sum += get_deltas_sum(times, n);
-		return FNV1a(sum);
+		int split, n = args.length;
+		String time, freq;
+		long[] times = new long[n];
 		
+		for (int i = 0; i < n; i++) {
+			// decompose the string time:freq into its constituents
+			split = args[i].indexOf(":");
+			time = args[i].substring(0, split);
+			freq = args[i].substring(split+1);
+			// parse the strings into longs
+			times[i] = Long.parseLong(time);
+			sum += Long.parseLong(freq);
+		}
+		System.out.println(times);
+		quicksort(times);
+		System.out.println(times);
+		System.out.println(sum);
+		sum += get_deltas_sum(times, n);
+		System.out.println(sum);
+		System.out.println(FNV1a(sum));
+		*/
+		long[] blah = new long[50];
+		Random rand = new Random();
+		for(int i = 0; i < 50; i++) {
+			blah[i] = rand.nextLong() % 25;
+		}
+		System.out.println(Arrays.toString(blah));
+		quicksort(blah);
+		System.out.println(Arrays.toString(blah));
 	}
 
 	// 32 bit hash algorithm
@@ -41,11 +64,80 @@ public class hashfp {
 	// computes the sum of the time deltas
 	private static long get_deltas_sum(long[] times, int n) {
 		long deltas_sum = 0;
-		sort(times); // quicksort or whatever
+		quicksort(times); // quicksort or whatever
 		for (int i = 0; i < n; i++) {
 			// because each term appears 2i - n + 1 times,
 			deltas_sum += times[i] * (2*i - n + 1);
 		}
 		return deltas_sum;
 	}
+	
+	// quicksort helper function
+	private static void sort(long[] L, int low, int high) {
+		// long[] above, pivot, below;
+		int size = high - low;
+		if (size < 2) { }
+		else if (size == 2) {
+			if (L[0] > L[1]) {
+				long temp = L[0];
+				L[0] = L[1];
+				L[1] = temp;
+			}
+		}
+		else {
+			long pivot = median(L[low], L[(int) ((high + low) / 2)], L[high-1]);
+			long[] above = new long[size];
+			long[] pivots = new long[size];
+			long[] below = new long[size];
+			int above_cnt = 0, pivots_cnt = 0, below_cnt = 0;
+			
+			int i;
+			
+			for (i = low; i < high; i++) {
+				if (L[i] > pivot) above[above_cnt++] = L[i];
+				else if (L[i] < pivot) below[below_cnt++] = L[i];
+				else pivots[pivots_cnt++] = L[i];
+			}
+			
+			int middle = below_cnt + pivots_cnt;
+			if (below.length > 0) { 
+				for (i = 0; i < below_cnt; i++)
+					L[low + i] = below[i];
+			}
+			
+			for (i = 0; i < pivots_cnt; i++)
+				L[low + below_cnt + i] = pivots[i];
+			
+			if (above.length > 0) {
+				for (i = 0; i < above_cnt; i++)
+					L[low + below_cnt + pivots_cnt + i] = above[i];
+			}
+			
+			sort(L, low, low + below_cnt); // sort the lower half
+			sort(L, low + middle, high); // sort the upper half
+		}
+		
+	}
+	
+	// quicksort: O(nlogn)
+	private static void quicksort(long[] L) {
+		sort(L, 0, L.length);
+	}
+
+	// returns the median value of three numbers
+	private static long median(long l1, long l2, long l3) {
+		// first check if l1 is a max
+		if (l1 > l2 & l1 > l3) {
+			if (l2 > l3) return l2;
+			else return l3;
+		}
+		// then check if l2 is a min
+		else if (l1 < l2 & l1 < l3) {
+			if (l2 < l3) return l2;
+			else return l3;
+		}
+		// if not, then l1 is the median
+		else return l1;
+	}
+	
 }
