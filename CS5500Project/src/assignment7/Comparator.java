@@ -32,10 +32,9 @@ public class Comparator {
 			container.add(audio);
 		}
 	}
-	// compare the two files
+	
+	// compare all the files in each container against each other
 	public void compare(){
-		System.out.println("To be implemented.....");
-		
 		//special case when the second container only has 1 file, indicating
 		//that we need to check that file against all the files in container1
 		if (container2.size() == 1 && container1.size() > 1) {
