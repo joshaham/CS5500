@@ -1,17 +1,22 @@
 package test;
 
+import java.io.IOException;
 import java.util.HashSet;
 
 
 public class FFTTest {
-
+	static int count=0;
 	public static void main(String[] args){
-		HashSet<Pair> pairs = new HashSet<Pair>();
-		int N =20;
-		for(int i=0;i<N;i++){
-			pairs.add(new Pair(5,5));
+		String filePath="test";
+		String fileWav="/tmp/assignment7Sanguoyanyi" + (count++)+".wav";
+		String cmd="./lame --decode "+filePath+" "+fileWav;
+		Process p=null;
+		try {
+			p = java.lang.Runtime.getRuntime().exec("./lame sdfsdf sdfsd");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		System.out.println(pairs.size());
 	}
 }
 class Pair{

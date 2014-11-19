@@ -24,6 +24,7 @@ public class Comparator {
 			if(audio==null){
 				continue;
 			}
+			System.out.println(audio.getFileName()+"  : hashvalue  "+audio.hashValue);
 			container.add(audio);
 		}
 	}

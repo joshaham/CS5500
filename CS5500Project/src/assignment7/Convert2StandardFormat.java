@@ -20,6 +20,15 @@ public class Convert2StandardFormat {
 		else if(filePath.endsWith(".wav")){
 			// to be implemented
 			// standard sample rate, 16 bite per sample
+			String fileWav="/tmp/assignment7Sanguoyanyi" + (count++)+".wav";
+			String cmd="cp "+filePath+" "+fileWav;
+			Process p=null;
+			try {
+				p = java.lang.Runtime.getRuntime().exec(cmd);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}else{
 			if(Audio.DEBUG){
 				System.err.println("ERROR: file not ends with audio format");
