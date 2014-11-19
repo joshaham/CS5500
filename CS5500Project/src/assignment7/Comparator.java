@@ -60,9 +60,12 @@ public class Comparator {
                 String[] song1 = firstSong.split(";");
                 String[] song2 = secondSong.split(";");
                 
+                double song1Time = Integer.parseInt(song1[1]);
+                
                 System.out.println("Match " + song1[0] + " "
-                        + song2[0] + " " + song1[1] + " " 
-                        + song2[1]);
+                        + song2[0] + " " 
+                        + Double.parseDouble(song1[1])/1000 + " " 
+                        + Double.parseDouble(song2[1])/1000);
             }
         }
 	}
