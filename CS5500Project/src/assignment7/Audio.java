@@ -171,24 +171,21 @@ public  class Audio {
 	        int iteration = 1;
 	        
 	        //beginning index is incremented by the arraySize every iteration
-	        //length is either the pre-specified array size or the distance
-	        //from the beginning index to the end of the file, whichever is smaller
+	        //breaks out of the loop if the segment being analyzed is ever
+	        //less than the arraySize, i.e. less than 5 seconds long
 	        while (begIndex < datas.length){
-	            int length;
 	            if (begIndex + arraySize > datas.length) {
-	                length = datas.length - begIndex;
-	            } else {
-	                length = arraySize;
+	                break;
 	            }
-	            
+
 	            //copies the dualChannel and datas array segments being transformed
 	            //into temporary arrays
 	            double[] tempDualChannels = new double[(int) Math.pow(2, 15)];
 	            double[] tempDatas = new double[(int) Math.pow(2, 15)];
 	            System.arraycopy(this.dualChannelSamples, begIndex,
-	                    tempDualChannels, 0, length);
+	                    tempDualChannels, 0, arraySize);
 	            System.arraycopy(datas, begIndex,
-	                    tempDatas, 0, length);
+	                    tempDatas, 0, arraySize);
 	            
 	            //get the spectrogram and convert to the hashkey
 	            spectrogram = new AudioSpectrogram(tempDualChannels, 
@@ -199,7 +196,7 @@ public  class Audio {
 	            //SongName;BeginningSecondofChunk;EndingSecondofChunk
 	            String songName = this.getFileName();
 	            int begSec = (int) (begIndex / this.getSampleRate());
-	            int endSec = (int) ((begIndex + length) / this.getSampleRate());
+	            int endSec = (int) ((begIndex + arraySize) / this.getSampleRate());
 	            
 	            String hashValue = (songName + ";" + begSec + ";" + endSec);
 	            hm.put(hashKey, hashValue);
