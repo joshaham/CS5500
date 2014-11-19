@@ -4,10 +4,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.lang.System;
+import java.util.List;
 
-import drawer.SpectrogramDrawer;
+//import drawer.SpectrogramDrawer;
 
 //import drawer.SpectrogramDrawer;
 
@@ -27,12 +28,18 @@ public  class Audio {
 	public String[] getPeaks(){
 		return spectrogram.getLocalPeaks();
 	}
+	// return HashValue array, the index of array represent the corresponding time slot of each bin
 	public long[] getBinHashValue(double overlapRatio){
 		int size=(int) ((this.header.audioLength-this.songSampleSize)/(1-overlapRatio));
 		if(this.header.audioLength<=this.songSampleSize){
 			size=1;
 		}
 		long[] hashvalueArray=new long[size];
+		
+		List<String[]> container= new ArrayList<String[]>();
+		/*
+		 * to be implemented.....
+		 */
 		
 		return hashvalueArray;
 	}
@@ -47,7 +54,7 @@ public  class Audio {
 				continue;
 			}
 			System.out.println(audio.getHashValue());
-			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),audio.spectrogram);
+//			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),audio.spectrogram);
 		}
 		
 
@@ -60,7 +67,7 @@ public  class Audio {
 				continue;
 			}
 			System.out.println(audio.getHashValue());
-			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),audio.spectrogram);
+//			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),audio.spectrogram);
 		}
 
 	}

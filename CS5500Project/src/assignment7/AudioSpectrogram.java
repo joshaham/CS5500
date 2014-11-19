@@ -66,12 +66,6 @@ public class AudioSpectrogram {
 		int neighborSize=NEIGHBORHOOD_SIZE;
 		int maxPeaksNum=MAXIMUM_PEAKS_PER_BIN;
 		peaksContainer = get2DPeaks(spectrogramMatrix,neighborSize,ampMin,maxPeaksNum,overlapRatio,header.audioLength,header.getSampleRate());
-//		for(int row=0;row<array2D.length;row++){
-//			System.out.println();
-//			for(int col=0;col<array2D[0].length;col++){
-//				System.out.print(array2D[row][col]+"  ");
-//			}
-//		}
 		
 		// generate (time,frequency) peak pair
 		localPeaks=generatePeakPairs(peaksContainer);
