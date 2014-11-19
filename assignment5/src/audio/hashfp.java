@@ -1,3 +1,6 @@
+package audio;
+
+
 public class hashfp {
 	
 	public static long gethash(String[] args) {

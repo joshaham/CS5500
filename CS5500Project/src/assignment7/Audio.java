@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Set;
 
 import drawer.SpectrogramDrawer;
 
@@ -18,6 +19,10 @@ public  class Audio {
 	byte[] fileArray;
 	double[] dualChannelSamples;
 	
+	public Set<String> getPeaks(){
+		return spectrogram.getLocalPeaks();
+	}
+	
 	// for test
 	public static void main(String[] args){
 		String filePath="A5/D1/maynard.wav";
@@ -26,7 +31,7 @@ public  class Audio {
 			Audio audio=null;
 				audio = Audio.getInstance(path);
 			System.out.println(audio);
-			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),audio.spectrogram.getArray2D());
+			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),audio.spectrogram);
 		}
 
 	}
@@ -240,7 +245,10 @@ public  class Audio {
 		}
 	//@overwrite
 	public String toString(){
-		return header.toString();
+		String str= header.toString()+'\n';
+		int n = this.spectrogram.getLocalPeaks().size();
+		String peakSize ="Peak numbers: "+n+'\n';
+		return str+peakSize;
 	}
 
 	// read file to array
