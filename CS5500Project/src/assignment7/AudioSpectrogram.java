@@ -3,31 +3,12 @@ package assignment7;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class AudioSpectrogram {
-	// spectrograms
-	// col: time
-	// row: frequencis
-	// value: amplitude
-	int[][] spectrogramMatrix = null;
-	public int[][] getArray2D() {
-		return spectrogramMatrix;
-	}
-
-
-	Set<String> localPeaks=null;
-	private String[] peaks=null;
-	public String[] getLocalPeaks() {
-		if(peaks==null){
-			peaks=localPeaks.toArray(new String[localPeaks.size()]);
-		}
-		return peaks;
-	}
-
-
 	// Size of the FFT window, affects frequency granularity
 	static int WINDOW_SIZE=1; // seconds
 	// Maximum size of peaks per time slot
@@ -54,12 +35,59 @@ public class AudioSpectrogram {
 	 * # fingerprints and faster matching, but can potentially affect accuracy.
 	 */
 	static int NEIGHBORHOOD_SIZE=20;
+	// spectrograms
+	// col: time
+	// row: frequencis
+	// value: amplitude
+	int[][] spectrogramMatrix = null;
+	List<List<FrequencyAmplitudePair>> peaksContainer = null;
+	HashMap<Long,String> hm = null;
+	
+	
+	public HashMap<Long,String> getBinHashMap(String songName,int songSampleSize){
+		if(hm==null){
+			hm= new HashMap<Long,String>();
+			int intervalMilSec=(int) (1000*(1-OVERLAP_RATIO));
+			int idxPerBin=(int) (songSampleSize/(1-OVERLAP_RATIO));
+			for(int i=0;i<peaksContainer.size()-idxPerBin;i++){
+				ArrayList<String> peaks = new ArrayList<String>();
+				for(int k=i;k<i+idxPerBin;k++){
+					for(FrequencyAmplitudePair p : peaksContainer.get(k)){
+						peaks.add(e)
+					}
+				}
+				int begSec=i*intervalMilSec;
+		        String hashValue = (songName + ";" + begSec + ";" + (begSec*intervalMilSec));
+		        
+		        hm.put(hashKey, hashValue);
+				
+			}
+		}
+		return hm;
+	}
+
+
+	public int[][] getArray2D() {
+		return spectrogramMatrix;
+	}
+
+
+	Set<String> localPeaks=null;
+	private String[] peaks=null;
+	public String[] getLocalPeaks() {
+		if(peaks==null){
+			peaks=localPeaks.toArray(new String[localPeaks.size()]);
+		}
+		return peaks;
+	}
+
+
+
 	
 	public AudioSpectrogram(double[] dualChannelSamples, double[] datas, AudioHeader header){
 		int windowSize = WINDOW_SIZE;
 		double overlapRatio = OVERLAP_RATIO;
 		int ampMin=AMP_MIN;
-		List<List<FrequencyAmplitudePair>> peaksContainer = null;
 		// generate spectogram
 		spectrogramMatrix=generateSpectrogram(datas,header,windowSize,overlapRatio);
 		// extract peaks
