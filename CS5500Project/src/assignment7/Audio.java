@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.lang.System;
 
 //import drawer.SpectrogramDrawer;
 
@@ -18,6 +20,8 @@ public  class Audio {
 	byte[] fileArray;
 	double[] dualChannelSamples;
 	long hashValue=0;
+	double songSampleSize = 5;
+	static HashMap<Long, String> hm = new HashMap();
 	
 	public String[] getPeaks(){
 		return spectrogram.getLocalPeaks();
@@ -33,7 +37,7 @@ public  class Audio {
 			if(audio==null){
 				continue;
 			}
-			System.out.println(audio.getFileName()+"\n"+audio.hashValue+'\n');
+//			System.out.println(audio.getFileName()+"\n"+audio.hashValue+'\n');
 //			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),audio.spectrogram);
 		}
 		
@@ -46,7 +50,7 @@ public  class Audio {
 			if(audio==null){
 				continue;
 			}
-			System.out.println(audio.getFileName()+"\n"+audio.hashValue+'\n');
+//			System.out.println(audio.getFileName()+"\n"+audio.hashValue+'\n');
 //			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),audio.spectrogram);
 		}
 
@@ -100,7 +104,7 @@ public  class Audio {
 		File file = new File(standardFilePath);
 		if(!file.exists() || !file.isFile()){
 //			System.err.println("ERROR: File not exist, "+getCurrentDir()+"/"+standardFilePath);
-			System.err.println("ERROR: File not exist, "+actualPath);
+			System.err.println("ERROR: File does not exist, "+actualPath);
 			return null;
 		}
 		byte[] fileArray=readFile2ByteArray(file);
@@ -146,11 +150,65 @@ public  class Audio {
 				dualChannelSamples[i]=leftShort[i]/2+rightShort[i]/2;
 			}
 		}
-		spectrogram=new AudioSpectrogram(this.dualChannelSamples,datas,this.header);
-		hashValue=hashfp.gethash(spectrogram.getLocalPeaks());
+//		spectrogram=new AudioSpectrogram(this.dualChannelSamples,datas,this.header);
+//		hashValue=hashfp.gethash(spectrogram.getLocalPeaks());
+		hashData(datas);
 	}
 
 	
+	//converts every 5 second interval as well as every 1 second offset into
+	//hashKeys which are then stored with the corresponding value indicating
+	//the song name, beginning second, and end second of that song segment.
+	void hashData(double[] datas) {
+	    int arraySize = (int) (this.getSampleRate() * songSampleSize);
+	    int fiveSecIntervals = (int) Math.ceil
+	            (((double)datas.length) / arraySize);
+	    int numOffsets = 5;
+	    
+	    for (int i = 0; i < numOffsets; i++) {
+	        int offset = i * (int)(this.getSampleRate());
+	        int begIndex = 0;
+	        int iteration = 1;
+	        
+	        //beginning index is incremented by the arraySize every iteration
+	        //length is either the pre-specified array size or the distance
+	        //from the beginning index to the end of the file, whichever is smaller
+	        while (begIndex < datas.length){
+	            int length;
+	            if (begIndex + arraySize > datas.length) {
+	                length = datas.length - begIndex;
+	            } else {
+	                length = arraySize;
+	            }
+	            
+	            //copies the dualChannel and datas array segments being transformed
+	            //into temporary arrays
+	            double[] tempDualChannels = new double[(int) Math.pow(2, 15)];
+	            double[] tempDatas = new double[(int) Math.pow(2, 15)];
+	            System.arraycopy(this.dualChannelSamples, begIndex,
+	                    tempDualChannels, 0, length);
+	            System.arraycopy(datas, begIndex,
+	                    tempDatas, 0, length);
+	            
+	            //get the spectrogram and convert to the hashkey
+	            spectrogram = new AudioSpectrogram(tempDualChannels, 
+	                    tempDatas, this.header);
+	            long hashKey = hashfp.gethash(spectrogram.getLocalPeaks());
+	            
+	            //the corresponding hashvalue is stored as a string with format
+	            //SongName;BeginningSecondofChunk;EndingSecondofChunk
+	            String songName = this.getFileName();
+	            int begSec = (int) (begIndex / this.getSampleRate());
+	            int endSec = (int) ((begIndex + length) / this.getSampleRate());
+	            
+	            String hashValue = (songName + ";" + begSec + ";" + endSec);
+	            hm.put(hashKey, hashValue);
+	            
+	            begIndex = iteration * arraySize + offset;
+	            iteration++;
+	        }
+	    }
+	}
 
 	//Extract left channel bytes
 	// GIVEN: nums of channel, bites per sample
@@ -321,6 +379,10 @@ public  class Audio {
 	@Override
 	public int hashCode(){
 		return (int) this.hashValue;
+	}
+	
+	public HashMap<Long, String> getHashMap() {
+	    return this.hm;
 	}
 
 }
