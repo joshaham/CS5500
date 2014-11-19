@@ -61,8 +61,9 @@ public class Comparator {
                 String[] song2 = secondSong.split(";");
                 
                 System.out.println("Match " + song1[0] + " "
-                        + song2[0] + " " + song1[1] + " " 
-                        + song2[1]);
+                        + song2[0] + " " 
+                        + Double.parseDouble(song1[1])/1000 + " " 
+                        + Double.parseDouble(song2[1])/1000);
             }
         }
 	}
