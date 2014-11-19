@@ -12,9 +12,9 @@ public class AudioSpectrogram {
 	// col: time
 	// row: frequencis
 	// value: amplitude
-	int[][] array2D = null;
+	int[][] spectrogramMatrix = null;
 	public int[][] getArray2D() {
-		return array2D;
+		return spectrogramMatrix;
 	}
 
 
@@ -37,7 +37,7 @@ public class AudioSpectrogram {
 	 * next window. Higher overlap will allow a higher granularity of offset
      * matching, but potentially more fingerprints.
 	 */
-	static double OVERLAP_RATIO=0.1; // 0.1 second
+	static double OVERLAP_RATIO=0.9; // 1-OVERLAP_RATIO second
 	public static double getOVERLAP_RATIO() {
 		return OVERLAP_RATIO;
 	}
@@ -61,11 +61,11 @@ public class AudioSpectrogram {
 		int ampMin=AMP_MIN;
 		List<List<FrequencyAmplitudePair>> peaksContainer = null;
 		// generate spectogram
-		array2D=generateSpectrogram(datas,header,windowSize,overlapRatio);
+		spectrogramMatrix=generateSpectrogram(datas,header,windowSize,overlapRatio);
 		// extract peaks
 		int neighborSize=NEIGHBORHOOD_SIZE;
 		int maxPeaksNum=MAXIMUM_PEAKS_PER_BIN;
-		peaksContainer = get2DPeaks(array2D,neighborSize,ampMin,maxPeaksNum,overlapRatio,header.audioLength);
+		peaksContainer = get2DPeaks(spectrogramMatrix,neighborSize,ampMin,maxPeaksNum,overlapRatio,header.audioLength,header.getSampleRate());
 //		for(int row=0;row<array2D.length;row++){
 //			System.out.println();
 //			for(int col=0;col<array2D[0].length;col++){
@@ -74,20 +74,19 @@ public class AudioSpectrogram {
 //		}
 		
 		// generate (time,frequency) peak pair
-		localPeaks=generatePeakPairs(peaksContainer,overlapRatio);
+		localPeaks=generatePeakPairs(peaksContainer);
 		
 	}
 	
 
 	private Set<String> generatePeakPairs(
-			List<List<FrequencyAmplitudePair>> peaksContainer,
-			double overlapRatio) {
+			List<List<FrequencyAmplitudePair>> peaksContainer) {
 		Set<String> peaks= new HashSet<String>();
 		
 		for(int i=0;i<peaksContainer.size();i++){
 			List<FrequencyAmplitudePair> pairs=peaksContainer.get(i);
 			for(FrequencyAmplitudePair p : pairs){
-				peaks.add(""+i+":"+p.getFrequency());
+				peaks.add(""+p.millisecond+":"+p.getFrequency());
 			}
 		}
 		
@@ -96,30 +95,29 @@ public class AudioSpectrogram {
 
 
 	// calculate peaks for each second
-	private ArrayList<List<FrequencyAmplitudePair> > get2DPeaks(int[][] array2D,int neighborSize,int ampMin, 
-			int maxPeaksNum,double overlapRatio, int audioLength){
+	private ArrayList<List<FrequencyAmplitudePair> > get2DPeaks(int[][] spectrogramMatrix,int neighborSize,int ampMin, 
+			int maxPeaksNum,double overlapRatio, int audioLength,int sampleRate){
+//		System.out.println("get2DPeaks: height: "+spectrogramMatrix.length +"  width:" +spectrogramMatrix[0].length);
 		ArrayList<List<FrequencyAmplitudePair> > timePeaks=new ArrayList<List<FrequencyAmplitudePair> >();
-		for(int t=0;t<audioLength;t++){
-			List<FrequencyAmplitudePair> peaks=searchPeaks(array2D,neighborSize,ampMin,maxPeaksNum,overlapRatio,t);
+//		System.out.println("Max time idx: "+audioLength/(1-overlapRatio));
+		for(int t=0;t<(int)(audioLength/(1-overlapRatio));t++){
+			List<FrequencyAmplitudePair> peaks=searchPeaks(spectrogramMatrix,neighborSize,ampMin,maxPeaksNum,t,sampleRate,overlapRatio);
 			timePeaks.add(peaks);
 		}
 		return timePeaks;
 	}
-	// return a list of frequencies representing peaks for this time slot
-	private List<FrequencyAmplitudePair> searchPeaks(int[][] array2D,int neighborSize, int ampMin,
-			int maxPeaksNum,double overlapRatio, int t) {
+	// return a list of frequencies representing peaks at this timeIdx
+	private List<FrequencyAmplitudePair> searchPeaks(int[][] spectrogramMatrix,int neighborSize, int ampMin,
+			int maxPeaksNum, int timeIdx, int sampleRate, double overlapRatio) {
 		ArrayList<FrequencyAmplitudePair> frequencyAmplitudePairs=
 				new ArrayList<FrequencyAmplitudePair>();
-		
-		int samples=(int) (1/overlapRatio);
-		for(int col=samples*t;col<(t+1)*samples;col++){
-			for(int frequency=0;frequency<array2D.length;frequency++){
-				int amplitude=array2D[frequency][col];
-				if(isPeak(array2D,amplitude,frequency,col,neighborSize,ampMin)){
-					frequencyAmplitudePairs.add(new FrequencyAmplitudePair(frequency,amplitude));
+			for(int frequency=0;frequency<spectrogramMatrix.length;frequency++){
+				int amplitude=spectrogramMatrix[frequency][timeIdx];
+				if(isPeak(spectrogramMatrix,amplitude,frequency,timeIdx,neighborSize,ampMin)){
+					int milSecond = (int) (timeIdx*1000*(1-overlapRatio));
+					frequencyAmplitudePairs.add(new FrequencyAmplitudePair(frequency,amplitude,milSecond));
 				}
 			}
-		}
 		Collections.sort(frequencyAmplitudePairs,Collections.reverseOrder());
 		return frequencyAmplitudePairs.subList(0, Math.min(frequencyAmplitudePairs.size(), maxPeaksNum));
 	}
@@ -166,24 +164,35 @@ public class AudioSpectrogram {
 	// calculate without overlap of bins
 	private int[][] generateSpectrogram(double[] datas,AudioHeader header,
 			int windowSize, double overlapRatio){
-		
 		int[][] spectrogram=null;
-		int width=(int)(header.audioLength/overlapRatio);
+		int width=(int)(header.audioLength/(1-overlapRatio));
 		double[] bin=null;
 		spectrogram=new int[20000-20+1][width];
-		
+		//windowSize for FFT, not bin size
 		int sampleSize=windowSize*header.sampleRate;
-		int offset=(int)(header.sampleRate*overlapRatio);
-		for(int time=0;time<width;time++){
-			bin=Arrays.copyOfRange(datas, offset*time, offset*time+sampleSize);
+		int offset=(int)(header.sampleRate*(1-overlapRatio));
+//		for(int time=0;time<width;time++){
+//			bin=Arrays.copyOfRange(datas, offset*time, offset*time+sampleSize);
+//			int[] frequencyAmplitudes=calculateFrequencyArray(bin);
+//			for(int hz=20;hz<=20000;hz++){
+//				int amplitude=getAmplitudeOfFrequency(hz, frequencyAmplitudes, header);
+//				int frequency=20000-hz;
+//				spectrogram[frequency][time]=amplitude;
+//			}
+//		}
+		int start=0;
+		while(start+sampleSize<datas.length){
+			bin=Arrays.copyOfRange(datas, start, start+sampleSize);
 			int[] frequencyAmplitudes=calculateFrequencyArray(bin);
+			double d=(start+0.0)/header.sampleRate;
+			int timeIdx=(int) (d/(1-overlapRatio));
 			for(int hz=20;hz<=20000;hz++){
 				int amplitude=getAmplitudeOfFrequency(hz, frequencyAmplitudes, header);
 				int frequency=20000-hz;
-				spectrogram[frequency][time]=amplitude;
+				spectrogram[frequency][timeIdx]=amplitude;
 			}
+			start+=offset;
 		}
-		
 		return spectrogram;
 	}
 	
@@ -229,6 +238,7 @@ public class AudioSpectrogram {
 class FrequencyAmplitudePair implements Comparable<FrequencyAmplitudePair>{
 	int frequency;
 	int amplitude;
+	long millisecond;
 	
 	public int getFrequency() {
 		return frequency;
@@ -238,9 +248,10 @@ class FrequencyAmplitudePair implements Comparable<FrequencyAmplitudePair>{
 		return amplitude;
 	}
 
-	public FrequencyAmplitudePair(int frequency,int amplitude){
+	public FrequencyAmplitudePair(int frequency,int amplitude, long time){
 		this.frequency=frequency;
 		this.amplitude=amplitude;
+		this.millisecond=time;
 	}
 
 	@Override

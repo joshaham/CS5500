@@ -32,8 +32,9 @@ public class SpectrogramDrawer {
     
     
     
-//    public static void drawSpectrogram(String fileName,int[][] data){
+//    public static void drawSpectrogram(String fileName, AudioSpectrogram spectrogram){
 //    	int interval=1;
+//    	int[][] data=spectrogram.getArray2D();
 //    	System.out.println("Height: "+data.length/interval);
 //    	System.out.println("Width: "+data[0].length);
 //
@@ -46,6 +47,7 @@ public class SpectrogramDrawer {
 //    		}
 //    		System.out.println();
 //    	}
+//
 //    }
     
     public static void drawSpectrogram(String fileName,int[][] data){
@@ -84,7 +86,7 @@ public class SpectrogramDrawer {
     	int[][] data=spectrogram.getArray2D();
     	int frequencyRange=19981;
     	int audioLength=data[0].length;
-//    	System.out.println("Height: "+frequencyRange+", width:"+audioLength+'\n');
+    	System.out.println("Height: "+frequencyRange+", width:"+audioLength+'\n');
     	BufferedImage  img =new BufferedImage(audioLength,frequencyRange,BufferedImage.TYPE_INT_BGR);
     	for(int i=0;i<audioLength;i++){
     		for(int j=0;j<frequencyRange;j++){
@@ -95,7 +97,7 @@ public class SpectrogramDrawer {
     			img.setRGB(i, j,col);
     		}
     	}
-    	writePeak(img,spectrogram.getLocalPeaks(),spectrogram.getOVERLAP_RATIO());
+    	writePeak(img,spectrogram.getLocalPeaks(),AudioSpectrogram.getOVERLAP_RATIO());
     	
     	File f = new File(fileName+"Spectrogram.png");
     	try {
@@ -116,6 +118,7 @@ public class SpectrogramDrawer {
 			String[] strs =s.split(":");
 			int row=Integer.parseInt(strs[1]);
 			int col=Integer.parseInt(strs[0])*n;
+			col=(int) (col/(1000*(1-AudioSpectrogram.getOVERLAP_RATIO())));
 			drawCircle(row,col,img);
 		}
 	}
