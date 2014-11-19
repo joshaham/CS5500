@@ -84,7 +84,7 @@ public class SpectrogramDrawer {
     	int[][] data=spectrogram.getArray2D();
     	int frequencyRange=19981;
     	int audioLength=data[0].length;
-    	System.out.println("Height: "+frequencyRange+", width:"+audioLength);
+//    	System.out.println("Height: "+frequencyRange+", width:"+audioLength+'\n');
     	BufferedImage  img =new BufferedImage(audioLength,frequencyRange,BufferedImage.TYPE_INT_BGR);
     	for(int i=0;i<audioLength;i++){
     		for(int j=0;j<frequencyRange;j++){
@@ -109,7 +109,7 @@ public class SpectrogramDrawer {
 
 
 
-	private static void writePeak(BufferedImage img, Set<String> localPeaks,
+	private static void writePeak(BufferedImage img, String[] localPeaks,
 			double overlapRatio) {
 		int n=(int) (1/overlapRatio);
 		for(String s : localPeaks){

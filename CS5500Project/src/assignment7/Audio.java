@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.Set;
 
 import drawer.SpectrogramDrawer;
 
@@ -18,19 +17,36 @@ public  class Audio {
 	AudioSpectrogram spectrogram;
 	byte[] fileArray;
 	double[] dualChannelSamples;
+	long hashValue=0;
 	
-	public Set<String> getPeaks(){
+	public String[] getPeaks(){
 		return spectrogram.getLocalPeaks();
 	}
 	
 	// for test
 	public static void main(String[] args){
-		String filePath="A5/D1/maynard.wav";
-		String[] paths=Assignment7.getFilePaths(filePath, "-f");
+		String filePath="A5/D1";
+		String[] paths=Assignment7.getFilePaths(filePath, "-d");
 		for(String path : paths){
 			Audio audio=null;
 				audio = Audio.getInstance(path);
-			System.out.println(audio);
+			if(audio==null){
+				continue;
+			}
+			System.out.println(audio.getFileName()+"\n"+audio.hashValue+'\n');
+			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),audio.spectrogram);
+		}
+		
+
+		String filePath2="A5/D2";
+		String[] paths2=Assignment7.getFilePaths(filePath2, "-d");
+		for(String path : paths2){
+			Audio audio=null;
+				audio = Audio.getInstance(path);
+			if(audio==null){
+				continue;
+			}
+			System.out.println(audio.getFileName()+"\n"+audio.hashValue+'\n');
 			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),audio.spectrogram);
 		}
 
@@ -134,6 +150,7 @@ public  class Audio {
 			}
 		}
 		spectrogram=new AudioSpectrogram(this.dualChannelSamples,datas,this.header);
+		hashValue=hashfp.gethash(spectrogram.getLocalPeaks());
 	}
 
 	
@@ -245,10 +262,11 @@ public  class Audio {
 		}
 	//@overwrite
 	public String toString(){
-		String str= header.toString()+'\n';
-		int n = this.spectrogram.getLocalPeaks().size();
+		String str= header.toString();
+		int n = this.spectrogram.getLocalPeaks().length;
 		String peakSize ="Peak numbers: "+n+'\n';
-		return str+peakSize;
+		String hashvalue ="HashValue: "+this.hashValue+'\n';
+		return str+peakSize+hashvalue ;
 	}
 
 	// read file to array
@@ -302,6 +320,10 @@ public  class Audio {
 	}
 	public int getAudioLength(){
 		return header.getAudioLength();
+	}
+	@Override
+	public int hashCode(){
+		return (int) this.hashValue;
 	}
 
 }

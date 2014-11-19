@@ -17,6 +17,7 @@ public  class Audio {
 	byte[] fileArray;
 	int[] dualChannelSamples;
 	double[] frequenciesData;
+	long hashValue=0;
 	
 	// for test
 	public static void main(String[] args){
