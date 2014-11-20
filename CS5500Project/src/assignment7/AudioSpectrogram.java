@@ -18,7 +18,7 @@ public class AudioSpectrogram {
 	 * next window. Higher overlap will allow a higher granularity of offset
      * matching, but potentially more fingerprints.
 	 */
-	static double OVERLAP_RATIO=0.2; // 1-OVERLAP_RATIO second
+	static double OVERLAP_RATIO=0.1; // 1-OVERLAP_RATIO second
 	static int RoundDigits=10;
 	public static double getOVERLAP_RATIO() {
 		return OVERLAP_RATIO;
@@ -63,7 +63,7 @@ public class AudioSpectrogram {
 						peaks.add(str);
 					}
 				}
-				long hashKey=hashfp.gethash(peaks.toArray(
+				long hashKey=Hashfp.gethash(peaks.toArray(
 						new String[peaks.size()]));
 				hashKey=round(hashKey,RoundDigits);
 				int begSec=i*intervalMilSec;
@@ -219,6 +219,7 @@ public class AudioSpectrogram {
 	// calculate spectrogram on each time slot
 	private int[][] generateSpectrogram(double[] datas,AudioHeader header,
 			int windowSize, double overlapRatio){
+//		System.out.println(header.fileName);
 		int[][] spectrogram=null;
 		int width=(int)(header.audioLength/(1-overlapRatio));
 		double[] bin=null;
@@ -231,7 +232,7 @@ public class AudioSpectrogram {
 			bin=Arrays.copyOfRange(datas, start, start+sampleSize);
 			int[] frequencyAmplitudes=calculateFrequencyArray(bin);
 			double d=(start+0.0)/header.sampleRate;
-			int timeIdx=(int) (d/(1-overlapRatio));
+			int timeIdx=Math.min(width-1, (int) (d/(1-overlapRatio)));
 			for(int hz=20;hz<=20000;hz++){
 				int amplitude=getAmplitudeOfFrequency(hz, 
 						frequencyAmplitudes, header);

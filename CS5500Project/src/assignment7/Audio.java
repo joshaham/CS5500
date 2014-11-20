@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 
-//import drawer.SpectrogramDrawer;
+import drawer.SpectrogramDrawer;
 
 // Audio class
 public  class Audio {
@@ -34,7 +34,7 @@ public  class Audio {
 	}
 	// for test
 	public static void main(String[] args){
-		String filePath="A5/D1/sons2.wav";
+		String filePath="A6/D4/MMw.wav";
 		String[] paths=Assignment7.getFilePaths(filePath, "-f");
 		for(String path : paths){
 			Audio audio=null;
@@ -44,29 +44,29 @@ public  class Audio {
 			}
 			System.out.println(audio);
 			System.out.println(audio.getHashValue());
-//			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),
-//			audio.spectrogram);
+			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),
+			audio.spectrogram);
 		}
 		
-		String filePath2="A5/D2/sons.wav";
-		String[] paths2=Assignment7.getFilePaths(filePath2, "-f");
-		for(String path : paths2){
-			Audio audio=null;
-				audio = Audio.getInstance(path);
-			if(audio==null){
-				continue;
-			}
-			System.out.println(audio);
-			System.out.println(audio.getHashValue());
+//		String filePath2="A5/D2/y02.wav";
+//		String[] paths2=Assignment7.getFilePaths(filePath2, "-f");
+//		for(String path : paths2){
+//			Audio audio=null;
+//				audio = Audio.getInstance(path);
+//			if(audio==null){
+//				continue;
+//			}
+//			System.out.println(audio);
+//			System.out.println(audio.getHashValue());
 //			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),
 //			audio.spectrogram);
-		}
+//		}
 
 	}
 	// Return hashvalue of fingerprint of this audio file
 	private String getHashValue() {
 		if(this.hashValue==0){
-			this.hashValue=hashfp.gethash(spectrogram.getLocalPeaks());
+			this.hashValue=Hashfp.gethash(spectrogram.getLocalPeaks());
 		}
 		return "FileName: "+ this.getFileName()+"   hashvalue: "
 		+this.hashValue;
@@ -286,7 +286,7 @@ public  class Audio {
 		int n = this.spectrogram.getLocalPeaks().length;
 		String peakSize ="Peak numbers: "+n+'\n';
 		if(this.hashValue==0){
-			this.hashValue=hashfp.gethash(spectrogram.getLocalPeaks());
+			this.hashValue=Hashfp.gethash(spectrogram.getLocalPeaks());
 		}
 		String hashvalue ="HashValue: "+this.hashValue+'\n';
 		return str+peakSize+hashvalue ;

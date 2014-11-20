@@ -100,7 +100,7 @@ public class Comparator {
             System.out.println("MATCH " + song1Name + " " 
                     + song2Name + " " 
                     + song1Start/1000 + " "
-                    + song2Start/1000 + "\n");
+                    + song2Start/1000);
         }
 	}
 

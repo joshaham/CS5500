@@ -1,7 +1,7 @@
 package assignment7;
 
 
-public class hashfp {
+public class Hashfp {
 	
 	public static long gethash(String[] args) {
 		// given a set of n inputs of the form (time, frequency)
@@ -19,7 +19,7 @@ public class hashfp {
 			time = args[i].substring(0, split);
 			freq = args[i].substring(split+1);
 			// parse the strings into longs
-			times[i] = Long.parseLong(time);
+			times[i] = Long.parseLong(time)/1000;
 			sum += Long.parseLong(freq);
 		}
 		
