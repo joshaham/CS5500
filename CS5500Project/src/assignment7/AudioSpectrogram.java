@@ -49,13 +49,16 @@ public class AudioSpectrogram {
 			hm= new HashMap<Long,String>();
 			int intervalMilSec=(int) (1000*(1-OVERLAP_RATIO));
 			int idxPerBin=(int) (songSampleSize/(1-OVERLAP_RATIO));
+			// bin round
 			for(int i=0;i<peaksContainer.size()-idxPerBin;i++){
 				ArrayList<String> peaks = new ArrayList<String>();
 				for(int k=i;k<i+idxPerBin;k++){
 					for(FrequencyAmplitudePair p : peaksContainer.get(k)){
-						peaks.add(e)
+						String str=""+p.millisecond+":"+p.getFrequency();
+						peaks.add(str);
 					}
 				}
+				long hashKey=hashfp.gethash(peaks.toArray(new String[peaks.size()]));
 				int begSec=i*intervalMilSec;
 		        String hashValue = (songName + ";" + begSec + ";" + (begSec*intervalMilSec));
 		        
