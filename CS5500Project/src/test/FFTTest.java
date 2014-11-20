@@ -1,22 +1,17 @@
 package test;
 
-import java.io.IOException;
-import java.util.HashSet;
 
 
 public class FFTTest {
 	static int count=0;
 	public static void main(String[] args){
-		String filePath="test";
-		String fileWav="/tmp/assignment7Sanguoyanyi" + (count++)+".wav";
-		String cmd="./lame --decode "+filePath+" "+fileWav;
-		Process p=null;
-		try {
-			p = java.lang.Runtime.getRuntime().exec("./lame sdfsdf sdfsd");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		int i = 1732;
+		System.out.println(round(i,100));
+	}
+	
+	public static int round(int number, int digits){
+		int roundedNumber = (number + 5*digits) / 1000 * 1000;
+		return roundedNumber;
 	}
 }
 class Pair{

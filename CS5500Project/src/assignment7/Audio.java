@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 // Audio class
 public  class Audio {
-	static boolean DEBUG=true;
+	static boolean DEBUG=false;
 	AudioHeader header;
 	AudioSpectrogram spectrogram;
 	byte[] fileArray;
@@ -24,47 +24,54 @@ public  class Audio {
 	public String[] getPeaks(){
 		return spectrogram.getLocalPeaks();
 	}
-	// return HashValue array, the index of array represent the corresponding time slot of each bin
+	// return HashValue array, 
+	// the index of array represent the corresponding time slot of each bin
 	public HashMap<Long,String> getHashMap(){
 		if(hm==null){
-			hm = this.spectrogram.getBinHashMap(this.getFileName(),songSampleSize);
+			hm = spectrogram.getBinHashMap(getFileName(),songSampleSize);
 		}
 		return hm;
 	}
 	// for test
 	public static void main(String[] args){
-		String filePath="A5/D1";
-		String[] paths=Assignment7.getFilePaths(filePath, "-d");
+		String filePath="A5/D1/sons2.wav";
+		String[] paths=Assignment7.getFilePaths(filePath, "-f");
 		for(String path : paths){
 			Audio audio=null;
 				audio = Audio.getInstance(path);
 			if(audio==null){
 				continue;
 			}
+			System.out.println(audio);
 			System.out.println(audio.getHashValue());
-//			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),audio.spectrogram);
+//			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),
+//			audio.spectrogram);
 		}
 		
-		String filePath2="A5/D2";
-		String[] paths2=Assignment7.getFilePaths(filePath2, "-d");
+		String filePath2="A5/D2/sons.wav";
+		String[] paths2=Assignment7.getFilePaths(filePath2, "-f");
 		for(String path : paths2){
 			Audio audio=null;
 				audio = Audio.getInstance(path);
 			if(audio==null){
 				continue;
 			}
+			System.out.println(audio);
 			System.out.println(audio.getHashValue());
-//			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),audio.spectrogram);
+//			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),
+//			audio.spectrogram);
 		}
 
 	}
-	
+	// Return hashvalue of fingerprint of this audio file
 	private String getHashValue() {
 		if(this.hashValue==0){
 			this.hashValue=hashfp.gethash(spectrogram.getLocalPeaks());
 		}
-		return "FileName: "+ this.getFileName()+"   hashvalue: "+this.hashValue;
+		return "FileName: "+ this.getFileName()+"   hashvalue: "
+		+this.hashValue;
 	}
+	// Return instance of Audio
 	public static Audio getInstance(String filePath){
 		Audio audio=null;
 		// convert audio file to standard format if not,
@@ -81,7 +88,8 @@ public  class Audio {
 	
 	
 	// change filename if in need
-	private static Audio getInstanceHelper(String fileStandardPath,String filePath){
+	private static Audio getInstanceHelper(String fileStandardPath,
+			String filePath){
 		Process p = null;
 		Audio audio=checkAndGetInstance(fileStandardPath,filePath);
 		// remove standardPath in tmp directory
@@ -105,14 +113,14 @@ public  class Audio {
 	}
 
 	// check file format and return audio instance if correct
-	private static Audio checkAndGetInstance(String standardFilePath,String actualPath)
+	private static Audio checkAndGetInstance(String standardFilePath,
+			String actualPath)
 	{
 
 		String[] strs = actualPath.split("/");
 		String fileName=strs[strs.length-1];
 		File file = new File(standardFilePath);
 		if(!file.exists() || !file.isFile()){
-//			System.err.println("ERROR: File not exist, "+getCurrentDir()+"/"+standardFilePath);
 			System.err.println("ERROR: File does not exist, "+actualPath);
 			return null;
 		}
@@ -151,70 +159,21 @@ public  class Audio {
 							fileLeftChannel,fileRightChannel,
 							header.getBitesPerSecond());
 			double[] leftShort=
-					convertToDouble(fileLeftChannel,header.getBitesPerSecond());
+					convertToDouble(fileLeftChannel,
+							header.getBitesPerSecond());
 			double[] rightShort=
-					convertToDouble(fileRightChannel,header.getBitesPerSecond());
+					convertToDouble(fileRightChannel,
+							header.getBitesPerSecond());
 			dualChannelSamples=new double[leftShort.length];
 			for(int i=0;i<leftShort.length;i++){
 				dualChannelSamples[i]=leftShort[i]/2+rightShort[i]/2;
 			}
 		}
-		spectrogram=new AudioSpectrogram(this.dualChannelSamples,datas,this.header);
-//		hashValue=hashfp.gethash(spectrogram.getLocalPeaks());
-//		hashData(datas);
+		spectrogram=new AudioSpectrogram(this.dualChannelSamples,
+				datas,this.header);
 	}
 
 	
-	//converts every 5 second interval as well as every 1 second offset into
-	//hashKeys which are then stored with the corresponding value indicating
-	//the song name, beginning second, and end second of that song segment.
-	void hashData(double[] datas) {
-	    int arraySize = (int) (this.getSampleRate() * songSampleSize);
-	    int fiveSecIntervals = (int) Math.ceil
-	            (((double)datas.length) / arraySize);
-	    int numOffsets = 5;
-	    
-	    for (int i = 0; i < numOffsets; i++) {
-	        int offset = i * (int)(this.getSampleRate());
-	        int begIndex = 0;
-	        int iteration = 1;
-	        
-	        //beginning index is incremented by the arraySize every iteration
-	        //breaks out of the loop if the segment being analyzed is ever
-	        //less than the arraySize, i.e. less than 5 seconds long
-	        while (begIndex < datas.length){
-	            if (begIndex + arraySize > datas.length) {
-	                break;
-	            }
-
-	            //copies the dualChannel and datas array segments being transformed
-	            //into temporary arrays
-	            double[] tempDualChannels = new double[(int) Math.pow(2, 15)];
-	            double[] tempDatas = new double[(int) Math.pow(2, 15)];
-	            System.arraycopy(this.dualChannelSamples, begIndex,
-	                    tempDualChannels, 0, arraySize);
-	            System.arraycopy(datas, begIndex,
-	                    tempDatas, 0, arraySize);
-	            
-	            //get the spectrogram and convert to the hashkey
-	            spectrogram = new AudioSpectrogram(tempDualChannels, 
-	                    tempDatas, this.header);
-	            long hashKey = hashfp.gethash(spectrogram.getLocalPeaks());
-	            
-	            //the corresponding hashvalue is stored as a string with format
-	            //SongName;BeginningSecondofChunk;EndingSecondofChunk
-	            String songName = this.getFileName();
-	            int begSec = (int) (begIndex / this.getSampleRate());
-	            int endSec = (int) ((begIndex + arraySize) / this.getSampleRate());
-	            
-	            String hashValue = (songName + ";" + begSec + ";" + endSec);
-	            hm.put(hashKey, hashValue);
-	            
-	            begIndex = iteration * arraySize + offset;
-	            iteration++;
-	        }
-	    }
-	}
 
 	//Extract left channel bytes
 	// GIVEN: nums of channel, bites per sample

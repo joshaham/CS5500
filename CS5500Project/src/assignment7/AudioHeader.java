@@ -73,16 +73,16 @@ public class AudioHeader {
 						"ERROR: Incorrect bites per sample "+ bps+"  ");}
 				return null;
 		}
-		//check file size
-		int subChunk2Size=byteBuffer.getInt(40);
-		if(subChunk2Size!=datasize){
-			if(DEBUG){
-				System.out.print(
-						"Audio File data incomplete: "
-				+ " expected chunksize "+
-					datasize +" actual chunksize "+subChunk2Size+"   ");};
-			return null;
-		}
+//		//check file size
+//		int subChunk2Size=byteBuffer.getInt(40);
+//		if(subChunk2Size!=datasize){
+//			if(DEBUG){
+//				System.out.print(
+//						"Audio File data incomplete: "
+//				+ " expected chunksize "+
+//					datasize +" actual chunksize "+subChunk2Size+"   ");};
+//			return null;
+//		}
 		int audioLength=0;
 		audioLength=datasize/(sampleRate*nc*(bps/8));
 		return new AudioHeader(fileName,format,nc,sampleRate,bps,audioLength);
