@@ -24,7 +24,7 @@ public  class Audio {
 	double[] dualChannelSamples;
 	long hashValue=0;
 	// bin size
-	double songSampleSize = 5;
+	int songSampleSize = 5;
 	HashMap<Long,String> hm=null;
 	
 	public String[] getPeaks(){
