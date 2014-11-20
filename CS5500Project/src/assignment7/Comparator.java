@@ -69,6 +69,9 @@ public class Comparator {
 	}
 
     private void fillHashMap(ArrayList<Audio> container) {
+    	if(containerHM==null){
+    		containerHM=new HashMap<Long, String> ();
+    	}
         for (Audio audioFile : container) {
             HashMap<Long, String> fileHashMap = audioFile.getHashMap();
             containerHM.putAll(fileHashMap);

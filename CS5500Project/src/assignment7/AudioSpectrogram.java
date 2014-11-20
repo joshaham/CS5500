@@ -60,8 +60,7 @@ public class AudioSpectrogram {
 				}
 				long hashKey=hashfp.gethash(peaks.toArray(new String[peaks.size()]));
 				int begSec=i*intervalMilSec;
-		        String hashValue = (songName + ";" + begSec + ";" + (begSec*intervalMilSec));
-		        
+		        String hashValue = songName + ";" + begSec + ";" + (begSec*intervalMilSec);
 		        hm.put(hashKey, hashValue);
 				
 			}
