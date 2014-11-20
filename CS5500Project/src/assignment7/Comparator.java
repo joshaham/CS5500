@@ -65,6 +65,7 @@ public class Comparator {
                         + song2[0] + " " 
                         + Double.parseDouble(song1[1])/1000 + " " 
                         + Double.parseDouble(song2[1])/1000);
+                break;
             }
         }
         
