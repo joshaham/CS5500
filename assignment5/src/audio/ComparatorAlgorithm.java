@@ -17,12 +17,13 @@ public class ComparatorAlgorithm {
 			squaredError += error;
 		}
 		
-		for(int frequency = 20;frequency <20000;frequency++){
-			int j = getIndexOfFrequency(frequency,file1);
-			double value1 = file1.frequenciesData[j];
-			System.out.println("Frequency: "+frequency +" amplitude: "+value1);
-		}
+//		for(int frequency = 20;frequency <20000;frequency++){
+//			int j = getIndexOfFrequency(frequency,file1);
+//			double value1 = file1.frequenciesData[j];
+//			System.out.println("Frequency: "+frequency +" amplitude: "+value1);
+//		}
 		meanSquaredError = squaredError / (indexFor20000Hz-indexFor20Hz);
+		System.out.println(meanSquaredError);
 		
 		return meanSquaredError;
 	}

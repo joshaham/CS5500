@@ -1,4 +1,4 @@
-package assignment7;
+package assignment8;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -99,13 +99,8 @@ public class Comparator {
             
             System.out.println("MATCH " + song1Name + " " 
                     + song2Name + " " 
-<<<<<<< HEAD
                     + song1Start/1000 + " "
                     + song2Start/1000);
-=======
-                    + song1Start + " "
-                    + song2Start + "\n");
->>>>>>> bdcbaa041459315f7796c94935e4fb828ccc26c5
         }
 	}
 

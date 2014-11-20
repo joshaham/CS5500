@@ -50,13 +50,13 @@ public class Comparator {
 			return false;
 		}
 		// time zone MSE method
-//		else{
-//			return TMSEMatch(file1,file2);
-//		}
-		// frequency zone MSE method
 		else{
-			return MSEMatch(file1,file2);
+			return TMSEMatch(file1,file2);
 		}
+		// frequency zone MSE method
+//		else{
+//			return MSEMatch(file1,file2);
+//		}
 		// Segment compare
 //		else{
 //			return SegmentMatch(file1,file2);
@@ -69,7 +69,7 @@ public class Comparator {
 	// time zone MSE compare
 	private static boolean TMSEMatch(Audio file1, Audio file2){
 		int meanSquaredError=ComparatorAlgorithm.calculateTMSE(file1, file2);
-//		System.out.println("TMSE: "+meanSquaredError);
+		System.out.println("TMSE: "+meanSquaredError);
 		return meanSquaredError < THRESHOLD;
 	}
 	// frequency zone MSE compare

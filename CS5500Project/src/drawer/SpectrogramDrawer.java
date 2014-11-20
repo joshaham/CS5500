@@ -50,36 +50,36 @@ public class SpectrogramDrawer {
 //
 //    }
     
-    public static void drawSpectrogram(String fileName,int[][] data){
-    	if(fileName.contains(".")){
-    		fileName=fileName.substring(0,fileName.indexOf('.'));
-    	}
-    	int frequencyRange=1000;
-    	int audioLength=data[0].length;
-    	System.out.println("Height: "+frequencyRange+", width:"+audioLength);
-    	BufferedImage  img =new BufferedImage(audioLength,frequencyRange,BufferedImage.TYPE_INT_BGR);
-    	for(int i=0;i<audioLength;i++){
-    		for(int j=0;j<frequencyRange;j++){
-    			int col=data[j][i];
-    		
-//    			col=16711680;
-    			//  RED GREEN BLUE
-    			img.setRGB(i, j,col);
-    		}
-    	}
-    	File f = new File(fileName+"Spectrogram.png");
-    	try {
-			ImageIO.write(img, "PNG", f);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }
+//    public static void drawSpectrogram(String fileName,int[][] data){
+//    	if(fileName.contains(".")){
+//    		fileName=fileName.substring(0,fileName.indexOf('.'));
+//    	}
+//    	int frequencyRange=1000;
+//    	int audioLength=data[0].length;
+//    	System.out.println("Height: "+frequencyRange+", width:"+audioLength);
+//    	BufferedImage  img =new BufferedImage(audioLength,frequencyRange,BufferedImage.TYPE_INT_BGR);
+//    	for(int i=0;i<audioLength;i++){
+//    		for(int j=0;j<frequencyRange;j++){
+//    			int col=data[j][i];
+//    		
+////    			col=16711680;
+//    			//  RED GREEN BLUE
+//    			img.setRGB(i, j,col);
+//    		}
+//    	}
+//    	File f = new File(fileName+"Spectrogram.png");
+//    	try {
+//			ImageIO.write(img, "PNG", f);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//    }
 
 
 
 
-	public static void drawSpectrogram(String fileName, AudioSpectrogram spectrogram) {
+	public static void drawSpectrogram(String fileName, assignment8.AudioSpectrogram spectrogram) {
     	if(fileName.contains(".")){
     		fileName=fileName.substring(0,fileName.indexOf('.'));
     	}
