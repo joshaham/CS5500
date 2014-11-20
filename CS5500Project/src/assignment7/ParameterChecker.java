@@ -61,7 +61,7 @@ class ParameterChecker{
 		
 		if(par2.equals("-f")){
 			if(!file2.endsWith(".wav") && !file2.endsWith(".mp3")) {
-				return Error.WRONGFILEFORMAT1;
+				return Error.WRONGFILEFORMAT2;
 			}
 		}else if(par2.equals("-d")){
 			
