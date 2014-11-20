@@ -199,7 +199,8 @@ public class FFT {
     System.out.println("Averaged " + (time/iter) + "ms per iteration");
   }
 
-  protected static void beforeAfter(FFT fft, double[] re, double[] im,String msg) {
+  protected static void beforeAfter(FFT fft, double[] re, double[] im,String msg) 
+  {
 	System.out.println(msg);
     System.out.println("Before: ");
     printReIm(re, im);

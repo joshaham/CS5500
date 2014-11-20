@@ -28,6 +28,9 @@ public class Assignment7 {
 		}
 		else if(parameter.trim().equals("-d")){
 			filePaths=new File(path).list();
+			if(filePaths==null){
+				filePaths=new String[0];
+			}
 			String[] tmp=new String[filePaths.length];
 			for(int i=0;i<tmp.length;i++){
 				tmp[i]=path+'/'+filePaths[i];

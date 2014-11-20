@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import drawer.SpectrogramDrawer;
+//import drawer.SpectrogramDrawer;
 
 // Audio class
 public  class Audio {
@@ -44,23 +44,10 @@ public  class Audio {
 			}
 			System.out.println(audio);
 			System.out.println(audio.getHashValue());
-			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),
-			audio.spectrogram);
-		}
-		
-//		String filePath2="A5/D2/y02.wav";
-//		String[] paths2=Assignment7.getFilePaths(filePath2, "-f");
-//		for(String path : paths2){
-//			Audio audio=null;
-//				audio = Audio.getInstance(path);
-//			if(audio==null){
-//				continue;
-//			}
-//			System.out.println(audio);
-//			System.out.println(audio.getHashValue());
 //			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),
 //			audio.spectrogram);
-//		}
+		}
+		
 
 	}
 	// Return hashvalue of fingerprint of this audio file
@@ -95,7 +82,8 @@ public  class Audio {
 		// remove standardPath in tmp directory
 		if(!fileStandardPath.equals(filePath)){
 			try {
-					p =java.lang.Runtime.getRuntime().exec("rm "+fileStandardPath);
+				String str="rm "+fileStandardPath;
+				p =java.lang.Runtime.getRuntime().exec(str);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -28,7 +28,6 @@ public class Comparator {
 			if(audio==null){
 				continue;
 			}
-//			System.out.println(audio.getFileName()+"  : hashvalue  "+audio.hashValue);
 			container.add(audio);
 		}
 	}
@@ -41,7 +40,8 @@ public class Comparator {
 		    fillHashMap(container1);
 		    Audio audioFile = container2.get(0);
 		    checkSong (audioFile);
-		} else { //check every file in container 1 against every file in container 2
+		} else { 
+			//check every file in container 1 against every file in container 2
 		    fillHashMap(container2);
 		    for (Audio audioFile : container1) {
 		        checkSong(audioFile);

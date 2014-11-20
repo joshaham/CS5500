@@ -24,6 +24,13 @@ public class Hashfp {
 		}
 		
 		quicksort(times);
+		long base=times[0];
+		for(int i=0;i<times.length;i++){
+			if(Audio.DEBUG && times[i]<base){
+				System.out.println("BUG");
+			}
+			times[i]=times[i]-base;
+		}
 		sum += get_deltas_sum(times, n);
 		return FNV1a(sum);
 		
