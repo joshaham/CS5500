@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import drawer.SpectrogramDrawer;
+//import drawer.SpectrogramDrawer;
 
 // Audio class
 public  class Audio {
@@ -35,7 +35,7 @@ public  class Audio {
 	// for test
 	public static void main(String[] args){
 		String filePath="A5/D1/sons2.wav";
-		String[] paths=Assignment7.getFilePaths(filePath, "-f");
+		String[] paths=Assignment8.getFilePaths(filePath, "-f");
 		for(String path : paths){
 			Audio audio=null;
 				audio = Audio.getInstance(path);
@@ -43,12 +43,12 @@ public  class Audio {
 				continue;
 			}
 			System.out.println(audio);
-			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),
-			audio.spectrogram);
+//			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),
+//			audio.spectrogram);
 		}
 		
 		filePath="A5/D2/sons.wav";
-		paths=Assignment7.getFilePaths(filePath, "-f");
+		paths=Assignment8.getFilePaths(filePath, "-f");
 		for(String path : paths){
 			Audio audio=null;
 				audio = Audio.getInstance(path);
@@ -56,8 +56,8 @@ public  class Audio {
 				continue;
 			}
 			System.out.println(audio);
-			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),
-			audio.spectrogram);
+//			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),
+//			audio.spectrogram);
 		}
 		
 
@@ -76,101 +76,106 @@ public  class Audio {
 		// convert audio file to standard format if not,
 		// return the file path of standard format file.
 		// return null, if filePath is not audio file
-		String fileStandardPath = 
-				Convert2StandardFormat.standardFormat(filePath);
-		if(fileStandardPath==null){
+		String fileCanonicalPath = 
+				Convert2StandardFormat.Convert2CanonicalFormat(filePath);
+		if(fileCanonicalPath==null){
 			return null;
 		}
-		audio=getInstanceHelper(fileStandardPath,filePath);
-		return audio;
-	}
-	
-	
-	// change filename if in need
-	private static Audio getInstanceHelper(String fileStandardPath,
-			String filePath){
-		Process p = null;
-		Audio audio=checkAndGetInstance(fileStandardPath,filePath);
-		// remove standardPath in tmp directory
-		if(!fileStandardPath.equals(filePath)){
-			try {
-				String str="rm "+fileStandardPath;
-				p =java.lang.Runtime.getRuntime().exec(str);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			synchronized(p){
-				try {
-					p.wait(3000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		return audio;
-	}
-
-	// check file format and return audio instance if correct
-	private static Audio checkAndGetInstance(String standardFilePath,
-			String actualPath)
-	{
-
-		String[] strs = actualPath.split("/");
-		String fileName=strs[strs.length-1];
-		File file = new File(standardFilePath);
+		String fileName=getActualName(filePath);
+		File file = new File(fileCanonicalPath);
 		if(!file.exists() || !file.isFile()){
-			System.err.println("ERROR: File does not exist, "+actualPath);
 			return null;
 		}
 		byte[] fileArray=readFile2ByteArray(file);
+		audio = new Audio(fileArray,fileName);
+		if(!filePath.equals(fileCanonicalPath)){
+			removeCanonicalPath(fileCanonicalPath);
+		}
+		return audio;
+	}
+	
+	private static void removeCanonicalPath(String fileCanonicalPath) {
+		Process p=null;
+		try {
+			String str="rm "+fileCanonicalPath;
+			p =java.lang.Runtime.getRuntime().exec(str);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		synchronized(p){
+			try {
+				p.wait(3000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	private static String getActualName( String filePath){
+		String[] strs = filePath.split("/");
+		String fileName=strs[strs.length-1];
+		return fileName;
+	}
+	
+	
+	private Audio(byte[] fileArray,String fileName){
 		byte[] dataheader=Arrays.copyOfRange(fileArray, 0, 44);
 		AudioHeader header=
 				AudioHeader.getInstance(fileName,dataheader,
 						fileArray.length-44);
-		if(header==null){
-			System.err.println("File does not match CD specification: " 
-		+ strs[strs.length-1]);
-			return null;
-		}
-		return new Audio(header,fileArray);
-	}
-	
-	
-	protected Audio(AudioHeader header,byte[] fileArray){
 		this.header=header;
 		this.fileArray=fileArray;
+		
+		double[] datas=getScaledDataForFFTCalculate(fileArray,header);
+//		this.dualChannelSamples=getChannelSamples(fileArray,header);
+		spectrogram=new AudioSpectrogram(datas,this.header);
+	}
+	
+	// return scaled data for fft transform [-1,+1]
+	public double[] getScaledDataForFFTCalculate(byte[] fileArray,AudioHeader header){
+		double[] datas=null;
 		byte[] oneChannel;
 		byte[] fileLeftChannel;
 		byte[] fileRightChannel;
-		
-		double[] datas=null;
 		if(header.getNumChannels()==1){
 			oneChannel=extractMonoChannel(header.getBitesPerSecond());
 			datas = monoConvert2Doubles(oneChannel,header.getBitesPerSecond());
-			dualChannelSamples=
+		}else{
+			fileLeftChannel=extractLeftChannels(header.getBitesPerSecond());
+			fileRightChannel=extractRightChannels(header.getBitesPerSecond());
+			datas = StereoConvert2Doubles(fileLeftChannel,fileRightChannel,
+							header.getBitesPerSecond());
+		}
+		return datas;
+	}
+	// return unscaled data for fft transform
+	public double[] getChannelSamples(byte[] fileArray,AudioHeader header){
+		double[] channelSamples=null;
+		byte[] oneChannel;
+		byte[] fileLeftChannel;
+		byte[] fileRightChannel;
+		if(header.getNumChannels()==1){
+			oneChannel=extractMonoChannel(header.getBitesPerSecond());
+			channelSamples=
 					convertToDouble(oneChannel,header.getBitesPerSecond());
 		}else{
 			fileLeftChannel=extractLeftChannels(header.getBitesPerSecond());
 			fileRightChannel=extractRightChannels(header.getBitesPerSecond());
-			datas = 
-					StereoConvert2Doubles(
-							fileLeftChannel,fileRightChannel,
-							header.getBitesPerSecond());
+
 			double[] leftShort=
 					convertToDouble(fileLeftChannel,
 							header.getBitesPerSecond());
 			double[] rightShort=
 					convertToDouble(fileRightChannel,
 							header.getBitesPerSecond());
-			dualChannelSamples=new double[leftShort.length];
+			channelSamples=new double[leftShort.length];
 			for(int i=0;i<leftShort.length;i++){
-				dualChannelSamples[i]=leftShort[i]/2+rightShort[i]/2;
+				channelSamples[i]=leftShort[i]/2+rightShort[i]/2;
 			}
 		}
-		spectrogram=new AudioSpectrogram(this.dualChannelSamples,
-				datas,this.header);
+		return channelSamples;
 	}
 
 	
@@ -293,7 +298,7 @@ public  class Audio {
 	}
 
 	// read file to array
-	private static byte[] readFile2ByteArray(File file){
+	static byte[] readFile2ByteArray(File file){
 		byte[] fileArray=null;
 		try{
 			InputStream inputStream = new FileInputStream(file);

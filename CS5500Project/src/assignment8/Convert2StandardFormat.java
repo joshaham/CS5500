@@ -1,6 +1,8 @@
 package assignment8;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 /**
  * Convert all the audio files to standard format:
  * : wav format
@@ -12,22 +14,26 @@ import java.io.IOException;
 public class Convert2StandardFormat {
 	
 	static int count=0;
-	public static String standardFormat(String filePath){
+	// GIVEN: a file path
+	// RETURN: the path of the canonical file or null 
+	public static String Convert2CanonicalFormat(String filePath){
 		String formatFile = filePath;
 		if(filePath.endsWith(".mp3")){
 			formatFile=convertFromMp3ToWav(filePath);
 		}
+		// check wav header
 		else if(filePath.endsWith(".wav")){
-			// to be implemented
-			// standard sample rate, 16 bite per sample
-			String fileWav="/tmp/assignment7Sanguoyanyi" + (count++)+".wav";
-			String cmd="cp "+filePath+" "+fileWav;
-			Process p=null;
-			try {
-				p = java.lang.Runtime.getRuntime().exec(cmd);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			File file = new File(filePath);
+			if(!file.exists() || !file.isFile()){
+				return null;
+			}
+			byte[] fileArray=Audio.readFile2ByteArray(file);
+			byte[] dataheader=Arrays.copyOfRange(fileArray, 0, 44);
+			AudioHeader header=
+					AudioHeader.getInstance(filePath,dataheader,
+							fileArray.length-44);
+			if(header==null){
+				return null;
 			}
 		}else{
 			if(Audio.DEBUG){

@@ -95,8 +95,7 @@ public class AudioSpectrogram {
 
 
 	
-	public AudioSpectrogram(double[] dualChannelSamples, 
-			double[] datas, AudioHeader header){
+	public AudioSpectrogram(double[] datas, AudioHeader header){
 		int windowSize = WINDOW_SIZE;
 		double overlapRatio = OVERLAP_RATIO;
 		int ampMin=AMP_MIN;

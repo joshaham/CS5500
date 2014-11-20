@@ -4,10 +4,10 @@ import java.io.File;
 /* 
  * Copy right: Moses Gonzalez, Joshua Shaham, Zhuoli Liang
  * 
- *  Assignment 7 for CS5500 @ Northeastern University
+ *  Assignment 8 for CS5500 @ Northeastern University
  */
 
-public class Assignment7 {
+public class Assignment8 {
 	public static void main(String[] args) {		
 		if(!ParameterChecker.CheckFormat(args)){
 			System.exit(-1);

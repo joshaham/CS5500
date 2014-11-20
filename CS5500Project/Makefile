@@ -1,5 +1,5 @@
 default:
-	javac -d ./bin ./src/assignment7/*.java
+	javac -d ./bin ./src/assignment8/*.java
 draw:
 	javac -d bin -classpath ./lib/jmathplot.jar -sourcepath src/drawer src/comparator/*.java
 clean:
