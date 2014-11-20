@@ -1,7 +1,11 @@
 package assignment7;
 
 import java.io.File;
-
+/* 
+ * Copy right: Moses Gonzalez, Joshua Shaham, Zhuoli Liang
+ * 
+ *  Assignment 7 for CS5500 @ Northeastern University
+ */
 
 public class Assignment7 {
 	public static void main(String[] args) {		
@@ -15,7 +19,7 @@ public class Assignment7 {
 	}
 	
 
-	
+	// Return a list of file paths
 	public static String[] getFilePaths(String path, String parameter){
 		String[] filePaths=null;
 		if(parameter.trim().equals("-f")){

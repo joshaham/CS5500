@@ -53,6 +53,7 @@ public class Comparator {
         HashMap<Long, String> fileHashMap = audioFile.getHashMap();
         
         for (long key : fileHashMap.keySet()) {
+//        	System.out.println(key+"  -> "+fileHashMap.get(key));
             if (containerHM.containsKey(key)) {
                 String firstSong = fileHashMap.get(key);
                 String secondSong = containerHM.get(key);
@@ -66,6 +67,12 @@ public class Comparator {
                         + Double.parseDouble(song2[1])/1000);
             }
         }
+        
+//        System.out.println("\n\n");
+//        for(long key : containerHM.keySet()){
+//        	System.out.println(key+"  -> "+containerHM.get(key));
+//        	
+//        }
 	}
 
     private void fillHashMap(ArrayList<Audio> container) {

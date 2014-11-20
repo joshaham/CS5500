@@ -4,18 +4,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 //import drawer.SpectrogramDrawer;
 
-//import drawer.SpectrogramDrawer;
-
-
-
-// Audio class 
+// Audio class
 public  class Audio {
 	static boolean DEBUG=true;
 	AudioHeader header;
@@ -51,7 +45,6 @@ public  class Audio {
 //			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),audio.spectrogram);
 		}
 		
-
 		String filePath2="A5/D2";
 		String[] paths2=Assignment7.getFilePaths(filePath2, "-d");
 		for(String path : paths2){
