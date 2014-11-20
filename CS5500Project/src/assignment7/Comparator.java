@@ -74,33 +74,33 @@ public class Comparator {
                 double song1Start = Double.parseDouble(song1[1]);
                 double song2Start = Double.parseDouble(song2[1]);
                 double[] songMatchStarts = new double[2];
+                String song2Name = song2[0];
                 songMatchStarts[0] = song1Start;
                 songMatchStarts[1] = song2Start;
                 
-                if(matches.containsKey(song2[0])) {
-                    double storedSong1Start = matches.get(song2[0])[0];
-                    double storedSong2Start = matches.get(song2[0])[1];
+                if(matches.containsKey(song2Name)) {
+                    double storedSong1Start = matches.get(song2Name)[0];
+                    double storedSong2Start = matches.get(song2Name)[1];
                     
                     if (song1Start < storedSong1Start ||
                             song2Start < storedSong2Start) {
-                        matches.put(song2[0], songMatchStarts);
+                        matches.put(song2Name, songMatchStarts);
                     }
                 } else {
-                    matches.put(song2[0], songMatchStarts);
+                    matches.put(song2Name, songMatchStarts);
                 }
             }
+        }
+        
+        for (String matchKey : matches.keySet()) {
+            String song2Name = matchKey;
+            double song1Start = matches.get(matchKey)[0];
+            double song2Start = matches.get(matchKey)[1];
             
-            for (String matchKey : matches.keySet()) {
-                String song2Name = matchKey;
-                double song1Start = matches.get(matchKey)[0];
-                double song2Start = matches.get(matchKey)[1];
-                
-                System.out.println("MATCH " + song1Name + " " 
-                        + song2Name + " " 
-                        + song1Start + " "
-                        + song2Start + "\n");
-            }
-            
+            System.out.println("MATCH " + song1Name + " " 
+                    + song2Name + " " 
+                    + song1Start/1000 + " "
+                    + song2Start/1000 + "\n");
         }
 	}
 
