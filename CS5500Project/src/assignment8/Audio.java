@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 // Audio class
 public  class Audio {
-	static boolean DEBUG=false;
+	static boolean DEBUG=true;
 	AudioHeader header;
 	AudioSpectrogram spectrogram;
 	byte[] fileArray;
@@ -84,9 +84,9 @@ public  class Audio {
 						fileArray.length-44);
 		this.header=header;
 		this.fileArray=fileArray;
-		
+
 		double[] datas=getScaledDataForFFTCalculate(fileArray,header);
-//		this.dualChannelSamples=getChannelSamples(fileArray,header);
+		this.dualChannelSamples=getChannelSamples(fileArray,header);
 		spectrogram=new AudioSpectrogram(datas,this.header);
 		hm = spectrogram.getBinHashMap(getFileName(),songSampleSize);
 	}
@@ -296,7 +296,7 @@ public  class Audio {
 	
 	// for test
 	public static void main(String[] args){
-		String filePath="A5/D1/sons2.wav";
+		String filePath="A5/D1/curieuse2.wav";
 		String[] paths=Assignment8.getFilePaths(filePath, "-f");
 		for(String path : paths){
 			Audio audio=null;
@@ -309,7 +309,7 @@ public  class Audio {
 //			audio.spectrogram);
 		}
 		
-		filePath="A5/D2/sons.wav";
+		filePath="A5/D2/curieuse.wav";
 		paths=Assignment8.getFilePaths(filePath, "-f");
 		for(String path : paths){
 			Audio audio=null;

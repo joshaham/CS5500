@@ -40,6 +40,7 @@ public class Comparator {
 			eservice.awaitTermination(10, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
 		}
+//	      eservice.shutdownNow();
 	      Double secs = new Double((new java.util.Date().getTime() - begTest)*0.001);
 	      System.out.println("run time " + secs + " secs");
 	}

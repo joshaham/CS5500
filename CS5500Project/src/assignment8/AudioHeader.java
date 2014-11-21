@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 public class AudioHeader {
-	static boolean DEBUG=true;
+	static boolean DEBUG=Audio.DEBUG;
 	String fileName;
 
 	String format;

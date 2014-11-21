@@ -16,6 +16,7 @@ public class Assignment8 {
 		String[] paths2=getFilePaths(args[3],args[2]);
 		Comparator comparator = new Comparator(paths1,paths2);
 		comparator.compare();
+		System.exit(0);
 	}
 	
 
