@@ -2,12 +2,10 @@ package assignment8Energy;
 
 import java.io.File;
 /* 
- * Copy right: Moses Gonzalez, Joshua Shaham, Zhuoli Liang
- * 
- *  Assignment 8 for CS5500 @ Northeastern University
+ *  THIS IS JUST A TEST VERSION COMPARING ON TIME DOMAIN!!!
  */
 
-public class Assignment8 {
+public class TEST_VERSION {
 	public static void main(String[] args) {		
 		if(!ParameterChecker.CheckFormat(args)){
 			System.exit(-1);

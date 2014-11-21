@@ -153,7 +153,7 @@ public  class Audio {
 	// for test
 	public static void main(String[] args){
 		String filePath="A5/D1/sons2.wav";
-		String[] paths=Assignment8.getFilePaths(filePath, "-f");
+		String[] paths=TEST_VERSION.getFilePaths(filePath, "-f");
 		for(String path : paths){
 			Audio audio=null;
 				audio = Audio.getInstance(path);
