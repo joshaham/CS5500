@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 // Audio class
 public  class Audio {
-	static boolean DEBUG=true;
+	static boolean DEBUG=false;
 	AudioHeader header;
 	AudioSpectrogram spectrogram;
 	byte[] fileArray;
@@ -21,61 +21,18 @@ public  class Audio {
 	int songSampleSize = 5;
 	HashMap<Long,String> hm=null;
 	
-	public String[] getPeaks(){
-		return spectrogram.getLocalPeaks();
-	}
 	// return HashValue array, 
 	// the index of array represent the corresponding time slot of each bin
 	public HashMap<Long,String> getHashMap(){
-		if(hm==null){
-			hm = spectrogram.getBinHashMap(getFileName(),songSampleSize);
-		}
+//		if(hm==null){
+//			hm = spectrogram.getBinHashMap(getFileName(),songSampleSize);
+//		}
 		return hm;
 	}
-	// for test
-	public static void main(String[] args){
-		String filePath="A5/D1/sons2.wav";
-		String[] paths=Assignment8.getFilePaths(filePath, "-f");
-		for(String path : paths){
-			Audio audio=null;
-				audio = Audio.getInstance(path);
-			if(audio==null){
-				continue;
-			}
-			System.out.println(audio);
-//			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),
-//			audio.spectrogram);
-		}
-		
-		filePath="A5/D2/sons.wav";
-		paths=Assignment8.getFilePaths(filePath, "-f");
-		for(String path : paths){
-			Audio audio=null;
-				audio = Audio.getInstance(path);
-			if(audio==null){
-				continue;
-			}
-			System.out.println(audio);
-//			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),
-//			audio.spectrogram);
-		}
-		
 
-	}
-	// Return hashvalue of fingerprint of this audio file
-	private String getHashValue() {
-		if(this.hashValue==0){
-			this.hashValue=Hashfp.gethash(spectrogram.getLocalPeaks());
-		}
-		return "FileName: "+ this.getFileName()+"   hashvalue: "
-		+this.hashValue;
-	}
 	// Return instance of Audio
 	public static Audio getInstance(String filePath){
 		Audio audio=null;
-		// convert audio file to standard format if not,
-		// return the file path of standard format file.
-		// return null, if filePath is not audio file
 		String fileCanonicalPath = 
 				Convert2StandardFormat.Convert2CanonicalFormat(filePath);
 		if(fileCanonicalPath==null){
@@ -131,6 +88,7 @@ public  class Audio {
 		double[] datas=getScaledDataForFFTCalculate(fileArray,header);
 //		this.dualChannelSamples=getChannelSamples(fileArray,header);
 		spectrogram=new AudioSpectrogram(datas,this.header);
+		hm = spectrogram.getBinHashMap(getFileName(),songSampleSize);
 	}
 	
 	// return scaled data for fft transform [-1,+1]
@@ -143,8 +101,9 @@ public  class Audio {
 			oneChannel=extractMonoChannel(header.getBitesPerSecond());
 			datas = monoConvert2Doubles(oneChannel,header.getBitesPerSecond());
 		}else{
-			fileLeftChannel=extractLeftChannels(header.getBitesPerSecond());
-			fileRightChannel=extractRightChannels(header.getBitesPerSecond());
+			fileLeftChannel= new byte[(fileArray.length - 44) / 2];
+			fileRightChannel=new byte[(fileArray.length - 44) / 2];
+			extractBothChannels(header.getBitesPerSecond(),this.fileArray,fileLeftChannel,fileRightChannel);
 			datas = StereoConvert2Doubles(fileLeftChannel,fileRightChannel,
 							header.getBitesPerSecond());
 		}
@@ -161,8 +120,9 @@ public  class Audio {
 			channelSamples=
 					convertToDouble(oneChannel,header.getBitesPerSecond());
 		}else{
-			fileLeftChannel=extractLeftChannels(header.getBitesPerSecond());
-			fileRightChannel=extractRightChannels(header.getBitesPerSecond());
+			fileLeftChannel= new byte[(fileArray.length - 44) / 2];
+			fileRightChannel=new byte[(fileArray.length - 44) / 2];
+			extractBothChannels(header.getBitesPerSecond(),this.fileArray,fileLeftChannel,fileRightChannel);
 
 			double[] leftShort=
 					convertToDouble(fileLeftChannel,
@@ -179,49 +139,26 @@ public  class Audio {
 	}
 
 	
-
-	//Extract left channel bytes
-	// GIVEN: nums of channel, bites per sample
-	 byte[] extractLeftChannels(int bps) {
-		// subtract 44 head bytes, divide by numsOfChannel leaving one channel
-		byte[] fileLeftChannel = new byte[(fileArray.length - 44) / 2];
+	void extractBothChannels(int bps,byte[]fileArray, byte[]fileLeftChannel, byte[] fileRightChannel){
+		int base=44;
 		if(bps==16){
-			for(int i=0;i<fileLeftChannel.length/2;i++){
-				fileLeftChannel[i*2]=fileArray[44+i*2*2];
-				fileLeftChannel[i*2+1]=fileArray[44+i*2*2+1];
+			for(int i=0;i<(fileArray.length-44)/4;i++){
+				fileLeftChannel[i*2]=fileArray[base+i*4+0];
+				fileLeftChannel[i*2+1]=fileArray[base+i*4+1];
+				fileRightChannel[i*2]=fileArray[base+i*4+2];
+				fileRightChannel[i*2+1]=fileArray[base+i*4+3];
 			}
 		}else if(bps==8){
-			for(int i=0;i<fileLeftChannel.length;i++){
-				fileLeftChannel[i]=fileArray[44+i*2];
+			for(int i=0;i<(fileArray.length-44)/2;i++){
+				fileLeftChannel[i]=fileArray[base+i*2+0];
+				fileRightChannel[i]=fileArray[base+i*2+1];
 			}
 		}else{
 			if(DEBUG){
 				System.err.println(
 						"ERROR: incorrect bps in extractLeftChannels "+bps);}
-			return null;
+			System.exit(1);
 		}
-		return fileLeftChannel;
-	}
-	byte[] extractRightChannels(int bps){
-		// subtract 44 head bytes, divide by numsOfChannel leaving one channel
-		byte[] fileLeftChannel = new byte[(fileArray.length - 44) / 2];
-		if(bps==16){
-			for(int i=0;i<fileLeftChannel.length/2;i++){
-				fileLeftChannel[i*2]=fileArray[44+i*2*2+2];
-				fileLeftChannel[i*2+1]=fileArray[44+i*2*2+3];
-			}
-		}else if(bps==8){
-			for(int i=0;i<fileLeftChannel.length;i++){
-				fileLeftChannel[i]=fileArray[44+i*2+1];
-			}
-		}else{
-			if(DEBUG){
-				System.err.println(
-						"ERROR: incorrect bps in extractLeftChannels "+bps);}
-			return null;
-		}
-		return fileLeftChannel;
-		
 	}
 	 byte[] extractMonoChannel(int bps){
 		 return Arrays.copyOfRange(fileArray, 44, fileArray.length);
@@ -351,9 +288,41 @@ public  class Audio {
 	}
 	@Override
 	public int hashCode(){
+		if(this.hashValue==0){
+			this.hashValue=Hashfp.gethash(spectrogram.getLocalPeaks());
+		}
 		return (int) this.hashValue;
 	}
 	
+	// for test
+	public static void main(String[] args){
+		String filePath="A5/D1/sons2.wav";
+		String[] paths=Assignment8.getFilePaths(filePath, "-f");
+		for(String path : paths){
+			Audio audio=null;
+				audio = Audio.getInstance(path);
+			if(audio==null){
+				continue;
+			}
+			System.out.println(audio);
+//			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),
+//			audio.spectrogram);
+		}
+		
+		filePath="A5/D2/sons.wav";
+		paths=Assignment8.getFilePaths(filePath, "-f");
+		for(String path : paths){
+			Audio audio=null;
+				audio = Audio.getInstance(path);
+			if(audio==null){
+				continue;
+			}
+			System.out.println(audio);
+//			SpectrogramDrawer.drawSpectrogram(audio.getFileName(),
+//			audio.spectrogram);
+		}
+		
 
+	}
 
 }

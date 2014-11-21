@@ -2,6 +2,9 @@ package assignment7;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import assignment8.Audio;
 /**
@@ -9,6 +12,8 @@ import assignment8.Audio;
  * @author zhuoli
  * @purpose: comparator containers, 
  */
+
+
 public class Comparator {
 	ArrayList<Audio> container1=null;
 	ArrayList<Audio> container2=null;
@@ -33,7 +38,7 @@ public class Comparator {
 			container.add(audio);
 		}
 	}
-	
+
 	// compare all the files in each container against each other
 	public void compare(){
 		//special case when the second container only has 1 file, indicating
@@ -116,5 +121,25 @@ public class Comparator {
         }   
     }
 
+}
+
+class ContainerThread implements Runnable{
+	ArrayList<Audio> container;
+	String file;
+	public ContainerThread(ArrayList<Audio> container, String file){
+		this.container=container;
+		this.file=file;
+	}
+	@Override
+	public void run(){
+		synchronized(this.container){
+			Audio audio=null;
+			audio = Audio.getInstance(file);
+			if(audio!=null){
+				container.add(audio);
+			}
+		}
+		System.out.println(this.file);
+	}
 }
 	

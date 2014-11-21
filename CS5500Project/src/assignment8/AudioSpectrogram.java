@@ -47,7 +47,7 @@ public class AudioSpectrogram {
 	Set<String> localPeaks=null;
 	private String[] peaks=null;
 	
-	
+	// return hashvalues of bins to Comparator.compare for compare and match
 	public HashMap<Long,String> getBinHashMap(String songName,
 			int songSampleSize){
 		if(hm==null){

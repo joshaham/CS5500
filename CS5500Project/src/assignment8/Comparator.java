@@ -2,11 +2,16 @@ package assignment8;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 /**
  * 
  * @author zhuoli
  * @purpose: comparator containers, 
  */
+
+
 public class Comparator {
 	ArrayList<Audio> container1=null;
 	ArrayList<Audio> container2=null;
@@ -17,19 +22,26 @@ public class Comparator {
 	public Comparator(String[] files1,String[] files2){
 		container1=new ArrayList<Audio>();
 		container2=new ArrayList<Audio>();
-		fillContainer(container1,files1);
-		fillContainer(container2,files2);
+		fillContainerWithMultiThreads(container1,files1);
+		fillContainerWithMultiThreads(container2,files2);
 	}
 	
-	private void fillContainer(ArrayList<Audio> container,String[] files){
-		for(String file : files){
-			Audio audio=null;
-			audio = Audio.getInstance(file);
-			if(audio==null){
-				continue;
-			}
-			container.add(audio);
+	// utilize moltile-core process to fill container faster
+	private void fillContainerWithMultiThreads(ArrayList<Audio> container,String[] files){
+	      long begTest = new java.util.Date().getTime();
+	      int nrOfProcessors = Runtime.getRuntime().availableProcessors();
+	      ExecutorService eservice = Executors.newFixedThreadPool(nrOfProcessors);
+
+	      for(String file : files){
+	    	  eservice.execute(new ContainerThread(container,file));
+	      }
+	      eservice.shutdown();
+	      try {
+			eservice.awaitTermination(10, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
 		}
+	      Double secs = new Double((new java.util.Date().getTime() - begTest)*0.001);
+	      System.out.println("run time " + secs + " secs");
 	}
 	
 	// compare all the files in each container against each other
@@ -114,5 +126,24 @@ public class Comparator {
         }   
     }
 
+}
+
+class ContainerThread  implements Runnable {
+	ArrayList<Audio> container;
+	String file;
+	public ContainerThread(ArrayList<Audio> container, String file){
+		this.container=container;
+		this.file=file;
+	}
+	@Override
+	public void run() {
+			Audio audio=null;
+			audio = Audio.getInstance(file);
+			if(audio!=null){
+				synchronized(this.container){
+					container.add(audio);
+				}
+			}
+	}
 }
 	
