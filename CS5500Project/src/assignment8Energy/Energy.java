@@ -4,30 +4,49 @@ import java.util.HashMap;
 
 public class Energy {
 	static double overlapRatio=0.9;
-	long[] energyArray=null;
+	int[][] data=null;
+	int[] aveChannel=null;
+	int[] hashvaluePerSecond=null;
+	public int[] getHashvaluePerSecond() {
+		return hashvaluePerSecond;
+	}
+	double[] daveChannel=null;
 	AudioHeader header=null;
-	public Energy(byte[] array, AudioHeader header){
-		this.header=header;
-		int base=44;
-		int binsPerSecond=(int) (1/(1-overlapRatio));
-		energyArray=new long[header.audioLength*binsPerSecond];
-		for(int i=0;i<energyArray.length-binsPerSecond;i++){
-			long sum=0;
-			for(int idx=0;idx<header.sampleRate;idx++){
-				int start=(int) (base+i*(1-overlapRatio)*header.sampleRate+idx);
-				int l=array[start]+array[start+1]<<8;
-				int r=array[start+2]+array[start+3]<<8;
-				sum+=l/255+r/255;
-				if(idx%30==0){
-					System.out.println();
-				}
-				System.out.format("%4d",l/255);
-				System.out.format("%4d",r/255);
-
-			}
-			energyArray[i]=sum;
+	
+	public double[] getEnergyDoubleArray() {
+		return daveChannel;
+	}
+	public double[] getHashValuePerSecondForDouble(){
+		double[] ret=new double[hashvaluePerSecond.length];
+		for(int i=0;i<ret.length;i++){
+			ret[i]=hashvaluePerSecond[i];
+			System.out.format(" %8d",hashvaluePerSecond[i]);
 		}
-
+		System.out.println();
+		return ret;
+	}
+	public Energy(int[][] data, AudioHeader header){
+		int samplesPerSecond=(int) (1/(1-overlapRatio));
+		this.header=header;
+		this.data=data;
+		this.aveChannel=new int[this.data[0].length];
+		this.daveChannel=new double[this.data[0].length];
+		this.hashvaluePerSecond=new int[(daveChannel.length/header.sampleRate)*samplesPerSecond];
+		for(int i=0;i<data[0].length;i++){
+			int ave=0;
+			for(int ch=0;ch<header.numChannels;ch++){
+				ave+=data[ch][i];
+			}
+			aveChannel[i]=ave/data.length;
+			daveChannel[i]=aveChannel[i];
+		}
+		for(int i=0;i<hashvaluePerSecond.length-samplesPerSecond;i++){
+			int tmp=0;
+			for(int k=i*header.sampleRate/samplesPerSecond;k<i*header.sampleRate/samplesPerSecond+header.sampleRate;k++){
+				tmp+=this.aveChannel[k];
+			}
+			hashvaluePerSecond[i]=tmp;
+		}
 	}
 	
 //	@Override
@@ -61,7 +80,7 @@ public class Energy {
 		for(int i=0;i<header.audioLength-songSampleSize;i++){
 			long hashKey=0;
 			for(int k=0;k<songSampleSize;k++){
-				hashKey+=energyArray[i+k];
+				hashKey+=this.hashvaluePerSecond[i+k];
 			}
 			hashKey=this.round(hashKey, 100);
 			String hashValue=fileName+";"+i*1000+";"+(i+songSampleSize)*1000;

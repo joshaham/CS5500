@@ -1,32 +1,42 @@
-package assignment8Energy;
+package assignment8New;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.util.HashMap;
 
-import drawer.JmathplotLineGraph;
+//import drawer.JmathplotLineGraph;
+
+
+//import drawer.SpectrogramDrawer;
 
 // Audio class
 public  class Audio {
 	static boolean DEBUG=true;
 	public String filename = null;
 	private int[][] data = null;
-	private Energy energy=null;
 
 	AudioHeader header=null;
 	private BufferedInputStream bis = null;
+	// bin size
+	int songSampleSize = 5;
+	HashMap<Long,String> hm=null;
+	AudioSpectrogram spectrogram=null;
 	
-	public int[] getHashValuePerSecondWithOverlap(){
-		return energy.getHashvaluePerSecond();
+	public HashMap<Long, String> getHashMap() {
+		return hm;
 	}
-	
 	public double[] getChannelSamplesForFFT(){
 		double[] ret=new double[this.data[0].length];
 		for(int i=0;i<ret.length;i++){
-			ret[i]=(this.data[0][i]+this.data[1][i])/2;
+			ret[i]=0;
+			for(int ch=0;ch<header.numChannels;ch++){
+				ret[i] += this.data[ch][i];
+			}
+			ret[i]=ret[i]/header.numChannels;
+			ret[i]=ret[i]/32768.0;
 		}
 		return ret;
 	}
@@ -59,7 +69,9 @@ public  class Audio {
 				if (fis != null)
 					fis.close();
 			} catch (Exception e1) {
-				e1.printStackTrace();
+				if(Audio.DEBUG){
+					e1.printStackTrace();
+				}
 			}
 		}
 		if(!filePath.equals(fileCanonicalPath)){
@@ -96,31 +108,12 @@ public  class Audio {
 	public Audio(BufferedInputStream bis, String fileCanonicalPath, String fileName) {
 		this.bis=bis;
 		this.filename = fileName;
-		byte[] fileArray=readFile2ByteArray(new File(fileCanonicalPath));
-		byte[] dataheader=Arrays.copyOfRange(fileArray, 0, 44);
-		this.header = AudioHeader.getInstance(fileName,dataheader,fileArray.length-44);
-		
-		readString(WaveConstants.LENCHUNKDESCRIPTOR);
-		readLong();
-		readString(WaveConstants.LENWAVEFLAG);
-
-		readString(WaveConstants.LENFMTSUBCHUNK);
-		readLong();
-		readInt();
-		readInt();
-		readLong();
-		readLong();
-		readInt();
-		readInt();
-		readString(WaveConstants.LENDATASUBCHUNK);
-		readLong();
-
-
-		this.data = new int[this.header.numChannels][(fileArray.length-44)/(header.numChannels*header.bitePerSample/8)];
+		this.header=new AudioHeader(bis,fileName);
+		this.data = new int[this.header.numChannels][header.getLen()];
 
 		// read channel data
 		for (int i = 0; i < this.data[0].length; ++i) {
-			for (int n = 0; n < header.getNumChannels(); ++n) {
+			for (int n = 0; n < header.numChannels; ++n) {
 				if (header.bitePerSample == 8) {
 					try {
 						this.data[n][i] = bis.read();
@@ -131,12 +124,13 @@ public  class Audio {
 				} else if (header.bitePerSample == 16) {
 					this.data[n][i] = this.readInt();
 				}
-//				System.out.println(this.data[n][i] );
 			}
 		}
+		
+		double[] d=this.getChannelSamplesForFFT();
+	    spectrogram = new AudioSpectrogram(d,this.header);
+		hm = spectrogram.getBinHashMap(this.filename,songSampleSize);
 
-
-		energy=new Energy(this.data,header);
 	}
 
 
@@ -206,10 +200,10 @@ public  class Audio {
 	}
 
 	public static void main(String[] args){
-		Audio reader = Audio.getInstance("A5/D2/sons.wav");
-		JmathplotLineGraph.plot2d(reader.filename,reader.energy.getHashValuePerSecondForDouble());
-		reader = Audio.getInstance("A5/D1/sons2.wav");
-		JmathplotLineGraph.plot2d(reader.filename,reader.energy.getHashValuePerSecondForDouble());
+		Audio reader = Audio.getInstance("A5/D1/maynard.wav");
+//		JmathplotLineGraph.plot2d(reader.filename,reader.getChannelSamplesForFFT());
+//		reader = Audio.getInstance("A5/D1/sons2.wav");
+//		JmathplotLineGraph.plot2d(reader.filename,reader.energy.getHashValuePerSecond());
 	}
 
 

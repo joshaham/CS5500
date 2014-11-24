@@ -9,7 +9,7 @@ public class AudioHeader {
 
 	String format;
 	int sampleRate;
-	int bitesPerSecond;
+	int bitePerSample;
 	int numChannels;
 	int audioLength;
 	
@@ -20,7 +20,7 @@ public class AudioHeader {
 		this.format=format;
 		this.numChannels=nc;
 		this.sampleRate=sampleRate;
-		this.bitesPerSecond=bps;
+		this.bitePerSample=bps;
 		this.audioLength=audioLength;
 		
 	}
@@ -84,7 +84,7 @@ public class AudioHeader {
 		sb.append("Filename: "+this.fileName+"\n");
 		sb.append("Audio Format: "+this.format+"\n");
 		sb.append("Sample Rate: "+this.sampleRate+"\n");
-		sb.append("Bites per Second: "+this.bitesPerSecond+"\n");
+		sb.append("Bites per Second: "+this.bitePerSample+"\n");
 		sb.append("Number of Channels: "+this.numChannels+"\n");
 		sb.append("Audio length: "+this.audioLength);
 		sb.append('\n');
@@ -103,7 +103,7 @@ public class AudioHeader {
 	}
 
 	public int getBitesPerSecond() {
-		return bitesPerSecond;
+		return bitePerSample;
 	}
 
 	public int getNumChannels() {

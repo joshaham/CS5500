@@ -27,6 +27,7 @@ public class JmathplotLineGraph {	// TEST
         // create your PlotPanel (you can use it as a JPanel)
         Plot2DPanel plot = new Plot2DPanel();
 
+        plot.setFixedBounds(1, -250, 250);
         // define the legend position
         plot.addLegend("NORTH");
         plot.addLinePlot(title, x, y);
@@ -45,7 +46,7 @@ public class JmathplotLineGraph {	// TEST
 		}
         // create your PlotPanel (you can use it as a JPanel)
         Plot2DPanel plot = new Plot2DPanel();
-
+        plot.setAdjustBounds(false);
         // define the legend position
         plot.addLegend("NORTH");
         plot.addLinePlot(title, x, y);

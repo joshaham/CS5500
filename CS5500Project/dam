@@ -1,1 +1,1 @@
-java -cp ./bin assignment8.Assignment8 $@
+java -cp ./bin assignment8New.Assignment8 $@

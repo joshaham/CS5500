@@ -1,13 +1,13 @@
-package assignment8Energy;
+package assignment8New;
 
 import java.io.File;
 /* 
- *  THIS IS JUST A TEST VERSION COMPARING ON TIME DOMAIN!!!
+ * Copy right: Moses Gonzalez, Joshua Shaham, Zhuoli Liang
+ * 
+ *  Assignment 8 for CS5500 @ Northeastern University
  */
 
-public class TEST_VERSION {
-	// bin size
-	static int SongSampleSize = 5;
+public class Assignment8 {
 	public static void main(String[] args) {		
 		if(!ParameterChecker.CheckFormat(args)){
 			System.exit(-1);
@@ -16,6 +16,7 @@ public class TEST_VERSION {
 		String[] paths2=getFilePaths(args[3],args[2]);
 		Comparator comparator = new Comparator(paths1,paths2);
 		comparator.compare();
+		System.exit(0);
 	}
 	
 
