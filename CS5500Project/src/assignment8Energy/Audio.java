@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import drawer.JmathplotLineGraph;
+//import drawer.JmathplotLineGraph;
 
 // Audio class
 public  class Audio {
@@ -19,16 +19,8 @@ public  class Audio {
 	AudioHeader header=null;
 	private BufferedInputStream bis = null;
 	
-	public int[] getHashValuePerSecondWithOverlap(){
+	public long[] getHashValuePerSecondWithOverlap(){
 		return energy.getHashvaluePerSecond();
-	}
-	
-	public double[] getChannelSamplesForFFT(){
-		double[] ret=new double[this.data[0].length];
-		for(int i=0;i<ret.length;i++){
-			ret[i]=(this.data[0][i]+this.data[1][i])/2;
-		}
-		return ret;
 	}
 	// Return instance of Audio
 	public static Audio getInstance(String filePath){
@@ -134,9 +126,8 @@ public  class Audio {
 //				System.out.println(this.data[n][i] );
 			}
 		}
-
-
 		energy=new Energy(this.data,header);
+
 	}
 
 
@@ -206,10 +197,10 @@ public  class Audio {
 	}
 
 	public static void main(String[] args){
-		Audio reader = Audio.getInstance("A5/D2/sons.wav");
-		JmathplotLineGraph.plot2d(reader.filename,reader.energy.getHashValuePerSecondForDouble());
-		reader = Audio.getInstance("A5/D1/sons2.wav");
-		JmathplotLineGraph.plot2d(reader.filename,reader.energy.getHashValuePerSecondForDouble());
+		Audio reader = Audio.getInstance("A5/D2/z04.wav");
+//		JmathplotLineGraph.plot2d(reader.filename,reader.energy.getHashValuePerSecondForDouble());
+		reader = Audio.getInstance("A5/D1/z03.wav");
+//		JmathplotLineGraph.plot2d(reader.filename,reader.energy.getHashValuePerSecondForDouble());
 	}
 
 

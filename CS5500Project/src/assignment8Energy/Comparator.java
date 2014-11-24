@@ -28,7 +28,6 @@ public class Comparator {
 	
 	// utilize moltile-core process to fill container faster
 	private void fillContainerWithMultiThreads(ArrayList<Audio> container,String[] files){
-	      long begTest = new java.util.Date().getTime();
 	      int nrOfProcessors = Runtime.getRuntime().availableProcessors();
 	      ExecutorService eservice = Executors.newFixedThreadPool(nrOfProcessors);
 
@@ -40,8 +39,6 @@ public class Comparator {
 			eservice.awaitTermination(10, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
 		}
-	      Double secs = new Double((new java.util.Date().getTime() - begTest)*0.001);
-	      System.out.println("run time " + secs + " secs");
 	}
 	
 	// compare all the files in each container against each other
@@ -61,8 +58,8 @@ public class Comparator {
 	private boolean isMatch(Audio audio1, Audio audio2) {
 		int valueSamplesPerSecond = (int) (1/(1-Energy.overlapRatio));
 		int valuesPerZone=(TEST_VERSION.SongSampleSize*valueSamplesPerSecond);
-		int[] hashvalue1=audio1.getHashValuePerSecondWithOverlap();
-		int[] hashvalue2=audio2.getHashValuePerSecondWithOverlap();
+		long[] hashvalue1=audio1.getHashValuePerSecondWithOverlap();
+		long[] hashvalue2=audio2.getHashValuePerSecondWithOverlap();
 		for(int array1Start=0;array1Start<hashvalue1.length-valuesPerZone;array1Start++){
 			for(int array2Start=0;array2Start<hashvalue2.length-valuesPerZone;array2Start++){
 				if(isMatchStartHere(hashvalue1,array1Start,hashvalue2,array2Start,valuesPerZone)){
@@ -74,7 +71,7 @@ public class Comparator {
 		return false;
 	}
 	
-	private boolean isMatchStartHere(int[] hashvalue1,int array1Start,int[] hashvalue2,int array2Start,int valuesPerZone){
+	private boolean isMatchStartHere(long[] hashvalue1,int array1Start,long[] hashvalue2,int array2Start,int valuesPerZone){
 		double mean=hashvalue1[array1Start]/(0.01+hashvalue2[array2Start]);
 		if(mean<0){
 			return false;
