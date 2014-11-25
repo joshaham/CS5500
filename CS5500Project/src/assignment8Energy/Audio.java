@@ -7,19 +7,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-//import drawer.JmathplotLineGraph;
-
+//
 // Audio class
 public  class Audio {
-	static boolean DEBUG=true;
+	static boolean DEBUG=false;
 	public String filename = null;
 	private int[][] data = null;
+	public int[][] getData() {
+		return data;
+	}
+
 	private Energy energy=null;
 
 	AudioHeader header=null;
 	private BufferedInputStream bis = null;
 	
-	public long[] getHashValuePerSecondWithOverlap(){
+	public int[] getHashValuePerSecondWithOverlap(){
 		return energy.getHashvaluePerSecond();
 	}
 	// Return instance of Audio
@@ -197,10 +200,9 @@ public  class Audio {
 	}
 
 	public static void main(String[] args){
-		Audio reader = Audio.getInstance("A5/D2/z04.wav");
-//		JmathplotLineGraph.plot2d(reader.filename,reader.energy.getHashValuePerSecondForDouble());
-		reader = Audio.getInstance("A5/D1/z03.wav");
-//		JmathplotLineGraph.plot2d(reader.filename,reader.energy.getHashValuePerSecondForDouble());
+		Audio reader1 = Audio.getInstance("A5/D2/z04.wav");
+		Audio reader2 = Audio.getInstance("A5/D1/z03.wav");
+
 	}
 
 

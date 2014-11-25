@@ -1,1 +1,1 @@
-java -cp ./bin assignment8New.Assignment8 $@
+java -cp ./bin assignment8Energy.TEST_VERSION $@

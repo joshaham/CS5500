@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
 /**
  * 
  * @author zhuoli
@@ -13,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 
 public class Comparator {
+	static double THRESHOLD=0.03;
 	ArrayList<Audio> container1=null;
 	ArrayList<Audio> container2=null;
 	
@@ -56,39 +58,70 @@ public class Comparator {
 	}
 
 	private boolean isMatch(Audio audio1, Audio audio2) {
+		int minhashvalue=0;
 		int valueSamplesPerSecond = (int) (1/(1-Energy.overlapRatio));
 		int valuesPerZone=(TEST_VERSION.SongSampleSize*valueSamplesPerSecond);
-		long[] hashvalue1=audio1.getHashValuePerSecondWithOverlap();
-		long[] hashvalue2=audio2.getHashValuePerSecondWithOverlap();
+		int[] hashvalue1=audio1.getHashValuePerSecondWithOverlap();
+		int[] hashvalue2=audio2.getHashValuePerSecondWithOverlap();
+		for(int v : hashvalue1){
+			minhashvalue=Math.min(minhashvalue, v);
+		}
+		for(int v:hashvalue2){
+			minhashvalue=Math.min(minhashvalue, v);
+		}
+		for(int i=0;i<hashvalue1.length;i++){
+			hashvalue1[i]=2+hashvalue1[i]-minhashvalue;
+		}
+		for(int i=0;i<hashvalue2.length;i++){
+			hashvalue2[i]=2+hashvalue2[i]-minhashvalue;
+		}
+
 		for(int array1Start=0;array1Start<hashvalue1.length-valuesPerZone;array1Start++){
 			for(int array2Start=0;array2Start<hashvalue2.length-valuesPerZone;array2Start++){
 				if(isMatchStartHere(hashvalue1,array1Start,hashvalue2,array2Start,valuesPerZone)){
-					System.out.println("MATCH "+audio1.filename+" "+audio2.filename+" "+(array1Start+0.0)/valuesPerZone+" "+(array2Start+0.0)/valuesPerZone);
-					return true;
+						System.out.println("MATCH "+audio1.filename+" "+audio2.filename+" "+(array1Start+0.0)/valuesPerZone+" "+(array2Start+0.0)/valuesPerZone);
+						return true;
 				}
 			}
 		}
 		return false;
 	}
 	
-	private boolean isMatchStartHere(long[] hashvalue1,int array1Start,long[] hashvalue2,int array2Start,int valuesPerZone){
-		double mean=hashvalue1[array1Start]/(0.01+hashvalue2[array2Start]);
-		if(mean<0){
-			return false;
+	private boolean isMatchStartHere(int[] hashvalue1,int array1Start,int[] hashvalue2,int array2Start,int valuesPerZone){
+		double[] rateArray=new double[valuesPerZone];
+		for(int i=0;i<valuesPerZone;i++){
+			rateArray[i]=hashvalue1[array1Start+i]/(0.01+hashvalue2[array2Start+i]);
 		}
-		for(int k=0;k<valuesPerZone;k++){
-			double newMean=hashvalue1[array1Start+k]/(0.01+hashvalue2[array2Start+k]);
-			if(newMean<0){
-				return false;
+		if(calculateMeanError(rateArray)<THRESHOLD){
+			int restSamples=Math.min(hashvalue1.length-array1Start, hashvalue2.length-array2Start);
+			rateArray=new double[restSamples];
+			for(int i=0;i<valuesPerZone;i++){
+				rateArray[i]=hashvalue1[array1Start+i]/(0.01+hashvalue2[array2Start+i]);
 			}
-			if(Math.abs(newMean-mean)>0.2){
-				return false;
-			}
-			mean=(mean+newMean)/2.0;
+		  return calculateMeanError(rateArray)<THRESHOLD;
 		}
-		return true;
+		return false;
 	}
+	
+	private double calculateMeanError(double[] array){
+		double ave=0;
+		for(double d : array){
+			ave+=d;
+		}
+		ave=ave/array.length;
+		double errorAccumulation=0;
+		for(double d : array){
+			errorAccumulation+=(d-ave)*(d-ave);
+		}
+		double mean= errorAccumulation/array.length;
+		if(Audio.DEBUG && mean<THRESHOLD){
+			System.out.println("AVE value: " + ave+"MEAN ERROR: "+mean);
+		}
+		return mean;
+	}
+	
 }
+
 
 
 class ContainerThread  implements Runnable {
