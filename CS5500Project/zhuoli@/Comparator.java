@@ -63,10 +63,11 @@ public class Comparator {
 		int[] hashvalue1=audio1.getHashValuePerSecondWithOverlap();
 		int[] hashvalue2=audio2.getHashValuePerSecondWithOverlap();
 
+
 		for(int array1Start=0;array1Start<hashvalue1.length-valuesPerZone;array1Start++){
 			for(int array2Start=0;array2Start<hashvalue2.length-valuesPerZone;array2Start++){
 				if(isMatchStartHere(hashvalue1,array1Start,hashvalue2,array2Start,valuesPerZone)){
-						System.out.println("MATCH "+audio1.filename+" "+audio2.filename+" "+(array1Start+0.0)/valueSamplesPerSecond+" "+(array2Start+0.0)/valueSamplesPerSecond);
+						System.out.println("MATCH "+audio1.filename+" "+audio2.filename+" "+(array1Start+0.0)/valuesPerZone+" "+(array2Start+0.0)/valuesPerZone);
 						return true;
 				}
 			}
@@ -81,9 +82,7 @@ public class Comparator {
 			rateArray[i]=getRate(array1[idx1],array2[idx2]);
 		}
 		if(calculateMeanError(rateArray)<THRESHOLD){
-//			System.out.println("array1 length: "+array1.length+" array1Start: "+array1Start+" array2 length: "+array2.length+" array2Start: " +array2Start);
 			int restSamples=Math.min(array1.length-array1Start, array2.length-array2Start);
-//			System.out.println("Rest Samples: "+restSamples);
 			rateArray=new double[restSamples];
 			for(int i=0;i<valuesPerZone;i++){
 				rateArray[i]=getRate(array1[array1Start+i],array2[array2Start+i]);

@@ -130,6 +130,7 @@ public  class Audio {
 			}
 		}
 		energy=new Energy(this.data,header);
+
 	}
 
 
@@ -200,8 +201,8 @@ public  class Audio {
 
 
 	public static void main(String[] args){
-		Audio reader1 = Audio.getInstance("A6/D4/Mpmm.wav");
-		Audio reader2 = Audio.getInstance("A6/D5/Piste1.wav");
+		Audio reader1 = Audio.getInstance("A5/D2/z04.wav");
+		Audio reader2 = Audio.getInstance("A5/D1/z03.wav");
 	}
 
 
