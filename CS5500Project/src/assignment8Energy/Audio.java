@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
+
 //
 // Audio class
 public  class Audio {
@@ -22,8 +23,14 @@ public  class Audio {
 	AudioHeader header=null;
 	private BufferedInputStream bis = null;
 	
-	public int[] getHashValuePerSecondWithOverlap(){
-		return energy.getHashvaluePerSecond();
+//	public int[] getHashValuePerSecondWithOverlap(){
+//		return energy.getHashvaluePerSecond();
+//	}
+	public int[] getPostiveHashValuePerSecondWithOverlap(){
+		return energy.getPostiveHashValuePerInterval();
+	}
+	public int[] getNegativeHashValuePerInterval(){
+		return energy.getNegativeHashValuePerInterval();
 	}
 	// Return instance of Audio
 	public static Audio getInstance(String filePath){
@@ -196,12 +203,6 @@ public  class Audio {
 	}
 	public String getFileName() {
 		return this.header.getFileName();
-	}
-
-
-	public static void main(String[] args){
-		Audio reader1 = Audio.getInstance("A6/D4/Mpmm.wav");
-		Audio reader2 = Audio.getInstance("A6/D5/Piste1.wav");
 	}
 
 

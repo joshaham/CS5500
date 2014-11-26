@@ -6,26 +6,37 @@ public class Energy {
 	// time interval for hash
 	static int HsashvalueInterval=1;
 	int[] monoChannel=null;
-	int[] hashValuePerInterval=null;
-	public int[] getHashvaluePerSecond() {
-		return hashValuePerInterval;
+	int[] PostiveHashValuePerInterval=null;
+	int[] NegativeHashValuePerInterval=null;
+	public int[] getPostiveHashValuePerInterval() {
+		return PostiveHashValuePerInterval;
 	}
-	
+
+	public int[] getNegativeHashValuePerInterval() {
+		return NegativeHashValuePerInterval;
+	}
 
 	public Energy(int[][] data, AudioHeader header){
 		int valuesPerSecond=(int) (1/(1-overlapRatio));
 		int audioSamplesPerInterval=HsashvalueInterval*header.sampleRate;
 		int offset=(int) (header.sampleRate*(1-overlapRatio));
 		
-		this.hashValuePerInterval=new int[(header.audioLength-HsashvalueInterval)*valuesPerSecond];
+		this.PostiveHashValuePerInterval=new int[(header.audioLength-HsashvalueInterval)*valuesPerSecond];
+		this.NegativeHashValuePerInterval=new int[(header.audioLength-HsashvalueInterval)*valuesPerSecond];
 		this.monoChannel=convert2monochannel(data);
-		for(int i=0;i<hashValuePerInterval.length;i++){
-			int tmp=0;
+		for(int i=0;i<PostiveHashValuePerInterval.length;i++){
+			long posAccumul=0;
+			long negAccumul=0;
 			int start=i*offset;
 			for(int k=start;k<start+audioSamplesPerInterval;k++){
-				tmp+=this.monoChannel[k];
+				if(this.monoChannel[k]>0){
+					posAccumul+=this.monoChannel[k];
+				}else{
+					negAccumul+=Math.abs(this.monoChannel[k]);
+				}
 			}
-			hashValuePerInterval[i]=tmp;
+			PostiveHashValuePerInterval[i]=(int) (posAccumul/audioSamplesPerInterval);
+			NegativeHashValuePerInterval[i]=(int) (negAccumul/audioSamplesPerInterval);
 		}
 	}
 	

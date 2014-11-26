@@ -14,11 +14,14 @@ import java.util.concurrent.TimeUnit;
 
 
 public class Comparator {
-	static double THRESHOLD=1;
+	static double THRESHOLD=30;
 	ArrayList<Audio> container1=null;
 	ArrayList<Audio> container2=null;
 	
 	HashMap<Long, String> containerHM=null;
+	
+	// for test
+	double minError=Integer.MAX_VALUE;
 	
 	// contain files from args1 and files from args3
 	public Comparator(String[] files1,String[] files2){
@@ -58,11 +61,37 @@ public class Comparator {
 	}
 
 	private boolean isMatch(Audio audio1, Audio audio2) {
+//		if(Audio.DEBUG){
+//			Audio.drawWaveFile(audio1,audio2);
+//		}
 		int valueSamplesPerSecond = (int) (1/(1-Energy.overlapRatio));
 		int valuesPerZone=(TEST_VERSION.SongSampleSize*valueSamplesPerSecond);
-		int[] hashvalue1=audio1.getHashValuePerSecondWithOverlap();
-		int[] hashvalue2=audio2.getHashValuePerSecondWithOverlap();
-
+		int[] hashvalue1=audio1.getPostiveHashValuePerSecondWithOverlap();
+		int[] hashvalue2=audio2.getPostiveHashValuePerSecondWithOverlap();
+//		if(Audio.DEBUG){
+//			double[] ratioArray=new double[hashvalue1.length];
+//			System.out.println("\nhashvalue each overlaped second");
+//			for(int i=0;i<hashvalue1.length;i++){
+//				System.out.format("%9d", hashvalue1[i]);
+//			}
+//			System.out.println();
+//			for(int i=0;i<hashvalue2.length;i++){
+//				System.out.format("%9d", hashvalue2[i]);
+//			}
+//			System.out.println('\n'+"rate array: "+hashvalue1.length+"\n");
+//			for(int i=0;i<Math.min(hashvalue1.length,hashvalue2.length);i++){
+//				double rate=getRate(hashvalue1[i],hashvalue2[i]);
+//				ratioArray[i]=rate;
+//				System.out.format("  %4.3f", rate);
+//			}
+//			System.out.println();
+//			String[] pamss = new String[] { "-r", "-g", "-b" };
+//			PlotFrame frame = Plot.figrue("rate plot");
+//			frame.setSize(500, 200);
+//			Plot.hold_on();
+//			Plot.plot(ratioArray, pamss[0]);
+//			Plot.hold_off();
+//		}
 		for(int array1Start=0;array1Start<hashvalue1.length-valuesPerZone;array1Start++){
 			for(int array2Start=0;array2Start<hashvalue2.length-valuesPerZone;array2Start++){
 				if(isMatchStartHere(hashvalue1,array1Start,hashvalue2,array2Start,valuesPerZone)){
@@ -71,27 +100,81 @@ public class Comparator {
 				}
 			}
 		}
+		if(Audio.DEBUG){
+			System.out.println("Minimum mean error: "+this.minError);
+		}
 		return false;
 	}
 	
+//	private boolean isMatchStartHere(int[] array1,int array1Start,int[] array2,int array2Start,int valuesPerZone){
+//		double[] rateArray=new double[valuesPerZone];
+//		for(int i=0;i<valuesPerZone;i++){
+//			int idx1=array1Start+i,idx2=array2Start+i;
+//			rateArray[i]=getRate(array1[idx1],array2[idx2]);
+//		}
+//
+//		 double overallMES=calculateMeanError(rateArray);
+//		if(calculateMeanError(rateArray)<THRESHOLD){
+////			System.out.println("array1 length: "+array1.length+" array1Start: "+array1Start+" array2 length: "+array2.length+" array2Start: " +array2Start);
+//			int restSamples=Math.min(array1.length-array1Start, array2.length-array2Start);
+////			System.out.println("Rest Samples: "+restSamples);
+//			rateArray=new double[restSamples];
+//			for(int i=0;i<restSamples;i++){
+//				rateArray[i]=getRate(array1[array1Start+i],array2[array2Start+i]);
+//			}
+//		  overallMES=calculateMeanError(rateArray);
+//		  if(overallMES<THRESHOLD){
+//			  System.out.format("%2.3f ",overallMES);
+//		  }
+//		  return calculateMeanError(rateArray)<THRESHOLD;
+//		}
+//		return false;
+//	}
 	private boolean isMatchStartHere(int[] array1,int array1Start,int[] array2,int array2Start,int valuesPerZone){
-		double[] rateArray=new double[valuesPerZone];
+		int[] diffArray=new int[valuesPerZone];
 		for(int i=0;i<valuesPerZone;i++){
 			int idx1=array1Start+i,idx2=array2Start+i;
-			rateArray[i]=getRate(array1[idx1],array2[idx2]);
+			diffArray[i]=getDiffer(array1[idx1],array2[idx2]);
 		}
-		if(calculateMeanError(rateArray)<THRESHOLD){
+
+		 int meanSquareError = calculateMSE(diffArray);
+		if(meanSquareError<THRESHOLD){
 //			System.out.println("array1 length: "+array1.length+" array1Start: "+array1Start+" array2 length: "+array2.length+" array2Start: " +array2Start);
 			int restSamples=Math.min(array1.length-array1Start, array2.length-array2Start);
 //			System.out.println("Rest Samples: "+restSamples);
-			rateArray=new double[restSamples];
-			for(int i=0;i<valuesPerZone;i++){
-				rateArray[i]=getRate(array1[array1Start+i],array2[array2Start+i]);
+			diffArray=new int[restSamples];
+			for(int i=0;i<restSamples;i++){
+				diffArray[i]=getDiffer(array1[array1Start+i],array2[array2Start+i]);
 			}
-		  return calculateMeanError(rateArray)<THRESHOLD;
+			meanSquareError=calculateMSE(diffArray);
+		  if(meanSquareError<THRESHOLD){
+			  System.out.format("%5d ",meanSquareError);
+		  }
+		  return meanSquareError<THRESHOLD;
 		}
 		return false;
 	}
+	private int calculateMSE(int[] diffArray) {
+//		System.out.println("dif array");
+//		for(int v : diffArray){
+//			System.out.format("%4d",v);
+//		}
+		long sum=0;
+		for(int v : diffArray){
+			sum+=v;
+		}
+		int mean=(int) (sum/diffArray.length);
+
+//		System.out.println("\nMean: "+mean+"\n+dif:");
+		sum=0;
+		for(int v : diffArray){
+			sum+=Math.abs((v-mean));
+//			System.out.format("%5d", (v-mean)*(v-mean));
+		}
+//		System.out.println();
+		return (int) sum/diffArray.length;
+	}
+
 	private double getRate(int a, int b){
 		a=Math.abs(a);
 		b=Math.abs(b);
@@ -101,6 +184,10 @@ public class Comparator {
 			return b/(0.1+a);
 		}
 //		return a/(0.1+b);
+	}
+	
+	private int getDiffer(int a, int b){
+		return a-b;
 	}
 	
 	private double calculateMeanError(double[] array){
@@ -114,9 +201,6 @@ public class Comparator {
 			errorAccumulation+=Math.abs(d-ave);
 		}
 		double mean= errorAccumulation/array.length;
-		if(Audio.DEBUG ){
-			System.out.println("AVE value: " + ave+"MEAN ERROR: "+mean);
-		}
 		return mean;
 	}
 	
