@@ -1,0 +1,45 @@
+package assignment8;
+
+public class Energy {
+	long[] energyArray=null;
+//	public Energy(double[] array, AudioHeader header){
+//		int sampleRate=header.getSampleRate();
+//		energyArray=new double[header.audioLength];
+//		for(int i=0;i<header.audioLength;i++){
+//			double ave=0;
+//			for(int idx=i*sampleRate;idx<(i+1)*sampleRate;idx++){
+//				ave+=array[idx]/sampleRate;
+//			}
+//			energyArray[i]=ave;
+//		}
+//	}
+	
+	public Energy(byte[] array, AudioHeader header){
+		energyArray=new long[header.audioLength];
+		System.out.println(array.length);
+		int base=44;
+		for(int i=0;i<header.audioLength;i++){
+			long sum=0;
+			for(int idx=0;idx<header.sampleRate;idx++){
+				int start=base+i*header.sampleRate+idx;
+				int l=array[start]+array[start+1]<<8;
+				int r=array[start+2]+array[start+3]<<8;
+				sum+=l/255+r/255;
+			}
+			energyArray[i]=sum;
+		}
+
+	}
+	
+	@Override
+	public String toString(){
+		StringBuilder sb=new StringBuilder();
+		for(int i=0;i<energyArray.length;i++){
+			sb.append((int)energyArray[i]+"   ");
+			if(i%20==0){
+				sb.append('\n');
+			}
+		}
+		return sb.toString();
+	}
+}

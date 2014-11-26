@@ -1,0 +1,175 @@
+package assignment8;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Arrays;
+
+import com.sin.java.waveaccess.WaveConstants;
+
+import drawer.JmathplotLineGraph;
+
+
+// Audio class
+public  class Audio {
+	static boolean DEBUG=true;
+	public String filename = null;
+	private int[][] data = null;
+
+	AudioHeader header=null;
+	private FileInputStream fis = null;
+	private BufferedInputStream bis = null;
+
+	public double[] getChannelSamples(){
+		double[] ret=new double[this.data[0].length];
+		for(int i=0;i<ret.length;i++){
+			ret[i]=(this.data[0][i]+this.data[1][i])/2;
+		}
+		return ret;
+	}
+	// Return instance of Audio
+	public static Audio getInstance(String filePath){
+
+		Audio audio=null;
+		String fileCanonicalPath = 
+				Convert2StandardFormat.Convert2CanonicalFormat(filePath);
+		if(fileCanonicalPath==null){
+			return null;
+		}
+		String fileName=getActualName(filePath);
+		audio = new Audio(fileCanonicalPath,fileName);
+		if(!filePath.equals(fileCanonicalPath)){
+			removeCanonicalPath(fileCanonicalPath);
+		}
+		return audio;
+	}
+	
+	private static void removeCanonicalPath(String fileCanonicalPath) {
+		Process p=null;
+		try {
+			String str="rm "+fileCanonicalPath;
+			p =java.lang.Runtime.getRuntime().exec(str);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		synchronized(p){
+			try {
+				p.wait(3000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	private static String getActualName( String filePath){
+		String[] strs = filePath.split("/");
+		String fileName=strs[strs.length-1];
+		return fileName;
+	}
+	
+	
+
+
+	public Audio(String fileCanonicalPath, String fileName) {
+		this.filename = fileName;
+		byte[] fileArray=Convert2StandardFormat.readFile2ByteArray(new File(fileCanonicalPath));
+		byte[] dataheader=Arrays.copyOfRange(fileArray, 0, 44);
+		this.header = AudioHeader.getInstance(fileName,dataheader,fileArray.length-44);
+		try {
+			fis = new FileInputStream(fileCanonicalPath);
+			bis = new BufferedInputStream(fis);
+
+			readString(WaveConstants.LENCHUNKDESCRIPTOR);
+			readLong();
+			readString(WaveConstants.LENWAVEFLAG);
+
+			readString(WaveConstants.LENFMTSUBCHUNK);
+			readLong();
+			readInt();
+			readInt();
+			readLong();
+			readLong();
+			readInt();
+			readInt();
+			readString(WaveConstants.LENDATASUBCHUNK);
+			readLong();
+
+
+			this.data = new int[this.header.numChannels][(fileArray.length-44)/(header.numChannels*header.bitePerSample/8)];
+
+			// read channel data
+			for (int i = 0; i < this.data[0].length; ++i) {
+				for (int n = 0; n < header.getNumChannels(); ++n) {
+					if (header.bitePerSample == 8) {
+						this.data[n][i] = bis.read();
+					} else if (header.bitePerSample == 16) {
+						this.data[n][i] = this.readInt();
+					}
+//					System.out.println(this.data[n][i] );
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (bis != null)
+					bis.close();
+				if (fis != null)
+					fis.close();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
+
+
+	private int readInt() {
+		byte[] buf = new byte[2];
+		int res = 0;
+		try {
+			if (bis.read(buf) != 2)
+				throw new IOException("no more data!!!");
+			res = (buf[0] & 0x000000FF) | (((int) buf[1]) << 8);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+
+	private long readLong() {
+		long res = 0;
+		try {
+			long[] l = new long[4];
+			for (int i = 0; i < 4; ++i) {
+				l[i] = bis.read();
+				if (l[i] == -1) {
+					throw new IOException("no more data!!!");
+				}
+			}
+			res = l[0] | (l[1] << 8) | (l[2] << 16) | (l[3] << 24);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+
+	private String readString(int len) {
+		byte[] buf = new byte[len];
+		try {
+			if (bis.read(buf) != len)
+				throw new IOException("no more data!!!");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return new String(buf);
+	}
+	
+	public static void main(String[] args){
+		Audio reader = Audio.getInstance("A5/D2/sons.wav");
+		JmathplotLineGraph.plot2d(reader.filename,reader.getChannelSamples());
+	}
+
+}

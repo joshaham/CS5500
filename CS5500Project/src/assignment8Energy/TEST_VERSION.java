@@ -7,7 +7,7 @@ import java.io.File;
 
 public class TEST_VERSION {
 	// bin size
-	static int SongSampleSize = 5;
+	public static int SongSampleSize = 5;
 	public static void main(String[] args) {		
 		if(!ParameterChecker.CheckFormat(args)){
 			System.exit(-1);

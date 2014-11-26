@@ -2,8 +2,8 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item value="265" key="DIALOG_WIDTH"/>
-		<item value="258" key="DIALOG_Y_ORIGIN"/>
-		<item value="927" key="DIALOG_X_ORIGIN"/>
+		<item value="250" key="DIALOG_Y_ORIGIN"/>
+		<item value="1343" key="DIALOG_X_ORIGIN"/>
 		<item value="399" key="DIALOG_HEIGHT"/>
 		<item value="1|.Helvetica Neue DeskInterface|11.0|0|COCOA|1|.HelveticaNeueDeskInterface-Regular" key="DIALOG_FONT_NAME"/>
 	</section>
@@ -13,16 +13,16 @@
 		<item value="false" key="isRegEx"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="Audio File data incomplete" key="selection"/>
+		<item value="AVE value:" key="selection"/>
 		<list key="findhistory">
-			<item value="Audio File data incomplete"/>
-			<item value="incomple"/>
-			<item value="imple"/>
-			<item value="auto"/>
-			<item value="getFrequencies"/>
-			<item value="main"/>
-			<item value="getMSE"/>
-			<item value="calculateMatchSegments"/>
+			<item value="overallMES"/>
+			<item value="AVE value:"/>
+			<item value="rate plot"/>
+			<item value="rate"/>
+			<item value="toin"/>
+			<item value="valuesPerZone"/>
+			<item value="getHashValuePerSecondForDouble"/>
+			<item value="getHashValuePerSecondWithOverlap"/>
 		</list>
 		<list key="replacehistory">
 			<item value="fileFFT"/>

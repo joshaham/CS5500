@@ -1,0 +1,40 @@
+package assignment8Energy;
+
+
+public class Energy {
+	static double overlapRatio=0.9;
+	int[] monoChannel=null;
+	int[] hashvaluePerSecond=null;
+	public int[] getHashvaluePerSecond() {
+		return hashvaluePerSecond;
+	}
+	
+
+	public Energy(int[][] data, AudioHeader header){
+		int samplesPerSecond=(int) (1/(1-overlapRatio));
+		this.hashvaluePerSecond=new int[header.audioLength*samplesPerSecond];
+		this.monoChannel=convert2monochannel(data);
+		for(int i=0;i<hashvaluePerSecond.length-samplesPerSecond;i++){
+			int tmp=0;
+			int start=i*header.sampleRate/samplesPerSecond;
+			for(int k=start;k<start+header.sampleRate;k++){
+				tmp+=this.monoChannel[k];
+			}
+			hashvaluePerSecond[i]=tmp;
+		}
+	}
+	
+	// convert canonical channels to monochannel
+	private int[] convert2monochannel(int[][] data){
+		int[] monoChannel=new int[data[0].length];
+		for(int i=0;i<data[0].length;i++){
+			int ave=0;
+			for(int ch=0;ch<data.length;ch++){
+				ave+=data[ch][i];
+			}
+			monoChannel[i]=ave/data.length;
+		}
+		return monoChannel;
+	}
+	
+}

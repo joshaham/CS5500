@@ -1,0 +1,8 @@
+package test;
+
+public class atanTest {
+	public static void main(String[] args){
+		double thirty=Math.PI/6;
+		System.out.println(Math.sin(Math.PI/6));
+	}
+}

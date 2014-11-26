@@ -2,12 +2,20 @@ package assignment8Energy;
 
 
 public class Energy {
-	static double overlapRatio=0.9;
+	public static double overlapRatio=0.9;
 	// time interval for hash
 	static int HsashvalueInterval=1;
 	int[] monoChannel=null;
 	int[] PostiveHashValuePerInterval=null;
 	int[] NegativeHashValuePerInterval=null;
+	int[] postiveAngles=null;
+	public int[] getPostiveAngles() {
+		if(postiveAngles==null){
+			postiveAngles=calculateAngles(PostiveHashValuePerInterval,0);
+		}
+		return postiveAngles;
+	}
+
 	public int[] getPostiveHashValuePerInterval() {
 		return PostiveHashValuePerInterval;
 	}
@@ -39,7 +47,18 @@ public class Energy {
 			NegativeHashValuePerInterval[i]=(int) (negAccumul/audioSamplesPerInterval);
 		}
 	}
-	
+	private int[] calculateAngles(int[] array, int start) {
+		int deltX=(int)(500*(1-Energy.overlapRatio));
+		int[] angles=new int[array.length-1];
+		for(int i=start;i<array.length-1;i++){
+			int deltY=array[i+1]-array[i];
+			angles[i]=getAngel(Math.atan(deltY/(0.0+deltX)));
+		}
+		return angles;
+	}
+	public  int getAngel(double angle){
+		return (int) (angle*180/Math.PI);
+	}
 	// convert canonical channels to monochannel
 	private int[] convert2monochannel(int[][] data){
 		int numChannel=data.length;

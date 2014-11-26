@@ -1,0 +1,55 @@
+package test;
+
+import java.util.Arrays;
+
+import assignment8Energy.Audio;
+import assignment8Energy.Energy;
+import assignment8Energy.TEST_VERSION;
+
+public class audiosDrawer {
+	public static void main(String[] args){
+		String file1="./A6/D4/Mpmm.wav";
+		Audio audio1=Audio.getInstance(file1);
+		String file2="./A6/D5/Sor3508.wav";
+		Audio audio2=Audio.getInstance(file2);
+		System.out.println(isMatchAtThisTime(audio1,1.2,audio2,0.1));
+	}
+	
+	public static boolean isMatchAtThisTime(Audio audio1,double time1, Audio audio2, double time2){
+		int samplesPerSecond=(int) (1/(1-Energy.overlapRatio));
+		int start1=(int) (time1*samplesPerSecond);
+		int start2=(int) (time2*samplesPerSecond);
+		int count=20;
+		int[] array1Angles=Arrays.copyOfRange(audio1.getHashValuesAngle(),start1,audio1.getHashValuesAngle().length);
+		int[] array2Angles=Arrays.copyOfRange(audio2.getHashValuesAngle(),start2,audio2.getHashValuesAngle().length);
+		long sum=0;
+		int valuesPerZone=samplesPerSecond*TEST_VERSION.SongSampleSize;
+		int n=Math.min(array1Angles.length, array2Angles.length);
+		n=Math.min(n, valuesPerZone);
+		if(n<valuesPerZone){
+			return false;
+		}
+		String s1=audio1.getFileName()+" "+time1;
+		String s2=audio2.getFileName()+" "+time2;
+		Audio.drawWaveFile(Arrays.copyOfRange(audio1.getPostiveHashValuePerSecondWithOverlap(), start1, audio1.getPostiveHashValuePerSecondWithOverlap().length),s1
+				,Arrays.copyOfRange(audio2.getPostiveHashValuePerSecondWithOverlap(), start2, audio2.getPostiveHashValuePerSecondWithOverlap().length),s2);
+
+		for(int i=0;i<n;i++){
+			if(Math.abs(array1Angles[i]-array2Angles[i])>15){
+				System.out.format("array1angle: %d\n",array1Angles[i]);
+				System.out.format("array2angle: %d\n\n",array2Angles[i]);
+				--count;
+			}
+			if(count<0){
+				return false;
+			}
+			sum+=Math.abs(array1Angles[start1+i]-array2Angles[start2+i]);
+		}
+		int dif=(int) (sum/n);
+//		if(dif<30){
+			System.out.print("dif: "+dif+"  ");
+//		}
+			
+		return dif<5;
+	}
+}

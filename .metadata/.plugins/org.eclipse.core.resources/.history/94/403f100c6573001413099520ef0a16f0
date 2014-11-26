@@ -1,0 +1,188 @@
+package assignment8;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashMap;
+
+import com.sin.java.waveaccess.WaveConstants;
+
+
+// Audio class
+public  class Audio {
+	static boolean DEBUG=true;
+	String filename=null;
+	byte[] fileArray;
+	double[] dualChannelSamples;
+	long hashValue=0;
+	// bin size
+	int songSampleSize = 5;
+	HashMap<Long,String> hm=null;
+	Energy energy=null;
+	private String chunkdescriptor = null;
+
+
+	FileInputStream fis;
+	BufferedInputStream bis;
+	
+
+
+	// Return instance of Audio
+	public static Audio getInstance(String filePath){
+
+		Audio audio=null;
+		String fileCanonicalPath = 
+				Convert2StandardFormat.Convert2CanonicalFormat(filePath);
+		if(fileCanonicalPath==null){
+			return null;
+		}
+		String fileName=getActualName(filePath);
+		audio = new Audio(fileCanonicalPath,fileName);
+		if(!filePath.equals(fileCanonicalPath)){
+			removeCanonicalPath(fileCanonicalPath);
+		}
+		return audio;
+	}
+	
+	private static void removeCanonicalPath(String fileCanonicalPath) {
+		Process p=null;
+		try {
+			String str="rm "+fileCanonicalPath;
+			p =java.lang.Runtime.getRuntime().exec(str);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		synchronized(p){
+			try {
+				p.wait(3000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	private static String getActualName( String filePath){
+		String[] strs = filePath.split("/");
+		String fileName=strs[strs.length-1];
+		return fileName;
+	}
+	
+	
+	private Audio(byte[] fileArray,String fileName){
+		byte[] dataheader=Arrays.copyOfRange(fileArray, 0, 44);
+		AudioHeader header=
+				AudioHeader.getInstance(fileName,dataheader,
+						fileArray.length-44);
+		this.header=header;
+		this.fileArray=fileArray;
+		this.energy=new Energy(fileArray,this.header);
+//		System.out.println(energy);
+	}
+	
+
+	public Audio(String fileCanonicalPath, String fileName) {
+		this.filename = fileName;
+		try {
+			fis = new FileInputStream(this.filename);
+			bis = new BufferedInputStream(fis);
+
+			this.chunkdescriptor = readString(WaveConstants.LENCHUNKDESCRIPTOR);
+			if (!chunkdescriptor.endsWith("RIFF"))
+				throw new IllegalArgumentException("RIFF miss, " + filename + " is not a wave file.");
+
+			this.chunksize = readLong();
+			this.waveflag = readString(WaveConstants.LENWAVEFLAG);
+			if (!waveflag.endsWith("WAVE"))
+				throw new IllegalArgumentException("WAVE miss, " + filename + " is not a wave file.");
+
+			this.fmtsubchunk = readString(WaveConstants.LENFMTSUBCHUNK);
+			if (!fmtsubchunk.endsWith("fmt "))
+				throw new IllegalArgumentException("fmt miss, " + filename + " is not a wave file.");
+
+			this.subchunk1size = readLong();
+			this.audioformat = readInt();
+			this.numchannels = readInt();
+			this.samplerate = readLong();
+			this.byterate = readLong();
+			this.blockalign = readInt();
+			this.bitspersample = readInt();
+
+			this.datasubchunk = readString(WaveConstants.LENDATASUBCHUNK);
+			if (!datasubchunk.endsWith("data"))
+				throw new IllegalArgumentException("data miss, " + filename + " is not a wave file.");
+			this.subchunk2size = readLong();
+
+			this.len = (int) (this.subchunk2size / (this.bitspersample / 8) / this.numchannels);
+
+			this.data = new int[this.numchannels][this.len];
+
+			// 读取数据
+			for (int i = 0; i < this.len; ++i) {
+				for (int n = 0; n < this.numchannels; ++n) {
+					if (this.bitspersample == 8) {
+						this.data[n][i] = bis.read();
+					} else if (this.bitspersample == 16) {
+						this.data[n][i] = this.readInt();
+					}
+				}
+			}
+
+			issuccess = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (bis != null)
+					bis.close();
+				if (fis != null)
+					fis.close();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
+
+	//@overwrite
+	public String toString(){
+		String str= header.toString();
+		return str+this.energy.toString()+"\n";
+	}
+
+	// read file to array
+	static byte[] readFile2ByteArray(File file){
+		byte[] fileArray=null;
+		try{
+			InputStream inputStream = new FileInputStream(file);
+			fileArray = new byte[(int)file.length()];
+			inputStream.read(fileArray, 0, fileArray.length);
+			inputStream.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			System.err.println("File not found");
+			System.exit(1);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} 
+		
+
+		return fileArray;
+	}
+
+	private String readString(int len) {
+		byte[] buf = new byte[len];
+		try {
+			if (bis.read(buf) != len)
+				throw new IOException("no more data!!!");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return new String(buf);
+	}
+
+}

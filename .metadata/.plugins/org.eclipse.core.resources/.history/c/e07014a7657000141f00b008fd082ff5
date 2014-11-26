@@ -1,0 +1,37 @@
+package test;
+
+import java.io.IOException;
+import java.util.HashSet;
+
+
+public class FFTTest {
+	static int count=0;
+	public static void main(String[] args){
+		int i = 1732;
+		MathUtils.round((double) i, -1); // nearest ten, 1730.0
+		MathUtils.round((double) i, -2); // nearest hundred, 1700.0
+		MathUtils.round((double) i, -3); // nearest thousand, 2000.0
+	}
+}
+class Pair{
+	int x;
+	int y;
+	public Pair(int x,int y){
+		this.x=x;
+		this.y=y;
+	}
+	@Override
+	public int hashCode(){
+		return (this.x+this.y);
+	}
+	@Override
+	public boolean equals(Object p){
+		if(p instanceof Pair){
+			Pair o=(Pair)p;
+			if(this.x==o.x && this.y==o.y){
+				return true;
+			}
+		}
+		return false;
+	}
+}

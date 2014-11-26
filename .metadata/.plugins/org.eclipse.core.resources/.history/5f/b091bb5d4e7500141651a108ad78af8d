@@ -1,0 +1,76 @@
+package assignment8Energy;
+
+
+public class Energy {
+	static double overlapRatio=0.9;
+	// time interval for hash
+	static int HsashvalueInterval=1;
+	int[] monoChannel=null;
+	int[] PostiveHashValuePerInterval=null;
+	int[] NegativeHashValuePerInterval=null;
+	int[] postiveAngles=null;
+	public double[] getPostiveAngles() {
+		if(postiveAngles==null){
+			postiveAngles=calculateAngles(PostiveHashValuePerInterval,0);
+		}
+		return postiveAngles;
+	}
+
+	public int[] getPostiveHashValuePerInterval() {
+		return PostiveHashValuePerInterval;
+	}
+
+	public int[] getNegativeHashValuePerInterval() {
+		return NegativeHashValuePerInterval;
+	}
+
+	public Energy(int[][] data, AudioHeader header){
+		int valuesPerSecond=(int) (1/(1-overlapRatio));
+		int audioSamplesPerInterval=HsashvalueInterval*header.sampleRate;
+		int offset=(int) (header.sampleRate*(1-overlapRatio));
+		
+		this.PostiveHashValuePerInterval=new int[(header.audioLength-HsashvalueInterval)*valuesPerSecond];
+		this.NegativeHashValuePerInterval=new int[(header.audioLength-HsashvalueInterval)*valuesPerSecond];
+		this.monoChannel=convert2monochannel(data);
+		for(int i=0;i<PostiveHashValuePerInterval.length;i++){
+			long posAccumul=0;
+			long negAccumul=0;
+			int start=i*offset;
+			for(int k=start;k<start+audioSamplesPerInterval;k++){
+				if(this.monoChannel[k]>0){
+					posAccumul+=this.monoChannel[k];
+				}else{
+					negAccumul+=Math.abs(this.monoChannel[k]);
+				}
+			}
+			PostiveHashValuePerInterval[i]=(int) (posAccumul/audioSamplesPerInterval);
+			NegativeHashValuePerInterval[i]=(int) (negAccumul/audioSamplesPerInterval);
+		}
+	}
+	private double[] calculateAngles(int[] array, int start) {
+		int deltX=300;
+		double[] angles=new double[array.length-1];
+		for(int i=start;i<array.length-1;i++){
+			int deltY=array[i+1]-array[i];
+			angles[i]=getAngel(Math.atan(deltY/(0.0+deltX)));
+		}
+		return angles;
+	}
+	public  double getAngel(double angle){
+		return angle*180/Math.PI;
+	}
+	// convert canonical channels to monochannel
+	private int[] convert2monochannel(int[][] data){
+		int numChannel=data.length;
+		int[] monoChannel=new int[data[0].length];
+		for(int i=0;i<data[0].length;i++){
+			int ave=0;
+			for(int ch=0;ch<numChannel;ch++){
+				ave+=data[ch][i];
+			}
+			monoChannel[i]=ave/numChannel;
+		}
+		return monoChannel;
+	}
+	
+}

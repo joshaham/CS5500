@@ -1,0 +1,38 @@
+package test;
+
+import assignment8Energy.Audio;
+
+public class audiosDrawer {
+	public static void main(String[] args){
+		String file1="./A6/D4/mMbm.wav";
+		Audio audio1=Audio.getInstance(file1);
+		String file2="./A6/D5/bad_guy_in_yer_bar.wav";
+		Audio audio2=Audio.getInstance(file2);
+		isMatchAtThisTime(audio1,53.5,audio2,18.0);
+	}
+	
+	public static boolean isMatchAtThisTime(Audio audio1,double time1, Audio audio2, double time2){
+		int count=20;
+		int[] array1Angles=audio1.getHashValuesAngle();
+		int[] array2Angles=audio2.getHashValuesAngle();
+		long sum=0;
+		int n=Math.min(array1Angles.length-start1, array2Angles.length-start2);
+		if(n<valuesPerZone){
+			return false;
+		}
+		for(int i=0;i<n;i++){
+			if(Math.abs(array1Angles[start1+i]-array2Angles[start2+i])>5 && --count<0){
+//				System.out.format("array1angle: %d\n",array1Angles[start1+i]);
+//				System.out.format("array2angle: %d\n",array2Angles[start2+i]);
+				return false;
+			}
+			sum+=Math.abs(array1Angles[start1+i]-array2Angles[start2+i]);
+		}
+		int dif=(int) (sum/n);
+		if(dif<THRESHOLD){
+			System.out.print("dif: "+dif+"  ");
+		}
+
+		return dif<THRESHOLD;
+	}
+}

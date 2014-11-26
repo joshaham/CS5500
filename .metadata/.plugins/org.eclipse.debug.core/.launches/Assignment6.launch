@@ -8,6 +8,6 @@
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="audio.Assignment6"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-f examples/curieuse.wav -f examples/curieuse.wav"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-f A5/D1/sons2.wav -f A5/D2/sons.wav"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="assignment5"/>
 </launchConfiguration>

@@ -1,0 +1,18 @@
+package test;
+
+import assignment8Energy.Audio;
+
+public class audiosDrawer {
+	public static void main(String[] args){
+		String file1="./A6/D4/mMbm.wav";
+		Audio audio1=Audio.getInstance(file1);
+		String file2="./A6/D5/bad_guy_in_yer_bar.wav";
+		Audio audio2=Audio.getInstance(file2);
+		isMatchAtThisTime(audio1,53.5,audio2,18.0);
+	}
+	
+	public static boolean isMatchAtThisTime(Audio audio1,double time1, Audio audio2, double time2){
+		
+		return false;
+	}
+}

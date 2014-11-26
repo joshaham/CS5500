@@ -1,0 +1,46 @@
+package test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+
+
+public class ConcurrencyTest {
+	private void fillContainerWithMultiThreads(ArrayList<Audio> container,String[] files){
+		System.out.println("fillContainerWithMultiThreads");
+		int nThreads=10;
+		ExecutorService exec = Executors.newFixedThreadPool(nThreads);
+		for(String file : files){
+			exec.execute(new ContainerThread(container,file));
+		}
+		try {
+			exec.awaitTermination(60, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+
+class ContainerThread implements Runnable{
+	ArrayList<Audio> container;
+	String file;
+	public ContainerThread(ArrayList<Audio> container, String file){
+		this.container=container;
+		this.file=file;
+	}
+	@Override
+	public void run(){
+		synchronized(this.container){
+			Audio audio=null;
+			audio = Audio.getInstance(file);
+			if(audio!=null){
+				container.add(audio);
+			}
+		}
+		System.out.println(this.file);
+	}
+}

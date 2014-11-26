@@ -1,6 +1,7 @@
 package assignment8Energy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 
 public class Comparator {
-	static double THRESHOLD=30;
+	static double THRESHOLD=3;
 	ArrayList<Audio> container1=null;
 	ArrayList<Audio> container2=null;
 	
@@ -94,7 +95,7 @@ public class Comparator {
 //		}
 		for(int array1Start=0;array1Start<hashvalue1.length-valuesPerZone;array1Start++){
 			for(int array2Start=0;array2Start<hashvalue2.length-valuesPerZone;array2Start++){
-				if(isMatchStartHere(hashvalue1,array1Start,hashvalue2,array2Start,valuesPerZone)){
+				if(isMathStartHereCompareAngle(audio1,array1Start,audio2,array2Start,valuesPerZone)){
 						System.out.println("MATCH "+audio1.filename+" "+audio2.filename+" "+(array1Start+0.0)/valueSamplesPerSecond+" "+(array2Start+0.0)/valueSamplesPerSecond);
 						return true;
 				}
@@ -106,31 +107,33 @@ public class Comparator {
 		return false;
 	}
 	
-//	private boolean isMatchStartHere(int[] array1,int array1Start,int[] array2,int array2Start,int valuesPerZone){
-//		double[] rateArray=new double[valuesPerZone];
-//		for(int i=0;i<valuesPerZone;i++){
-//			int idx1=array1Start+i,idx2=array2Start+i;
-//			rateArray[i]=getRate(array1[idx1],array2[idx2]);
-//		}
-//
-//		 double overallMES=calculateMeanError(rateArray);
-//		if(calculateMeanError(rateArray)<THRESHOLD){
-////			System.out.println("array1 length: "+array1.length+" array1Start: "+array1Start+" array2 length: "+array2.length+" array2Start: " +array2Start);
-//			int restSamples=Math.min(array1.length-array1Start, array2.length-array2Start);
-////			System.out.println("Rest Samples: "+restSamples);
-//			rateArray=new double[restSamples];
-//			for(int i=0;i<restSamples;i++){
-//				rateArray[i]=getRate(array1[array1Start+i],array2[array2Start+i]);
-//			}
-//		  overallMES=calculateMeanError(rateArray);
-//		  if(overallMES<THRESHOLD){
-//			  System.out.format("%2.3f ",overallMES);
-//		  }
-//		  return calculateMeanError(rateArray)<THRESHOLD;
-//		}
-//		return false;
-//	}
-	private boolean isMatchStartHere(int[] array1,int array1Start,int[] array2,int array2Start,int valuesPerZone){
+	// compare algorithm1: compare value proportion 
+	private boolean isMatchStartHereCompareProportion(int[] array1,int array1Start,int[] array2,int array2Start,int valuesPerZone){
+		double[] rateArray=new double[valuesPerZone];
+		for(int i=0;i<valuesPerZone;i++){
+			int idx1=array1Start+i,idx2=array2Start+i;
+			rateArray[i]=getRate(array1[idx1],array2[idx2]);
+		}
+
+		 double overallMES=calculateMeanError(rateArray);
+		if(calculateMeanError(rateArray)<THRESHOLD){
+//			System.out.println("array1 length: "+array1.length+" array1Start: "+array1Start+" array2 length: "+array2.length+" array2Start: " +array2Start);
+			int restSamples=Math.min(array1.length-array1Start, array2.length-array2Start);
+//			System.out.println("Rest Samples: "+restSamples);
+			rateArray=new double[restSamples];
+			for(int i=0;i<restSamples;i++){
+				rateArray[i]=getRate(array1[array1Start+i],array2[array2Start+i]);
+			}
+		  overallMES=calculateMeanError(rateArray);
+		  if(overallMES<THRESHOLD){
+			  System.out.format("%2.3f ",overallMES);
+		  }
+		  return calculateMeanError(rateArray)<THRESHOLD;
+		}
+		return false;
+	}
+	// compare algorithm2: compare value difference
+	private boolean isMatchStartHereCompareValue(int[] array1,int array1Start,int[] array2,int array2Start,int valuesPerZone){
 		int[] diffArray=new int[valuesPerZone];
 		for(int i=0;i<valuesPerZone;i++){
 			int idx1=array1Start+i,idx2=array2Start+i;
@@ -154,24 +157,41 @@ public class Comparator {
 		}
 		return false;
 	}
+	// compare algorithm3: compare angle
+	private boolean isMathStartHereCompareAngle(Audio audio1,int start1,Audio audio2,int start2,int valuesPerZone){
+		int[] array1Angles=audio1.getHashValuesAngle();
+		int[] array2Angles=audio2.getHashValuesAngle();
+		long sum=0;
+		int count=0;
+		int n=Math.min(array1Angles.length-start1, array2Angles.length-start2);
+		n=Math.min(n, valuesPerZone);
+		if(n<valuesPerZone){
+			return false;
+		}
+		for(int i=0;i<n;i++){
+			if(Math.abs(array1Angles[start1+i]-array2Angles[start2+i])>30 && ++count>5){
+				return false;
+			}
+			sum+=array1Angles[start1+i]-array2Angles[start2+i];
+		}
+		int dif=(int) (sum/n);
+		if(dif<THRESHOLD){
+			System.out.print("dif: "+dif+"  " + "count: "+count+"   ");
+		}
+
+		return dif<THRESHOLD;
+	}
+
 	private int calculateMSE(int[] diffArray) {
-//		System.out.println("dif array");
-//		for(int v : diffArray){
-//			System.out.format("%4d",v);
-//		}
 		long sum=0;
 		for(int v : diffArray){
 			sum+=v;
 		}
 		int mean=(int) (sum/diffArray.length);
-
-//		System.out.println("\nMean: "+mean+"\n+dif:");
 		sum=0;
 		for(int v : diffArray){
 			sum+=Math.abs((v-mean));
-//			System.out.format("%5d", (v-mean)*(v-mean));
 		}
-//		System.out.println();
 		return (int) sum/diffArray.length;
 	}
 

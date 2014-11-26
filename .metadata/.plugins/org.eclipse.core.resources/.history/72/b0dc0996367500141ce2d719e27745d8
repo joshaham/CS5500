@@ -1,0 +1,47 @@
+package assignment8Energy;
+
+
+public class Energy {
+	static double overlapRatio=0.9;
+	// time interval for hash
+	static int HsashvalueInterval=1;
+	int[] monoChannel=null;
+	int[] PostivehashValuePerInterval=null;
+	int[] hashValuePerInterval=null;
+	public int[] getHashvaluePerSecond() {
+		return hashValuePerInterval;
+	}
+	
+
+	public Energy(int[][] data, AudioHeader header){
+		int valuesPerSecond=(int) (1/(1-overlapRatio));
+		int audioSamplesPerInterval=HsashvalueInterval*header.sampleRate;
+		int offset=(int) (header.sampleRate*(1-overlapRatio));
+		
+		this.hashValuePerInterval=new int[(header.audioLength-HsashvalueInterval)*valuesPerSecond];
+		this.monoChannel=convert2monochannel(data);
+		for(int i=0;i<hashValuePerInterval.length;i++){
+			int tmp=0;
+			int start=i*offset;
+			for(int k=start;k<start+audioSamplesPerInterval;k++){
+				tmp+=this.monoChannel[k];
+			}
+			hashValuePerInterval[i]=tmp;
+		}
+	}
+	
+	// convert canonical channels to monochannel
+	private int[] convert2monochannel(int[][] data){
+		int numChannel=data.length;
+		int[] monoChannel=new int[data[0].length];
+		for(int i=0;i<data[0].length;i++){
+			int ave=0;
+			for(int ch=0;ch<numChannel;ch++){
+				ave+=data[ch][i];
+			}
+			monoChannel[i]=ave/numChannel;
+		}
+		return monoChannel;
+	}
+	
+}

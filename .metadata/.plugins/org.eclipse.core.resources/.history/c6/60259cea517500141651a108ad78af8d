@@ -1,0 +1,12 @@
+package test;
+
+import assignment8Energy.Audio;
+
+public class audiosDrawer {
+	public static void main(String[] args){
+		String file1="";
+		Audio audio1=Audio.getInstance(file1);
+		String file2="";
+		Audio audio2=Audio.getInstance(file2);
+	}
+}

@@ -23,14 +23,17 @@ public  class Audio {
 	AudioHeader header=null;
 	private BufferedInputStream bis = null;
 	
-//	public int[] getHashValuePerSecondWithOverlap(){
-//		return energy.getHashvaluePerSecond();
-//	}
+	public AudioHeader getHeader(){
+		return this.header;
+	}
 	public int[] getPostiveHashValuePerSecondWithOverlap(){
 		return energy.getPostiveHashValuePerInterval();
 	}
 	public int[] getNegativeHashValuePerInterval(){
 		return energy.getNegativeHashValuePerInterval();
+	}
+	public int[] getHashValuesAngle(){
+		return energy.getPostiveAngles();
 	}
 	// Return instance of Audio
 	public static Audio getInstance(String filePath){
@@ -204,6 +207,5 @@ public  class Audio {
 	public String getFileName() {
 		return this.header.getFileName();
 	}
-
 
 }
