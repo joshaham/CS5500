@@ -2,7 +2,6 @@ package assignment8AveAmplitude;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -18,10 +17,6 @@ public class Comparator {
 	ArrayList<Audio> container1=null;
 	ArrayList<Audio> container2=null;
 	
-	HashMap<Long, String> containerHM=null;
-	
-
-	
 	// contain files from args1 and files from args3
 	public Comparator(String[] files1,String[] files2){
 		container1=new ArrayList<Audio>();
@@ -32,10 +27,12 @@ public class Comparator {
 	
 	// utilize moltile-core process to fill container faster
 	private void fillContainerWithMultiThreads(ArrayList<Audio> container,String[] files){
+		 // get numbers of processors of this PC
 	      int nrOfProcessors = Runtime.getRuntime().availableProcessors();
 	      ExecutorService eservice = Executors.newFixedThreadPool(nrOfProcessors);
 
 	      for(String file : files){
+		      // new thread
 	    	  eservice.execute(new ContainerThread(container,file));
 	      }
 	      eservice.shutdown();
@@ -47,9 +44,7 @@ public class Comparator {
 	
 	// compare all the files in each container against each other
 	public void compare(){
-		//special case when the second container only has 1 file, indicating
-		//that we need to check that file against all the files in container1
-
+		// the numbers of average amplitudes per second is judged by the overlap ratio of time window 
 		int valueSamplesPerSecond = (int) (1/(1-AverageAmplitude.overlapRatio));
 		int valuesPerZone=(Assignment8.SongSampleSize*valueSamplesPerSecond);
 		for(Audio audio1 : container1){
@@ -60,80 +55,85 @@ public class Comparator {
 			}
 		}
 	}
-
+	//compare if two files have one or more segments sounds alike
 	private boolean isMatch(Audio audio1, Audio audio2, int valueSamplesPerSecond, int valuesPerZone) {
-		int[] hashvalue1=audio1.getNegativeHashValuePerSecondWithOverlap();
-		int[] hashvalue2=audio2.getNegativeHashValuePerSecondWithOverlap();
-		for(int array1Start=0;array1Start<hashvalue1.length-valuesPerZone;array1Start++){
-			for(int array2Start=0;array2Start<hashvalue2.length-valuesPerZone;array2Start++){
-				if(isMathStartHereCompareAngle(1,0,audio1,array1Start,audio2,array2Start,valuesPerZone)){
-					System.out.println("MATCH "+audio1.filename+" "+audio2.filename+" "+(array1Start+0.0)/valueSamplesPerSecond+" "+(array2Start+0.0)/valueSamplesPerSecond);
-					if(Assignment8.DEBUG){
-						String s1=audio1.getFileName()+" "+((array1Start+0.0)/valueSamplesPerSecond)+"s";
-						String s2=audio2.getFileName()+" "+((array2Start+0.0)/valueSamplesPerSecond)+"s";
-						Audio.drawWaveFile(Arrays.copyOfRange(hashvalue1, array1Start, hashvalue1.length),s1,Arrays.copyOfRange(hashvalue2, array2Start, hashvalue2.length),s2);
-					}
+	  // these two arrays are used for visualization in DEBUG model
+	  int[] hashvalue1=audio1.getNegativeAmplitudeValuePerSecondWithOverlap();
+	  int[] hashvalue2=audio2.getNegativeAmplitudeValuePerSecondWithOverlap();
+	  for(int array1Start=0;array1Start<hashvalue1.length-valuesPerZone;array1Start++){
+	    for(int array2Start=0;array2Start<hashvalue2.length-valuesPerZone;array2Start++){
+		  if(doesMathStartHere(1,0,audio1,array1Start,audio2,array2Start,valuesPerZone)){
+		    String msg="MATCH "+audio1.filename+" "+audio2.filename+" "
+			  +(array1Start+0.0)/valueSamplesPerSecond+" "+(array2Start+0.0)/valueSamplesPerSecond;
+			  System.out.println(msg);
+			  // visualization in DEBUG model
+			  if(Assignment8.DEBUG){
+			    String s1=audio1.getFileName()+" "+((array1Start+0.0)/valueSamplesPerSecond)+"s";
+				String s2=audio2.getFileName()+" "+((array2Start+0.0)/valueSamplesPerSecond)+"s";
+				Audio.drawWaveFile(Arrays.copyOfRange(hashvalue1, array1Start, hashvalue1.length),s1,
+					Arrays.copyOfRange(hashvalue2, array2Start, hashvalue2.length),s2);
+			  }
 					
-					return true;
-				}
-			}
-		}
-
-
-		return false;
+			return true;
+		 }
+	   }
+     }
+	return false;
 	}
 	
 
-	// compare algorithm3: compare angle
-	private boolean isMathStartHereCompareAngle(int termination,int acculError,Audio audio1,int start1,Audio audio2,int start2,int valuesPerZone){
-		int threshold=5;
-		int DIFF_ANGLE=30;
-		int count=6;
-		int[] array1Angles=termination==1?audio1.getPositiveHashValuesAngle():audio1.getNegativeHashValuesAngle();
-		int[] array2Angles=termination==1?audio2.getPositiveHashValuesAngle():audio2.getNegativeHashValuesAngle();
-		long sum=0;
-		int n=Math.min(array1Angles.length-start1, array2Angles.length-start2);
-		n=Math.min(n, valuesPerZone);
-		if(n<valuesPerZone){
-			return false;
-		}
-		for(int i=0;i<n;i++){
-			if(Math.abs(array1Angles[start1+i]-array2Angles[start2+i])>DIFF_ANGLE && --count<=0){
-				return false;
-			}
-			sum+=array1Angles[start1+i]-array2Angles[start2+i];
-		}
-		acculError+=(int) (sum/n);			
-		
-		// termination condition
-		if(termination==0){
-			if(acculError<threshold){
-				System.out.print("accumulate error: "+acculError+"   ");
-			}
-			return acculError<threshold;
-		}
-		
-		if(acculError<threshold){
-			int offset=(int) (1/(1-AverageAmplitude.overlapRatio));
-			for(int i=start1-offset;i<start1+offset;i++){
-				for(int k=start2-offset;k<start2+offset;k++){	
-					//error index case
-					if(i<0 || k<0){
-						continue;
-					}
-					if(isMathStartHereCompareAngle(0,acculError,audio1,i,audio2,k,valuesPerZone)){
-						return true;
-					}
-				}
-			}
-		}
+	// compare algorithm3: compare the angles of 2d line plot, 
+	//if the angles of 2 arrays hve the same trends then they the two 
+	//arrays are similar
+	private boolean doesMathStartHere(int termination,int acculError,
+			Audio audio1,int start1,Audio audio2,int start2,
+			int valuesPerZone){
+	  int threshold=5;
+	  int DIFF_ANGLE=30;
+	  int count=6;
+	  int[] array1Angles=termination==1?audio1.getPositiveValuesAngle()
+				:audio1.getNegativeValuesAngle();
+	  int[] array2Angles=termination==1?audio2.getPositiveValuesAngle()
+				:audio2.getNegativeValuesAngle();
+	  long sum=0;
+	  int n=Math.min(array1Angles.length-start1, array2Angles.length-start2);
+	  n=Math.min(n, valuesPerZone);
+	  if(n<valuesPerZone){
 		return false;
+	  }
+	  for(int i=0;i<n;i++){
+	     if(Math.abs(array1Angles[start1+i]-array2Angles[start2+i])>DIFF_ANGLE && --count<=0){
+			return false;
+	      }
+		 sum+=array1Angles[start1+i]-array2Angles[start2+i];
+	  }
+	  acculError+=(int) (sum/n);			
+		
+	  // termination condition
+	  if(termination==0){
+		return acculError<threshold;
+	  }
+	  if(acculError<threshold){
+		  int offset=(int) (1/(1-AverageAmplitude.overlapRatio));
+		  for(int i=start1-offset;i<start1+offset;i++){
+			for(int k=start2-offset;k<start2+offset;k++){	
+			  //error index case
+			  if(i<0 || k<0){
+				continue;
+			  }
+			  if(doesMathStartHere(0,acculError,audio1,i,audio2,k,valuesPerZone)){
+				return true;
+			  }
+			}
+		 }
+		}
+	  return false;
 	}
 	
 }
 
 
-
+// helper class
 class ContainerThread  implements Runnable {
 	ArrayList<Audio> container;
 	String file;

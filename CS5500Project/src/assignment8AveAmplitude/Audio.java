@@ -10,7 +10,6 @@ import java.util.Arrays;
 import plot.Plot;
 import plot.PlotFrame;
 
-//
 // Audio class
 public  class Audio {
 	public String filename = null;
@@ -23,20 +22,24 @@ public  class Audio {
 
 	AudioHeader header=null;
 	private BufferedInputStream bis = null;
-	
+	// Audio header information
 	public AudioHeader getHeader(){
 		return this.header;
 	}
-	public int[] getPostiveHashValuePerSecondWithOverlap(){
+	// return the average amplitude of all positive amplitudes per second
+	public int[] getPostiveAmplitudeValuePerSecondWithOverlap(){
 		return AverageAmplitude.getPostiveHashValuePerInterval();
 	}
-	public int[] getNegativeHashValuePerSecondWithOverlap(){
+	// return the average amplitude of all negative amplitudes per second
+	public int[] getNegativeAmplitudeValuePerSecondWithOverlap(){
 		return AverageAmplitude.getNegativeHashValuePerInterval();
 	}
-	public int[] getPositiveHashValuesAngle(){
+	// angles of the plot line of positive amplitudes array
+	public int[] getPositiveValuesAngle(){
 		return AverageAmplitude.getPostiveAngles();
 	}
-	public int[] getNegativeHashValuesAngle(){
+	// angles of the plot line of negative amplitudes array
+	public int[] getNegativeValuesAngle(){
 		return AverageAmplitude.getNegativeAngles();
 	}
 	// Return instance of Audio
@@ -72,11 +75,12 @@ public  class Audio {
 			}
 		}
 		if(!filePath.equals(fileCanonicalPath)){
-			removeCanonicalPath(fileCanonicalPath);
+//			removeCanonicalPath(fileCanonicalPath);
 		}
 		return audio;
 	}
-	
+	// remove the temporary file 
+	/*** BUG NEED TO BE FIXED!!! ***/
 	private static void removeCanonicalPath(String fileCanonicalPath) {
 		Process p=null;
 		try {
@@ -96,6 +100,7 @@ public  class Audio {
 		}
 		
 	}
+	// trime  the path and get the file name
 	private static String getActualName( String filePath){
 		String[] strs = filePath.split("/");
 		String fileName=strs[strs.length-1];
@@ -125,7 +130,7 @@ public  class Audio {
 		readLong();
 
 
-		this.data = new int[this.header.numChannels][(fileArray.length-44)/(header.numChannels*header.bitePerSample/8)];
+		this.data = new int[header.numChannels][(fileArray.length-44)/(header.numChannels*header.bitePerSample/8)];
 
 		// read channel data
 		for (int i = 0; i < this.data[0].length; ++i) {
@@ -211,23 +216,23 @@ public  class Audio {
 	public String getFileName() {
 		return this.header.getFileName();
 	}
-	// ??????????????????
+	//  Draw methods all used for debugging 
 	public static void drawWaveFile(Audio reader1, Audio reader2) {
 		//
 		String[] pamss = new String[] { "-r", "-g", "-b" };
 			PlotFrame frame = Plot.figrue(String.format("%s %s %dHZ %dBit %dCH", "negative "+reader1.getFileName(),reader2.getFileName(), reader1.header.getSampleRate(), reader1.header.getBitesPerSecond(), reader1.header.getNumChannels()));
 			frame.setSize(500, 200);
 			Plot.hold_on();
-			Plot.plot(Integers2Doubles(reader1.getPostiveHashValuePerSecondWithOverlap()), pamss[0]);
-			Plot.plot(Integers2Doubles(reader2.getPostiveHashValuePerSecondWithOverlap()), pamss[1]);
+			Plot.plot(Integers2Doubles(reader1.getPostiveAmplitudeValuePerSecondWithOverlap()), pamss[0]);
+			Plot.plot(Integers2Doubles(reader2.getPostiveAmplitudeValuePerSecondWithOverlap()), pamss[1]);
 			Plot.hold_off();
 		
 			pamss = new String[] { "-r", "-g", "-b" };
 			frame = Plot.figrue(String.format("%s %s %dHZ %dBit %dCH","postive "+ reader1.getFileName(),reader2.getFileName(), reader1.header.getSampleRate(), reader1.header.getBitesPerSecond(), reader1.header.getNumChannels()));
 			frame.setSize(500, 200);
 			Plot.hold_on();
-			Plot.plot(Integers2Doubles(reader1.getNegativeHashValuePerSecondWithOverlap()), pamss[0]);
-			Plot.plot(Integers2Doubles(reader2.getNegativeHashValuePerSecondWithOverlap()), pamss[1]);
+			Plot.plot(Integers2Doubles(reader1.getNegativeAmplitudeValuePerSecondWithOverlap()), pamss[0]);
+			Plot.plot(Integers2Doubles(reader2.getNegativeAmplitudeValuePerSecondWithOverlap()), pamss[1]);
 			Plot.hold_off();
 
 	}

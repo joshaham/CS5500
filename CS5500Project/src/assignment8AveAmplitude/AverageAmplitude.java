@@ -1,9 +1,10 @@
 package assignment8AveAmplitude;
 
-
+// average amplitudes class, line plot data array
 public class AverageAmplitude {
+	// overlap ratio of each sample interval
 	public static double overlapRatio=0.9;
-	// time interval for hash
+	// length of time interval to compute average amplitude
 	static int HsashvalueInterval=1;
 	int[] monoChannel=null;
 	int[] PostiveHashValuePerInterval=null;
@@ -11,15 +12,9 @@ public class AverageAmplitude {
 	int[] postiveAngles=null;
 	int[] negativeAngles=null;
 	public int[] getPostiveAngles() {
-		if(postiveAngles==null){
-			postiveAngles=calculateAngles(PostiveHashValuePerInterval,0);
-		}
 		return postiveAngles;
 	}
 	public int[] getNegativeAngles(){
-		if(negativeAngles==null){
-			negativeAngles=calculateAngles(NegativeHashValuePerInterval,0);
-		}
 		return negativeAngles;
 	}
 
@@ -30,14 +25,17 @@ public class AverageAmplitude {
 	public int[] getNegativeHashValuePerInterval() {
 		return NegativeHashValuePerInterval;
 	}
-
+	// given audio samples data and audio header
+	//  
 	public AverageAmplitude(int[][] data, AudioHeader header){
 		int valuesPerSecond=(int) (1/(1-overlapRatio));
 		int audioSamplesPerInterval=HsashvalueInterval*header.sampleRate;
 		int offset=(int) (header.sampleRate*(1-overlapRatio));
 		
-		this.PostiveHashValuePerInterval=new int[(header.audioLength-HsashvalueInterval)*valuesPerSecond];
-		this.NegativeHashValuePerInterval=new int[(header.audioLength-HsashvalueInterval)*valuesPerSecond];
+		this.PostiveHashValuePerInterval=
+				new int[(header.audioLength-HsashvalueInterval)*valuesPerSecond];
+		this.NegativeHashValuePerInterval=
+				new int[(header.audioLength-HsashvalueInterval)*valuesPerSecond];
 		this.monoChannel=convert2monochannel(data);
 		for(int i=0;i<PostiveHashValuePerInterval.length;i++){
 			long posAccumul=0;
@@ -50,10 +48,16 @@ public class AverageAmplitude {
 					negAccumul+=Math.abs(this.monoChannel[k]);
 				}
 			}
-			PostiveHashValuePerInterval[i]=(int) (posAccumul/audioSamplesPerInterval);
-			NegativeHashValuePerInterval[i]=(int) (negAccumul/audioSamplesPerInterval);
+			PostiveHashValuePerInterval[i]=
+					(int) (posAccumul/audioSamplesPerInterval);
+			NegativeHashValuePerInterval[i]=
+					(int) (negAccumul/audioSamplesPerInterval);
 		}
+
+		postiveAngles=calculateAngles(PostiveHashValuePerInterval,0);
+		negativeAngles=calculateAngles(NegativeHashValuePerInterval,0);
 	}
+	// calculate angles of this data array.
 	private int[] calculateAngles(int[] array, int start) {
 		int deltX=(int)(500*(1-AverageAmplitude.overlapRatio));
 		int[] angles=new int[array.length-1];

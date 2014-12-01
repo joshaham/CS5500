@@ -1,9 +1,6 @@
 package assignment8AveAmplitude;
 
 import java.io.File;
-/* 
- *  THIS IS JUST A TEST VERSION COMPARING ON TIME DOMAIN!!!
- */
 
 public class Assignment8 {
 	// bin size
@@ -17,6 +14,8 @@ public class Assignment8 {
 		String[] paths2=getFilePaths(args[3],args[2]);
 		Comparator comparator = new Comparator(paths1,paths2);
 		comparator.compare();
+		// terminates all threads if any
+		System.exit(0);
 	}
 	
 

@@ -12,8 +12,6 @@ import java.util.Arrays;
  *
  */
 public class Convert2StandardFormat {
-	
-	static int count=0;
 	// GIVEN: a file path
 	// RETURN: the path of the canonical file or null 
 	public static String Convert2CanonicalFormat(String filePath){
@@ -47,7 +45,12 @@ public class Convert2StandardFormat {
 	
 	// convert mp3 file to wav file
 	private static String convertFromMp3ToWav(String filePath){
-		String fileWav="/tmp/assignment7Sanguoyanyi" + (count++)+".wav";
+		String[] strs=filePath.split("/");
+		String fileName=strs[strs.length-1];
+		if(fileName.endsWith(".mp3")){
+			fileName=fileName.substring(0,fileName.indexOf("."));
+		}
+		String fileWav="/tmp/assignment7Sanguoyanyi" + fileName+".wav";
 		String cmd="./lame --decode "+filePath+" "+fileWav;
 		Process p=null;
 		try {
@@ -58,7 +61,7 @@ public class Convert2StandardFormat {
 		}
 		synchronized(p){
 			try {
-				p.wait(3000);
+				p.wait(5000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
