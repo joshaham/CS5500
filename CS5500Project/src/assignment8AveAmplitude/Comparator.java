@@ -62,7 +62,7 @@ public class Comparator {
 	  int[] amplitudes2=audio2.getNegativeAmplitudeValuePerSecondWithOverlap();
 	  for(int array1Start=0;array1Start<amplitudes1.length-valuesPerZone;array1Start++){
 	    for(int array2Start=0;array2Start<amplitudes2.length-valuesPerZone;array2Start++){
-		  if(doesMathStartHere(1,0,audio1,array1Start,audio2,array2Start,valuesPerZone)){
+		  if(doesMatchStartHere(1,0,audio1,array1Start,audio2,array2Start,valuesPerZone)){
 		    String msg="MATCH "+audio1.filename+" "+audio2.filename+" "
 			  +(array1Start+0.0)/valueSamplesPerSecond+" "+(array2Start+0.0)/valueSamplesPerSecond;
 			  System.out.println(msg);
@@ -85,7 +85,7 @@ public class Comparator {
 	// compare algorithm3: compare the angles of 2d line plot, 
 	//if the angles of 2 arrays hve the same trends then they the two 
 	//arrays are similar
-	private boolean doesMathStartHere(int termination,int acculError,
+	private boolean doesMatchStartHere(int termination,int acculError,
 			Audio audio1,int start1,Audio audio2,int start2,
 			int valuesPerZone){
 	  int threshold=5;
@@ -121,7 +121,7 @@ public class Comparator {
 			  if(i<0 || k<0){
 				continue;
 			  }
-			  if(doesMathStartHere(0,acculError,audio1,i,audio2,k,valuesPerZone)){
+			  if(doesMatchStartHere(0,acculError,audio1,i,audio2,k,valuesPerZone)){
 				return true;
 			  }
 			}
