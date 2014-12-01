@@ -58,10 +58,10 @@ public class Comparator {
 	//compare if two files have one or more segments sounds alike
 	private boolean isMatch(Audio audio1, Audio audio2, int valueSamplesPerSecond, int valuesPerZone) {
 	  // these two arrays are used for visualization in DEBUG model
-	  int[] hashvalue1=audio1.getNegativeAmplitudeValuePerSecondWithOverlap();
-	  int[] hashvalue2=audio2.getNegativeAmplitudeValuePerSecondWithOverlap();
-	  for(int array1Start=0;array1Start<hashvalue1.length-valuesPerZone;array1Start++){
-	    for(int array2Start=0;array2Start<hashvalue2.length-valuesPerZone;array2Start++){
+	  int[] amplitudes1=audio1.getNegativeAmplitudeValuePerSecondWithOverlap();
+	  int[] amplitudes2=audio2.getNegativeAmplitudeValuePerSecondWithOverlap();
+	  for(int array1Start=0;array1Start<amplitudes1.length-valuesPerZone;array1Start++){
+	    for(int array2Start=0;array2Start<amplitudes2.length-valuesPerZone;array2Start++){
 		  if(doesMathStartHere(1,0,audio1,array1Start,audio2,array2Start,valuesPerZone)){
 		    String msg="MATCH "+audio1.filename+" "+audio2.filename+" "
 			  +(array1Start+0.0)/valueSamplesPerSecond+" "+(array2Start+0.0)/valueSamplesPerSecond;
@@ -70,8 +70,8 @@ public class Comparator {
 			  if(Assignment8.DEBUG){
 			    String s1=audio1.getFileName()+" "+((array1Start+0.0)/valueSamplesPerSecond)+"s";
 				String s2=audio2.getFileName()+" "+((array2Start+0.0)/valueSamplesPerSecond)+"s";
-				Audio.drawWaveFile(Arrays.copyOfRange(hashvalue1, array1Start, hashvalue1.length),s1,
-					Arrays.copyOfRange(hashvalue2, array2Start, hashvalue2.length),s2);
+				Audio.drawWaveFile(Arrays.copyOfRange(amplitudes1, array1Start, amplitudes1.length),s1,
+					Arrays.copyOfRange(amplitudes2, array2Start, amplitudes2.length),s2);
 			  }
 					
 			return true;
