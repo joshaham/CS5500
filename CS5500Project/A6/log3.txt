@@ -1,3 +1,0 @@
-MATCH z01.wav z02.wav
-MATCH z07.wav z08.wav
-MATCH z08.wav Sor4959.wav

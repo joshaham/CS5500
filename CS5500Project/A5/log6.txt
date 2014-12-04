@@ -1,6 +1,0 @@
-MATCH curieuse2.wav y01.mp3
-MATCH curieuse.mp3 y01.mp3
-MATCH janacek.mp3 y02.mp3
-MATCH maynard.wav y03.mp3
-MATCH rimsky.mp3 y04.mp3
-MATCH sons2.wav y05.mp3

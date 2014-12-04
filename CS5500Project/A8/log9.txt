@@ -1,6 +1,0 @@
-MATCH birdy.wav monoBirdy.wav 0.0 0.0
-MATCH call.mp3 bits8call.wav 0.0 0.0
-MATCH cour.mp3 sr11.mp3 0.0 0.0
-MATCH hewn.wav sr22.mp3 0.0 0.0
-MATCH hews.wav sr48.mp3 0.0 0.0
-MATCH hewn.wav sr48m8hackin.mp3 0.0 0.0
