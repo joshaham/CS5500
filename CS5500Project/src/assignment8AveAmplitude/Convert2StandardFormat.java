@@ -19,6 +19,9 @@ public class Convert2StandardFormat {
 		if(filePath.endsWith(".mp3")){
 			formatFile=convertFromMp3ToWav(filePath);
 		}
+		else if(filePath.endsWith(".ogg")){
+			formatFile = convertFromOggToWav(filePath);
+		}
 		// check wav header
 		else if(filePath.endsWith(".wav")){
 			File file = new File(filePath);
@@ -33,7 +36,7 @@ public class Convert2StandardFormat {
 			if(header==null){
 				return null;
 			}
-		}else{
+		} else{
 			if(Assignment8.DEBUG){
 				System.err.println("ERROR: file not ends with audio format");
 			}
@@ -52,6 +55,34 @@ public class Convert2StandardFormat {
 		}
 		String fileWav="/tmp/assignment7Sanguoyanyi" + fileName+".wav";
 		String cmd="./lame --decode "+filePath+" "+fileWav;
+		Process p=null;
+		try {
+			p = java.lang.Runtime.getRuntime().exec(cmd);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		synchronized(p){
+			try {
+				p.wait(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return fileWav;
+	}
+	
+	// convert ogg to wav
+	private static String convertFromOggToWav(String filePath){
+		String[] strs=filePath.split("/");
+		String fileName=[strs.length-1];
+		if(fileName.endsWith(".ogg"){
+			fileName=fileName.substring(0,fileName.indexOf("."));
+		}
+		String fileWav="/tmp/assignment7Sanguoyanyi" + fileName+".wav";
+		String cmd="./user/bin/oggdec -o "+fileWav + " "+filePath;
 		Process p=null;
 		try {
 			p = java.lang.Runtime.getRuntime().exec(cmd);
