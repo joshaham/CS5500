@@ -1,4 +1,4 @@
-CS5500 TEAM PROJECT ASSIGNMENT 7
+CS5500 TEAM PROJECT ASSIGNMENT 9
 Requirements: JDK 1.6+, unix
 
 Team members:
@@ -14,6 +14,3 @@ $ ./dam -f <pathname> -f <pathname>
 $ ./dam -d <pathname> -d <pathname>
 $ ./dam -f <pathname> -d <pathname>
 $ ./dam -d <pathname> -f <pathname>
-
-FFT class copyrighted by Columbia University,
-used with instructor's permission
