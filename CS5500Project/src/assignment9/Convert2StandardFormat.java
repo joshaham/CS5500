@@ -63,17 +63,17 @@ public class Convert2StandardFormat {
       Process p = null;
       try {
          p = Runtime.getRuntime().exec(cmd);
+ 		synchronized(p){
+ 			try {
+ 				p.wait(10000);
+ 			} catch (InterruptedException e) {
+ 				// TODO Auto-generated catch block
+ 				e.printStackTrace();
+ 			}
+ 		}
       } catch (IOException e) {
          e.printStackTrace();
-      }	  
-		synchronized(p){
-			try {
-				p.wait(5000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+      }	 
       System.out.println("Done "+filePath+"");
       return fileWav;
    }
@@ -90,20 +90,8 @@ public class Convert2StandardFormat {
       String cmd = "/usr/bin/oggdec -o " + fileWav + " " + filePath;
       Process p = null;
       try {
-//    	 String s=null;
          p = Runtime.getRuntime().exec(cmd);
-//         BufferedReader stdInput = new BufferedReader(new
-//                 InputStreamReader(p.getInputStream()));
-//         // read the output from the command
-//         System.out.println("Here is the standard output of the command:\n");
-//         while ((s = stdInput.readLine()) != null) {
-//             System.out.println(s);
-//         }
-      } catch (IOException e) {
-    	 System.out.println("try to execute: "+ cmd);
-         e.printStackTrace();
-      }
-		synchronized(p){
+ 		synchronized(p){
 			try {
 				p.wait(5000);
 			} catch (InterruptedException e) {
@@ -111,6 +99,11 @@ public class Convert2StandardFormat {
 				e.printStackTrace();
 			}
 		}
+		
+      } catch (IOException e) {
+    	 System.out.println("try to execute: "+ cmd);
+         e.printStackTrace();
+      }
       System.out.println("Done "+filePath+"");
       return fileWav;
    }
