@@ -1,1 +1,1 @@
-java -cp ./bin assignment8AveAmplitude.Assignment8 $@
+java -cp ./bin assignment9.Assignment9 $@

@@ -4,7 +4,7 @@ import java.io.File;
 
 public class Assignment8 {
 	// bin size
-	public static boolean DEBUG=false;
+	public static boolean DEBUG=true;
 	public static int SongSampleSize = 5;
 	public static void main(String[] args) {		
 		if(!ParameterChecker.CheckFormat(args)){

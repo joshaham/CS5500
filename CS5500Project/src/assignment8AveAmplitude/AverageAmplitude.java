@@ -5,41 +5,30 @@ public class AverageAmplitude {
 	// overlap ratio of each sample interval
 	public static double overlapRatio=0.9;
 	// length of time interval to compute average amplitude
-	static int HsashvalueInterval=1;
+	static int AveAmplitudeWindow=1; // 1 second
+	// convert samples into one channel
 	int[] monoChannel=null;
-	int[] PostiveHashValuePerInterval=null;
-	int[] NegativeHashValuePerInterval=null;
+	int[] PostiveAveAmplitudes=null;
+	int[] NegativeAveAmplitudes=null;
 	int[] postiveAngles=null;
 	int[] negativeAngles=null;
-	public int[] getPostiveAngles() {
-		return postiveAngles;
-	}
-	public int[] getNegativeAngles(){
-		return negativeAngles;
-	}
-
-	public int[] getPostiveHashValuePerInterval() {
-		return PostiveHashValuePerInterval;
-	}
-
-	public int[] getNegativeHashValuePerInterval() {
-		return NegativeHashValuePerInterval;
-	}
+	
+	
 	// given audio samples data and audio header
-	//  
 	public AverageAmplitude(int[][] data, AudioHeader header){
+		// averages amplitudes per second
 		int valuesPerSecond=(int) (1/(1-overlapRatio));
-		int audioSamplesPerInterval=HsashvalueInterval*header.sampleRate;
+		// audio samples per time window
+		int audioSamplesPerInterval=AveAmplitudeWindow*header.sampleRate;
 		int offset=(int) (header.sampleRate*(1-overlapRatio));
 		
-		this.PostiveHashValuePerInterval=
-				new int[(header.audioLength-HsashvalueInterval)*valuesPerSecond];
-		this.NegativeHashValuePerInterval=
-				new int[(header.audioLength-HsashvalueInterval)*valuesPerSecond];
+		this.PostiveAveAmplitudes=
+				new int[(header.audioLength-AveAmplitudeWindow)*valuesPerSecond];
+		this.NegativeAveAmplitudes=
+				new int[(header.audioLength-AveAmplitudeWindow)*valuesPerSecond];
 		this.monoChannel=convert2monochannel(data);
-		for(int i=0;i<PostiveHashValuePerInterval.length;i++){
-			long posAccumul=0;
-			long negAccumul=0;
+		for(int i=0;i<PostiveAveAmplitudes.length;i++){
+			long posAccumul=0, negAccumul=0;
 			int start=i*offset;
 			for(int k=start;k<start+audioSamplesPerInterval;k++){
 				if(this.monoChannel[k]>0){
@@ -48,14 +37,11 @@ public class AverageAmplitude {
 					negAccumul+=Math.abs(this.monoChannel[k]);
 				}
 			}
-			PostiveHashValuePerInterval[i]=
-					(int) (posAccumul/audioSamplesPerInterval);
-			NegativeHashValuePerInterval[i]=
-					(int) (negAccumul/audioSamplesPerInterval);
+			PostiveAveAmplitudes[i]=(int) (posAccumul/audioSamplesPerInterval);
+			NegativeAveAmplitudes[i]=(int) (negAccumul/audioSamplesPerInterval);
 		}
-
-		postiveAngles=calculateAngles(PostiveHashValuePerInterval,0);
-		negativeAngles=calculateAngles(NegativeHashValuePerInterval,0);
+		postiveAngles=calculateAngles(PostiveAveAmplitudes,0);
+		negativeAngles=calculateAngles(NegativeAveAmplitudes,0);
 	}
 	// calculate angles of this data array.
 	private int[] calculateAngles(int[] array, int start) {
@@ -63,13 +49,16 @@ public class AverageAmplitude {
 		int[] angles=new int[array.length-1];
 		for(int i=start;i<array.length-1;i++){
 			int deltY=array[i+1]-array[i];
-			angles[i]=getAngel(Math.atan(deltY/(0.0+deltX)));
+			angles[i]=getAngelInDegree(Math.atan(deltY/(0.0+deltX)));
 		}
 		return angles;
 	}
-	public  int getAngel(double angle){
+	
+	//convert from angle in radian to to angle in degree
+	public  int getAngelInDegree(double angle){
 		return (int) (angle*180/Math.PI);
 	}
+	
 	// convert canonical channels to monochannel
 	private int[] convert2monochannel(int[][] data){
 		int numChannel=data.length;
@@ -84,4 +73,20 @@ public class AverageAmplitude {
 		return monoChannel;
 	}
 	
+	
+
+	public int[] getPostiveAngles() {
+		return postiveAngles;
+	}
+	public int[] getNegativeAngles(){
+		return negativeAngles;
+	}
+
+	public int[] getPostiveHashValuePerInterval() {
+		return PostiveAveAmplitudes;
+	}
+
+	public int[] getNegativeHashValuePerInterval() {
+		return NegativeAveAmplitudes;
+	}
 }

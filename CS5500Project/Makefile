@@ -1,5 +1,4 @@
 default:
-	javac -d ./bin src/plot/*.java src/assignment8AveAmplitude/*.java
+	javac -d ./bin src/assignment9/*.java
 clean:
-	$(RM) ./bin/plot/*.class
-	$(RM) ./bin/assignment8AveAmplitude/*.class
+	$(RM) ./bin/assignment9/*.class

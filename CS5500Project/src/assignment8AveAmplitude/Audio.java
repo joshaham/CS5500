@@ -213,6 +213,10 @@ public  class Audio {
 
 		return fileArray;
 	}
+	@Override
+	public String toString(){
+		return this.header.toString();
+	}
 	public String getFileName() {
 		return this.header.getFileName();
 	}
@@ -307,8 +311,10 @@ public  class Audio {
 	}
 
 	public static void main(String[] args){
-		Audio reader1 = Audio.getInstance("A6/D4/MMw.wav");
-		Audio reader2 = Audio.getInstance("A6/D5/Piste1.wav");
+		Audio reader1 = Audio.getInstance("A8/D1/AAA1.wav");
+		Audio reader2 = Audio.getInstance("A8/D2/comm2.wav");
+		System.out.println(reader1);
+		System.out.println(reader2);
 		
 		drawWaveFile(reader1,reader2);
 //		drawRawData(reader1.getData()[1],"",reader2.getData()[1],"");
