@@ -50,7 +50,8 @@ class ParameterChecker{
 		String par2=args[2].trim();
 		String file1 = args[1].trim(), file2 = args[3].trim();
 		if(par1.equals("-f")){
-			if(!file1.endsWith(".wav") && !file1.endsWith(".mp3")) {
+			if(!file1.endsWith(".wav") && !file1.endsWith(".mp3")
+				&& !file1.endsWith(".ogg")) {
 				return Error.WRONGFILEFORMAT1;
 			}
 		}else if(par1.equals("-d")){
@@ -60,7 +61,8 @@ class ParameterChecker{
 		}
 		
 		if(par2.equals("-f")){
-			if(!file2.endsWith(".wav") && !file2.endsWith(".mp3")) {
+			if(!file2.endsWith(".wav") && !file2.endsWith(".mp3")
+				&& !file2.endsWith(".ogg")) {
 				return Error.WRONGFILEFORMAT2;
 			}
 		}else if(par2.equals("-d")){
