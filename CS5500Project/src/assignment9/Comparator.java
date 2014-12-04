@@ -34,38 +34,38 @@ public class Comparator {
    // utilize moltile-core process to fill container faster
    private void fillContainerWithMultiThreads(ArrayList<Audio> container,
                                                    String[] files){
-	   for(String file : files){
-		      Audio audio = null;
-		      audio = Audio.getInstance(file);
-	          container.add(audio);
-	   }
+//	   for(String file : files){
+//		      Audio audio = null;
+//		      audio = Audio.getInstance(file);
+//	          container.add(audio);
+//	   }
 	   
 	   
-//      // get numbers of processors of this PC
-//      int nrOfProcessors = Runtime.getRuntime().availableProcessors();
-//      ExecutorService service = 
-//         Executors.newFixedThreadPool(nrOfProcessors);
-//      List<Future<Runnable>> futures = new ArrayList<Future<Runnable>>();
-//
-//      for (String file : files) {
-//         // new thread
-//    	  Future f =service.submit(new ContainerThread(container,file));
-//    	  futures.add(f);
-//      }
-//      // wait for all tasks to complete before continuing
-//      for (Future<Runnable> f : futures)
-//      {
-//         try {
-//			f.get();
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (ExecutionException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//      }
-//      service.shutdownNow();
+      // get numbers of processors of this PC
+      int nrOfProcessors = Runtime.getRuntime().availableProcessors();
+      ExecutorService service = 
+         Executors.newFixedThreadPool(nrOfProcessors);
+      List<Future<Runnable>> futures = new ArrayList<Future<Runnable>>();
+
+      for (String file : files) {
+         // new thread
+    	  Future f =service.submit(new ContainerThread(container,file));
+    	  futures.add(f);
+      }
+      // wait for all tasks to complete before continuing
+      for (Future<Runnable> f : futures)
+      {
+         try {
+			f.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+      }
+      service.shutdownNow();
 	   
 //		 // get numbers of processors of this PC
 //	      int nrOfProcessors = Runtime.getRuntime().availableProcessors();
