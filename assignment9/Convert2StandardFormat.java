@@ -78,7 +78,7 @@ public class Convert2StandardFormat {
    private static String convertFromOggToWav(String filePath){
       String[] strs = filePath.split("/");
       String fileName = strs[strs.length - 1];
-      if (fileName.endsWith(".ogg") {
+      if (fileName.endsWith(".ogg")) {
          fileName = fileName.substring(0, fileName.indexOf("."));
       }
       String fileWav = "/tmp/assignment7Sanguoyanyi" + fileName + ".wav";
