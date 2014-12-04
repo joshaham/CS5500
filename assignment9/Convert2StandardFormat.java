@@ -77,7 +77,7 @@ public class Convert2StandardFormat {
    // convert ogg to wav
    private static String convertFromOggToWav(String filePath){
       String[] strs = filePath.split("/");
-      String fileName = [strs.length - 1];
+      String fileName = strs[strs.length - 1];
       if (fileName.endsWith(".ogg") {
          fileName = fileName.substring(0, fileName.indexOf("."));
       }
